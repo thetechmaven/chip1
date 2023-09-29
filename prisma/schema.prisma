@@ -10,4 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  // id for relational database
+  // id   String    @id @default(cuid())
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
 
+  name                String    @default("")
+  email               String    @default("")
+  phone               String?   @default("")
+  address             String?   @default("")
+  state               String?   @default("")
+  country             String?   @default("")
+  dob                 String?   @default("")
+  isEmailVerified     Boolean   @default(false)
+  isPhoneVerified     Boolean   @default(false) 
+  pwHash              String    @default("")   
+}
