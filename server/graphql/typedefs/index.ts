@@ -10,6 +10,12 @@ const typeDefs = gql`
     country: String
   }
 
+  type LoginResponse {
+    token: String
+    error: String
+    user: User
+  }
+
   type Query {
     user: User
   }
@@ -22,6 +28,7 @@ const typeDefs = gql`
       country: String
       password: String!
     ): User
+    login(email: String!, password: String!): LoginResponse
   }
 `;
 
