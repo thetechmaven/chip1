@@ -1,7 +1,11 @@
 import prisma from '@/prisma/prisma';
 import type * as Prisma from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { isEmail, isPasswordValid } from '../../../utils/validation';
+import {
+  isEmail,
+  isNameValid,
+  isPasswordValid,
+} from '../../../utils/validation';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -10,6 +14,7 @@ export const registerUser = async (_: unknown, args: RegisterUserInput) => {
 
   isEmail(args.email);
   isPasswordValid(args.password);
+  isNameValid(args.name);
 
   return;
   return prisma.user.create({

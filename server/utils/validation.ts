@@ -16,3 +16,12 @@ export const isPasswordValid = (password: string) => {
     );
   }
 };
+
+export const isNameValid = (name: string) => {
+  if (/[0-9]/.test(name)) {
+    throw new Error('Name should only contain alphabets');
+  }
+  if (name.length === 0) {
+    throw new Error('Name should contain atleast one character');
+  }
+};
