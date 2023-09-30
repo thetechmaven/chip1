@@ -16,10 +16,11 @@ export const registerUser = async (_: unknown, args: RegisterUserInput) => {
   isPasswordValid(args.password);
   isNameValid(args.name);
 
-  return;
+  const { password: _p, ...data } = args;
+
   return prisma.user.create({
     data: {
-      ...args,
+      ...data,
       pwHash,
     },
   });
