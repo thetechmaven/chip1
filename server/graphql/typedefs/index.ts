@@ -20,6 +20,7 @@ const typeDefs = gql`
       address: String
       state: String
       country: String
+      password: String!
     ): User
   }
 `;
