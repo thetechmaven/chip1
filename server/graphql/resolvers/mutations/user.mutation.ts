@@ -7,6 +7,8 @@ import {
   isPasswordValid,
 } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
+import { RESET_PASSWORD_RESPONSE } from '@/constants';
+import { sendForgetPasswordEmail } from '@/server/services/email';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -49,4 +51,15 @@ export const login = async (
       error: 'Incorrect email or password',
     };
   }
+};
+
+export const resetPassword = async (
+  _: unknown,
+  { email }: { email: string }
+) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user) {
+    await sendForgetPasswordEmail(email);
+  }
+  return { message: RESET_PASSWORD_RESPONSE };
 };

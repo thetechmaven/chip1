@@ -16,6 +16,10 @@ const typeDefs = gql`
     user: User
   }
 
+  type ResetPasswordResponse {
+    message: String!
+  }
+
   type Query {
     user: User
   }
@@ -28,7 +32,8 @@ const typeDefs = gql`
       country: String
       password: String!
     ): User
-    login(email: String!, password: String!): LoginResponse
+    login(email: String!, password: String!): LoginResponse!
+    resetPassword(email: String): ResetPasswordResponse!
   }
 `;
 
