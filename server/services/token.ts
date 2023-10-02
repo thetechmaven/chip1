@@ -10,5 +10,10 @@ export const generateToken = ({ tokenFor, data }: IGenerateTokenArgs) => {
 };
 
 export const getPayload = ({ token }: { token: string }) => {
-  return jwt.verify(token, process.env.JWT_SECRET as string);
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET as string);
+    return JSON.parse(JSON.stringify(payload));
+  } catch (err) {
+    return err;
+  }
 };

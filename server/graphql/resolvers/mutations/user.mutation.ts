@@ -7,8 +7,13 @@ import {
   isPasswordValid,
 } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
-import { RESET_PASSWORD_RESPONSE } from '@/constants';
+import {
+  RESET_PASSWORD_RESPONSE,
+  SUCCESS,
+  URL_EXPIRED_OR_INVALID,
+} from '@/constants';
 import { sendForgetPasswordEmail } from '@/server/services/email';
+import { getPayload } from '@/server/services/token';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -53,7 +58,7 @@ export const login = async (
   }
 };
 
-export const resetPassword = async (
+export const sendResetPasswordLink = async (
   _: unknown,
   { email }: { email: string }
 ) => {
@@ -62,4 +67,23 @@ export const resetPassword = async (
     await sendForgetPasswordEmail(email);
   }
   return { message: RESET_PASSWORD_RESPONSE };
+};
+
+type ResetPasswordArgs = { token: string; password: string };
+export const resetPassword = async (
+  _: unknown,
+  { token, password }: ResetPasswordArgs
+) => {
+  const payload = getPayload({ token });
+  if (payload?.data?.email) {
+    isPasswordValid(password);
+    const pwHash = await bcrypt.hash(password, 10);
+    await prisma.user.update({
+      where: { email: payload?.data?.email },
+      data: { pwHash },
+    });
+    return { status: SUCCESS };
+  } else {
+    return { status: URL_EXPIRED_OR_INVALID };
+  }
 };

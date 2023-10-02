@@ -18,6 +18,10 @@ const typeDefs = gql`
 
   type ResetPasswordResponse {
     message: String!
+    status: String!
+  }
+  type SendResetPasswordLinkResponse {
+    message: String!
   }
 
   type Query {
@@ -33,7 +37,8 @@ const typeDefs = gql`
       password: String!
     ): User
     login(email: String!, password: String!): LoginResponse!
-    resetPassword(email: String): ResetPasswordResponse!
+    sendResetPasswordLink(email: String!): SendResetPasswordLinkResponse!
+    resetPassword(password: String!, token: String!): ResetPasswordResponse!
   }
 `;
 
