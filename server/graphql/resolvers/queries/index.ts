@@ -1,7 +1,1 @@
-const resolvers = {
-  Query: {
-    hello: () => 'world',
-  },
-};
-
-export default resolvers;
+export * as userQueries from './user.queries';

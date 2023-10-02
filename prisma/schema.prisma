@@ -16,7 +16,7 @@ model User {
   id      String    @id @default(auto()) @map("_id") @db.ObjectId
 
   name                String    @default("")
-  email               String    @default("")
+  email               String    @default("") @unique
   phone               String?   @default("")
   address             String?   @default("")
   state               String?   @default("")
@@ -24,5 +24,5 @@ model User {
   dob                 String?   @default("")
   isEmailVerified     Boolean   @default(false)
   isPhoneVerified     Boolean   @default(false) 
-  pwHash              String    @default("")   
+  pwHash              String    @default("")
 }
