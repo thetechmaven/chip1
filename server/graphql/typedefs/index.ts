@@ -17,7 +17,7 @@ const typeDefs = gql`
   }
 
   type StatusResponse {
-    message: String!
+    message: String
     status: String!
   }
   type MessageResponse {
