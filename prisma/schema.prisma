@@ -25,4 +25,6 @@ model User {
   isEmailVerified     Boolean   @default(false)
   isPhoneVerified     Boolean   @default(false) 
   pwHash              String    @default("")
+
+  isAdmin             Boolean   @default(false)
 }
