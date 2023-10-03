@@ -8,11 +8,16 @@ import {
 } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
 import {
+  ERROR,
   RESET_PASSWORD_RESPONSE,
   SUCCESS,
   URL_EXPIRED_OR_INVALID,
+  VERIFICATION_EMAIL_SENT,
 } from '@/constants';
-import { sendForgetPasswordEmail } from '@/server/services/email';
+import {
+  sendForgetPasswordEmail,
+  sendVerificationEmail as sendVerification,
+} from '@/server/services/email';
 import { getPayload } from '@/server/services/token';
 
 type RegisterUserInput = Prisma.User & { password: string };
@@ -86,4 +91,28 @@ export const resetPassword = async (
   } else {
     return { status: URL_EXPIRED_OR_INVALID };
   }
+};
+
+//todo: use email for user in context; or just move this mutation anywhere else
+export const sendVerificationEmail = async (
+  _: unknown,
+  { email }: { email: string }
+) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user && !user.isEmailVerified) {
+    await sendVerification(email);
+  }
+  return { message: VERIFICATION_EMAIL_SENT };
+};
+
+export const verifyEmail = async (_: unknown, { token }: { token: string }) => {
+  const { data, error } = getPayload({ token });
+  if (error || !data.email) {
+    return { status: ERROR, message: URL_EXPIRED_OR_INVALID };
+  }
+  await prisma.user.update({
+    where: { email: data.email },
+    data: { isEmailVerified: true },
+  });
+  return { status: SUCCESS };
 };
