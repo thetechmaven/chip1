@@ -21,7 +21,6 @@ function ResetPassword({}) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Called');
     try {
       const { password, confirmPassword } = fdtojson(
         new FormData(e.target as HTMLFormElement)
