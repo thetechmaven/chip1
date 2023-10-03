@@ -13,7 +13,7 @@ export const getPayload = ({ token }: { token: string }) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET as string);
     return JSON.parse(JSON.stringify(payload));
-  } catch (err) {
-    return err;
+  } catch (error) {
+    return { error };
   }
 };

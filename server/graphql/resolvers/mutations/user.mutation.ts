@@ -19,6 +19,8 @@ import {
   sendVerificationEmail as sendVerification,
 } from '@/server/services/email';
 import { getPayload } from '@/server/services/token';
+import { IGqlContext } from '@/types';
+import { adminOnly } from '../../wrappers';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -116,3 +118,10 @@ export const verifyEmail = async (_: unknown, { token }: { token: string }) => {
   });
   return { status: SUCCESS };
 };
+
+type ChangeAdminStatusArgs = { userId: string; status: boolean };
+export const updateAdminStatus = adminOnly(
+  (_: unknown, { userId, status }: ChangeAdminStatusArgs) => {
+    console.log('Im here');
+  }
+);

@@ -41,6 +41,7 @@ const typeDefs = gql`
     resetPassword(password: String!, token: String!): StatusResponse!
     sendVerificationEmail(email: String!): MessageResponse!
     verifyEmail(token: String!): StatusResponse!
+    updateAdminStatus(userId: String!, status: Boolean): User
   }
 `;
 
