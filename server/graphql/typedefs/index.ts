@@ -1,4 +1,5 @@
 import { gql } from 'graphql-tag';
+import projectTypedefs from './project';
 
 const typeDefs = gql`
   type User {
@@ -43,6 +44,8 @@ const typeDefs = gql`
     sendVerificationEmail(email: String!): MessageResponse!
     verifyEmail(token: String!): StatusResponse!
     updateAdminStatus(userId: String!, status: Boolean): User
+
+    ${projectTypedefs}
   }
 `;
 
