@@ -19,7 +19,6 @@ import {
   sendVerificationEmail as sendVerification,
 } from '@/server/services/email';
 import { getPayload } from '@/server/services/token';
-import { IGqlContext } from '@/types';
 import { adminOnly } from '../../wrappers';
 
 type RegisterUserInput = Prisma.User & { password: string };
@@ -121,7 +120,15 @@ export const verifyEmail = async (_: unknown, { token }: { token: string }) => {
 
 type ChangeAdminStatusArgs = { userId: string; status: boolean };
 export const updateAdminStatus = adminOnly(
-  (_: unknown, { userId, status }: ChangeAdminStatusArgs) => {
-    console.log('Im here');
+  async (_: unknown, { userId, status }: ChangeAdminStatusArgs) => {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User does not exist');
+    }
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { isAdmin: true },
+    });
+    return updatedUser;
   }
 );
