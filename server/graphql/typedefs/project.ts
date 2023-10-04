@@ -1,5 +1,12 @@
 /* Project related typedefs */
 
-const projectTypedefs = ``;
+const projectTypedefs = `
+    type Query {
+        
+    }
+    type Mutation {
+        
+    }
+`;
 
 export default projectTypedefs;

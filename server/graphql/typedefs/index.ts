@@ -44,9 +44,9 @@ const typeDefs = gql`
     sendVerificationEmail(email: String!): MessageResponse!
     verifyEmail(token: String!): StatusResponse!
     updateAdminStatus(userId: String!, status: Boolean): User
-
-    ${projectTypedefs}
   }
+
+  ${projectTypedefs}
 `;
 
 export default typeDefs;
