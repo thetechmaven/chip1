@@ -8,6 +8,7 @@ const typeDefs = gql`
     address: String
     state: String
     country: String
+    isAdmin: Boolean
   }
 
   type LoginResponse {
