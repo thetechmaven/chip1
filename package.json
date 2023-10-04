@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "lint-staged": "lint-staged",
     "schema:generate-file-windows": "cross-env OS=Windows && type ./prisma/common.schema.prisma ./prisma/project.schema.prisma > ./prisma/schema.prisma",
-    "schema:generate-file-mac": "cross-env OS=MacOS cat ./prisma/common.schema.prisma ./prisma/project.schema.prisma > ./prisma/schema.prisma",
+    "schema:generate-file-mac": "cat ./prisma/common.schema.prisma > ./prisma/schema.prisma && tail -n +16 ./prisma/project.schema.prisma >> ./prisma/schema.prisma",
     "schema:generate-file": "npm-run-all schema:generate-file-*",
     "schema:generate-win": "npm run schema:generate-file-windows && npx prisma generate",
     "schema:generate": "npm run schema:generate-file-mac && npx prisma generate"
