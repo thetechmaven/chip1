@@ -57,6 +57,7 @@
     "@types/js-cookie": "^3.0.4",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/validator": "^13.11.2",
+    "encoding": "^0.1.13",
     "lint-staged": "^14.0.1",
     "prisma": "^5.3.1"
   }
