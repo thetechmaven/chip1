@@ -2,6 +2,8 @@ import { gql } from 'graphql-tag';
 import projectTypedefs from './project';
 
 const typeDefs = gql`
+  scalar Date
+
   type User {
     id: String!
     name: String
