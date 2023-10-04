@@ -25,4 +25,3 @@ model User {
 
   isAdmin             Boolean   @default(false)
 }
-// Project schema for prisma

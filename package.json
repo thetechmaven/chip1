@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "schema:generate-file-windows": "cross-env OS=Windows && type ./prisma/common.schema.prisma ./prisma/project.schema.prisma > ./prisma/schema.prisma",
+    "schema:generate-file-mac": "cross-env OS=MacOS cat ./prisma/common.schema.prisma ./prisma/project.schema.prisma > ./prisma/schema.prisma",
+    "schema:generate-file": "npm-run-all schema:generate-file-*",
+    "schema:generate-win": "npm run schema:generate-file-windows && npx prisma generate",
+    "schema:generate": "npm run schema:generate-file-mac && npx prisma generate"
   },
   "dependencies": {
     "@apollo/server": "^4.9.3",
@@ -25,6 +30,7 @@
     "@types/react-dom": "18.2.8",
     "autoprefixer": "10.4.16",
     "bcrypt": "^5.1.1",
+    "cross-env": "^7.0.3",
     "eslint": "8.50.0",
     "eslint-config-next": "13.5.3",
     "eslint-config-prettier": "^9.0.0",
@@ -35,6 +41,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "next": "13.5.3",
+    "npm-run-all": "^4.1.5",
     "postcss": "8.4.31",
     "prettier": "^3.0.3",
     "react": "18.2.0",
