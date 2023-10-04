@@ -2,10 +2,10 @@
 
 const projectTypedefs = `
     type Query {
-        
+      sampleQuery: String
     }
     type Mutation {
-        
+        sampleMutation: String
     }
 `;
 
