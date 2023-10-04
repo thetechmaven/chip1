@@ -1,1 +1,19 @@
 // Project schema for prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// .......
+// ......
+// .....
+// ....
+// ...
+// ..
+// .
+// Skip first 20 lines
