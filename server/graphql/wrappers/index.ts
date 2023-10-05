@@ -11,8 +11,8 @@ export const adminOnly =
   };
 
 export const isLoggedIn =
-  (fn: (parent: unknown, args: any, context: unknown) => void) =>
-  (parent: unknown, args: unknown, context: unknown) => {
+  (fn: (parent: unknown, args: any, context: IGqlContext) => void) =>
+  (parent: unknown, args: unknown, context: IGqlContext) => {
     const { user } = context as IGqlContext;
     if (!user) {
       throw new Error('Login to continue');
