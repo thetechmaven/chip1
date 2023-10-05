@@ -9,3 +9,13 @@ export const adminOnly =
     }
     return fn(parent, args, context);
   };
+
+export const isLoggedIn =
+  (fn: (parent: unknown, args: any, context: unknown) => void) =>
+  (parent: unknown, args: unknown, context: unknown) => {
+    const { user } = context as IGqlContext;
+    if (!user) {
+      throw new Error('Login to continue');
+    }
+    return fn(parent, args, context);
+  };
