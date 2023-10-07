@@ -51,6 +51,12 @@ export const login = async (
       error: 'Incorrect email or password',
     };
   }
+  if (
+    parseInt(process.env.REQUIRE_EMAIL_VERIFICATION || '') &&
+    !user.isEmailVerified
+  ) {
+    return { error: 'Email is not verified' };
+  }
   if (await bcrypt.compare(password, user.pwHash)) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
     return {
