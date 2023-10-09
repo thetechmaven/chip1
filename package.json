@@ -14,7 +14,8 @@
     "schema:generate-file": "npm-run-all schema:generate-file-*",
     "schema:generate-win": "npm run schema:generate-file-windows && npx prisma generate",
     "schema:generate": "npm run schema:generate-file-mac && npx prisma generate",
-    "run-bot": "tsc bot/index.ts --outDir .bot && node ./.bot/index.js"
+    "run-bot": "tsc bot/index.ts --outDir .bot && nodemon ./.bot/index.js",
+    "dev-bot": "./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"npm run run-bot\""
   },
   "dependencies": {
     "@apollo/server": "^4.9.3",
@@ -63,6 +64,7 @@
     "@types/validator": "^13.11.2",
     "encoding": "^0.1.13",
     "lint-staged": "^14.0.1",
+    "nodemon": "^3.0.1",
     "prisma": "^5.3.1"
   }
 }
