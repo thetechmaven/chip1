@@ -11,6 +11,7 @@ import {
   handleUpdateGender,
   handleUpdateJobCategory,
   handleUpdateJobPreference,
+  handleUpdateLocationPreference,
   handleUpdateRace,
   updateCitizen,
   updateCover,
@@ -133,6 +134,7 @@ const inlineQueryHandlers = (
     CITIZENSHIP: handleUpdateCitizen,
     JOB_CATEGORY: handleUpdateJobCategory,
     JOB_PREFERENCE: handleUpdateJobPreference,
+    LOCATION: handleUpdateLocationPreference,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);

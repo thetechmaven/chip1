@@ -326,3 +326,19 @@ export const updateLocationPreference = (
     parse_mode: 'markdown',
   });
 };
+
+export const handleUpdateLocationPreference = async (
+  bot: typeof TelegramBot,
+  [_, data]: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  await prisma.user.update({
+    where: { chatId: query.message?.chat.id },
+    data: { locationPreference: data },
+  });
+  deleteMessage(
+    query.message?.chat.id as number,
+    query.message?.message_id as number
+  );
+  sendProfile({ bot, chatId: query.message?.chat.id as number });
+};

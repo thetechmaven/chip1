@@ -35,7 +35,10 @@ export const ADD_EDIT_PROFILE = [
     },
   ],
   [
-    { text: 'Change Location Preference', callback_data: 'c' },
+    {
+      text: 'Change Location Preference',
+      callback_data: constants.PROFILE_LOCATION_PREFERENCE,
+    },
     { text: 'Delete Profile', callback_data: 'c' },
   ],
   [{ text: 'Back', callback_data: USER_TYPE_TUTOR }],
