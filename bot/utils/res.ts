@@ -1,0 +1,16 @@
+export const jobCategories = [
+  { type: 'Any type of job', id: 'ANY' },
+  { type: 'Pri - English', id: 'PRI-ENGLISH' },
+  { type: 'Pri - Chinese', id: 'PRI-CHINESE' },
+  { type: 'Pri - Math', id: 'PRI-MATH' },
+  { type: 'Pri - Science', id: 'PRI-SCIENCE' },
+  { type: 'Sec - English', id: 'SEC-ENGLISH' },
+  { type: 'Sec - Chinese', id: 'SEC-CHINESE' },
+  { type: 'Sec - Math', id: 'SEC-MATCH' },
+  { type: 'Sec - Science', id: 'SEC-SCIENCE' },
+  { type: 'Sec - Biology', id: 'SEC-BIOLOGY' },
+  { type: 'Sec - Chemistry', id: 'SEC-CHEMISTRY' },
+  { type: 'Sec - Physics', id: 'SEC-PHYSICS' },
+  { type: 'JC', id: 'JS' },
+  { type: 'Others', id: 'OTHERS' },
+];

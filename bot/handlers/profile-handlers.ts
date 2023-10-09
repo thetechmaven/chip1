@@ -107,3 +107,65 @@ export const updateCitizen = (
     }),
   });
 };
+
+export const updateQualification = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(
+    query.message?.chat.id,
+    constants.MESSAGE_PROFILE_QUALIFICATION,
+    {
+      reply_markup: JSON.stringify({
+        inline_keyboard: [
+          [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+        ],
+      }),
+      parse_mode: 'markdown',
+    }
+  );
+};
+
+export const updateCover = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_COVER, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+      ],
+    }),
+    parse_mode: 'markdown',
+  });
+};
+
+export const updatePicture = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_PICTURE, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+      ],
+    }),
+    parse_mode: 'markdown',
+  });
+};
+
+export const updateJobCategory = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_PICTURE, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: options.PROFILE_JOB_CATEGORY([]),
+    }),
+    parse_mode: 'markdown',
+  });
+};

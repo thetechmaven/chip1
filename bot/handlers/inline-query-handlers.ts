@@ -9,10 +9,13 @@ import * as profileOptions from './profile-options';
 import {
   handleUpdateGender,
   updateCitizen,
+  updateCover,
   updateEmail,
   updateExperience,
   updateGender,
+  updateJobCategory,
   updateName,
+  updateQualification,
   updateRace,
 } from './profile-handlers';
 const TelegramBot = require('node-telegram-bot-api');
@@ -80,6 +83,9 @@ const inlineQueryHandlers = (
     GENDER: handleUpdateGender,
     PROFILE_RACE: updateRace,
     PROFILE_CITIZENSHIP: updateCitizen,
+    PROFILE_QUALIFICATION: updateQualification,
+    PROFILE_COVER: updateCover,
+    PROFILE_JOB_CATEGORY: updateJobCategory,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);

@@ -1,5 +1,6 @@
 import { USER_TYPE_TUTOR } from '../contants';
 import * as constants from '../contants';
+import { jobCategories } from '../utils/res';
 
 export const ADD_EDIT_PROFILE = [
   [
@@ -27,7 +28,7 @@ export const ADD_EDIT_PROFILE = [
     { text: 'Profile Picture', callback_data: constants.PROFILE_PICTURE },
   ],
   [
-    { text: 'Job Category', callback_data: 'c' },
+    { text: 'Job Category', callback_data: constants.PROFILE_JOB_CATEGORY },
     { text: 'Change Job Preference', callback_data: 'c' },
   ],
   [
@@ -73,3 +74,25 @@ export const PROFILE_CITIZENSHIP = [
   [{ text: 'Foriegner', callback_data: 'CITIZENSHIP:FORIEGNER' }],
   [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
 ];
+
+export const PROFILE_JOB_CATEGORY = (selected: string[]) => {
+  const options = jobCategories.map((c) => ({
+    text: c.type,
+    callback_data: 'JOB_CATEGORY:' + c.id,
+  }));
+  const buttons: unknown[] = [];
+  for (let i = 0; i < options.length; i += 2) {
+    buttons.push([options[i], options[i + 1]]);
+  }
+  buttons.push([
+    {
+      text: 'Back',
+      callback_data: constants.VIEW_EDIT_PROFILE,
+    },
+    {
+      text: 'Done',
+      callback_data: constants.PROFILE_DONE,
+    },
+  ]);
+  return buttons;
+};
