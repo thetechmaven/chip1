@@ -72,11 +72,11 @@ const handleUserType = async (
         'Please provide your phone number',
         {
           reply_markup: JSON.stringify({
-            inline_keyboard: [
+            keyboard: [
               [
                 {
                   text: 'Share my phone number',
-                  callback_data: 'request_phone_number',
+                  request_contact: true,
                 },
               ],
             ],
