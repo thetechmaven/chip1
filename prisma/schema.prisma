@@ -30,7 +30,7 @@ model User {
   cover               String?
   photo               String?
   categoryPreference  String[]
-  // typePreference      String
+  typePreference      String[]
   locationPreference  String?
   
 

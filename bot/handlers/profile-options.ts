@@ -80,7 +80,7 @@ export const PROFILE_CITIZENSHIP = [
 
 export const PROFILE_JOB_CATEGORY = (selected: string[]) => {
   const options = jobCategories.map((c) => ({
-    text: c.type,
+    text: `${selected.includes(c.id) ? '✅ ' : ''}` + c.type,
     callback_data: 'JOB_CATEGORY:' + c.id,
   }));
   const buttons: unknown[] = [];
@@ -100,13 +100,37 @@ export const PROFILE_JOB_CATEGORY = (selected: string[]) => {
   return buttons;
 };
 
-export const PROFILE_JOB_PREFERENCE = () => {
+export const PROFILE_JOB_PREFERENCE = (selected: string[]) => {
+  const getMark = (id: string) => (selected.includes(id) ? '✅ ' : '');
   return [
-    [{ text: 'Full time', callback_data: 'FULLTIME' }],
-    [{ text: 'Part time', callback_data: 'PARTTIME' }],
-    [{ text: 'Internship', callback_data: 'INTERNSHIP' }],
-    [{ text: 'Contract', callback_data: 'CONTRACT' }],
-    [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+    [
+      {
+        text: getMark('FULLTIME') + 'Full time',
+        callback_data: 'JOB_PREFERENCE:FULLTIME',
+      },
+    ],
+    [
+      {
+        text: getMark('PARTTIME') + 'Part time',
+        callback_data: 'JOB_PREFERENCE:PARTTIME',
+      },
+    ],
+    [
+      {
+        text: getMark('INTERNSHIP') + 'Internship',
+        callback_data: 'JOB_PREFERENCE:INTERNSHIP',
+      },
+    ],
+    [
+      {
+        text: getMark('CONTRACT') + 'Contract',
+        callback_data: 'JOB_PREFERENCE:CONTRACT',
+      },
+    ],
+    [
+      { text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE },
+      { text: 'Done', callback_data: constants.PROFILE_DONE },
+    ],
   ];
 };
 

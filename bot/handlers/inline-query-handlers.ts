@@ -7,7 +7,11 @@ import {
 } from '../contants';
 import * as profileOptions from './profile-options';
 import {
+  handleUpdateCitizen,
   handleUpdateGender,
+  handleUpdateJobCategory,
+  handleUpdateJobPreference,
+  handleUpdateRace,
   updateCitizen,
   updateCover,
   updateEmail,
@@ -116,7 +120,6 @@ const inlineQueryHandlers = (
     PROFILE_EMAIL: updateEmail,
     PROFILE_EXPERIENCE: updateExperience,
     PROFILE_GENDER: updateGender,
-    GENDER: handleUpdateGender,
     PROFILE_RACE: updateRace,
     PROFILE_CITIZENSHIP: updateCitizen,
     PROFILE_QUALIFICATION: updateQualification,
@@ -124,6 +127,12 @@ const inlineQueryHandlers = (
     PROFILE_JOB_CATEGORY: updateJobCategory,
     PROFILE_JOB_PREFERENCE: updateJobPreference,
     PROFILE_LOCATION_PREFERENCE: updateLocationPreference,
+
+    GENDER: handleUpdateGender,
+    RACE: handleUpdateRace,
+    CITIZENSHIP: handleUpdateCitizen,
+    JOB_CATEGORY: handleUpdateJobCategory,
+    JOB_PREFERENCE: handleUpdateJobPreference,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);
