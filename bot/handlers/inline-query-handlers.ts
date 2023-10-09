@@ -23,39 +23,7 @@ import {
 import prisma from '../../prisma/prisma';
 const TelegramBot = require('node-telegram-bot-api');
 
-const handleUserType = (
-  bot: typeof TelegramBot,
-  data: string[],
-  query: TelegramBotTypes.CallbackQuery
-) => {
-  console.log(query);
-  bot.sendMessage(query.message?.chat.id, TUTOR_MAIN_MENU, {
-    reply_markup: JSON.stringify({
-      inline_keyboard: [
-        [
-          {
-            text: 'Apply for Jobs',
-            callback_data: APPLY_FOR_JOBS,
-          },
-        ],
-        [
-          {
-            text: 'View/Edit Profile',
-            callback_data: VIEW_EDIT_PROFILE,
-          },
-        ],
-        [
-          {
-            text: 'BACK',
-            callback_data: TUTOR_BACK,
-          },
-        ],
-      ],
-    }),
-  });
-};
-
-const handleUpdateTutorProfile = async (
+const handleUserType = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
@@ -74,14 +42,61 @@ const handleUpdateTutorProfile = async (
       update: {},
     });
     if (user.phone) {
-      bot.sendMessage(query.message?.chat.id, '&nbsp;', {
+      bot.sendMessage(query.message?.chat.id, TUTOR_MAIN_MENU, {
         reply_markup: JSON.stringify({
-          inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
+          inline_keyboard: [
+            [
+              {
+                text: 'Apply for Jobs',
+                callback_data: APPLY_FOR_JOBS,
+              },
+            ],
+            [
+              {
+                text: 'View/Edit Profile',
+                callback_data: VIEW_EDIT_PROFILE,
+              },
+            ],
+            [
+              {
+                text: 'BACK',
+                callback_data: TUTOR_BACK,
+              },
+            ],
+          ],
         }),
       });
     } else {
+      bot.sendMessage(
+        query.message.chat.id,
+        'Please provide your phone number',
+        {
+          reply_markup: JSON.stringify({
+            inline_keyboard: [
+              [
+                {
+                  text: 'Share my phone number',
+                  callback_data: 'request_phone_number',
+                },
+              ],
+            ],
+          }),
+        }
+      );
     }
   }
+};
+
+const handleUpdateTutorProfile = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, '&nbsp;', {
+    reply_markup: JSON.stringify({
+      inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
+    }),
+  });
 };
 
 const inlineQueryHandlers = (
