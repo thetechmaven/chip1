@@ -20,6 +20,7 @@ import {
   updateQualification,
   updateRace,
 } from './profile-handlers';
+import prisma from '../../prisma/prisma';
 const TelegramBot = require('node-telegram-bot-api');
 
 const handleUserType = (
@@ -27,6 +28,7 @@ const handleUserType = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  console.log(query);
   bot.sendMessage(query.message?.chat.id, TUTOR_MAIN_MENU, {
     reply_markup: JSON.stringify({
       inline_keyboard: [
@@ -53,16 +55,33 @@ const handleUserType = (
   });
 };
 
-const handleUpdateTutorProfile = (
+const handleUpdateTutorProfile = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  bot.sendMessage(query.message?.chat.id, '&nbsp;', {
-    reply_markup: JSON.stringify({
-      inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
-    }),
-  });
+  if (query.message?.chat.id) {
+    const user = await prisma.user.upsert({
+      where: { chatId: query.message.chat.id },
+      create: {
+        name:
+          (query.message.from?.first_name || '') +
+          ' ' +
+          (query.message.from?.last_name || ''),
+        chatId: query.message.chat.id,
+        categoryPreference: [],
+      },
+      update: {},
+    });
+    if (user.phone) {
+      bot.sendMessage(query.message?.chat.id, '&nbsp;', {
+        reply_markup: JSON.stringify({
+          inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
+        }),
+      });
+    } else {
+    }
+  }
 };
 
 const inlineQueryHandlers = (
