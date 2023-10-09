@@ -29,7 +29,10 @@ export const ADD_EDIT_PROFILE = [
   ],
   [
     { text: 'Job Category', callback_data: constants.PROFILE_JOB_CATEGORY },
-    { text: 'Change Job Preference', callback_data: 'c' },
+    {
+      text: 'Change Job Preference',
+      callback_data: constants.PROFILE_JOB_PREFERENCE,
+    },
   ],
   [
     { text: 'Change Location Preference', callback_data: 'c' },
@@ -95,4 +98,14 @@ export const PROFILE_JOB_CATEGORY = (selected: string[]) => {
     },
   ]);
   return buttons;
+};
+
+export const PROFILE_JOB_PREFERENCE = () => {
+  return [
+    [{ text: 'Full time', callback_data: 'FULLTIME' }],
+    [{ text: 'Part time', callback_data: 'PARTTIME' }],
+    [{ text: 'Internship', callback_data: 'INTERNSHIP' }],
+    [{ text: 'Contract', callback_data: 'CONTRACT' }],
+    [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+  ];
 };

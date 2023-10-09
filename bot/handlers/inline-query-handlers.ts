@@ -14,6 +14,7 @@ import {
   updateExperience,
   updateGender,
   updateJobCategory,
+  updateJobPreference,
   updateName,
   updateQualification,
   updateRace,
@@ -86,6 +87,7 @@ const inlineQueryHandlers = (
     PROFILE_QUALIFICATION: updateQualification,
     PROFILE_COVER: updateCover,
     PROFILE_JOB_CATEGORY: updateJobCategory,
+    PROFILE_JOB_PREFERENCE: updateJobPreference,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);

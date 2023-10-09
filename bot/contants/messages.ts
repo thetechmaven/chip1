@@ -6,3 +6,5 @@ export const MESSAGE_COVER =
   'Provide details of your experience(Eg: Past student improvement, teaching methodology)\n\nTutor who provide a good writeup has a higher chance of being selected.';
 export const MESSAGE_PICTURE =
   'Please send your picture into this chat.\n\nWe will share this picture with the tution agent and parent.';
+export const MESSAGE_JOB_PREFERENCE =
+  'Please select the type of job which you want to do';
