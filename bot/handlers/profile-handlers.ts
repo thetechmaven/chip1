@@ -182,3 +182,16 @@ export const updateJobPreference = (
     parse_mode: 'markdown',
   });
 };
+
+export const updateLocationPreference = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_JOB_PREFERENCE, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: options.PROFILE_LOCATION_PREFERENCES(),
+    }),
+    parse_mode: 'markdown',
+  });
+};

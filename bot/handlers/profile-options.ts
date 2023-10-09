@@ -109,3 +109,13 @@ export const PROFILE_JOB_PREFERENCE = () => {
     [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
   ];
 };
+
+export const PROFILE_LOCATION_PREFERENCES = () => {
+  return [
+    [{ text: 'North', callback_data: 'LOCATION:NORTH' }],
+    [{ text: 'East', callback_data: 'LOCATION:EAST' }],
+    [{ text: 'West', callback_data: 'LOCATION:WEST' }],
+    [{ text: 'Central', callback_data: 'LOCATION:CENTRAL' }],
+    [{ text: 'Northeast', callback_data: 'LOCATION:NORTHEAST' }],
+  ];
+};
