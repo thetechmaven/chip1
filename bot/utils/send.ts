@@ -31,7 +31,7 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
     )}`;
   }
   if (user?.experience) {
-    message += `\n*Expereince:* ${user?.experience}`;
+    message += `\n*Years:* ${user?.experience}`;
   }
   if (user?.gender) {
     message += `\n*Gender*: ${user.gender}`;
@@ -41,6 +41,15 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
   }
   if (user?.citizenship) {
     message += `\n*Citizenship:* ${user.citizenship}`;
+  }
+  if (user?.qualification) {
+    message += `\n*Qualification:* ${user.qualification}`;
+  }
+  if (user?.cover) {
+    message += `\n*Experience:* ${user?.cover}`;
+  }
+  if (user?.locationPreference) {
+    message += `\n*Location Preference:*${user.locationPreference}`;
   }
 
   bot.sendMessage(chatId, message, {

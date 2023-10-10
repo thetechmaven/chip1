@@ -44,3 +44,36 @@ export const handleUpdateExperience = async ({
   });
   sendProfile({ bot, chatId: message.chat.id });
 };
+
+export const handleUpdateQualification = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  await prisma.user.update({
+    where: { chatId: message.chat.id },
+    data: { qualification: message.text },
+  });
+  sendProfile({ bot, chatId: message.chat.id });
+};
+
+export const handleUpdateCover = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  await prisma.user.update({
+    where: { chatId: message.chat.id },
+    data: { cover: message.text },
+  });
+  sendProfile({ bot, chatId: message.chat.id });
+};
+
+// export const handleUpdateHp = async ({
+//   bot,
+//   message,
+// }: ICommandHandlerArgs) => {
+//   await prisma.user.update({
+//     where: { chatId: message.chat.id },
+//     data: { cover: message.text },
+//   });
+//   sendProfile({ bot, chatId: message.chat.id });
+// }

@@ -9,7 +9,7 @@ class MessageHistory {
     this.users[chatId] = new ChatMessageHistory(chatId);
   };
   getLastMessage = (chatId: number) => {
-    return this.users[chatId].lastMessage;
+    return this.users[chatId]?.lastMessage;
   };
   setLastMessage = (chatId: number, m: ILastMessage) => {
     if (this.users[chatId]) {

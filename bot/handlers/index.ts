@@ -8,7 +8,13 @@ import inlineQueryHandlers from './inline-query-handlers';
 const TelegramBot = require('node-telegram-bot-api');
 import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
-import { handleUpdateEmail, handleUpdateName } from './commandHandlers';
+import {
+  handleUpdateCover,
+  handleUpdateEmail,
+  handleUpdateExperience,
+  handleUpdateName,
+  handleUpdateQualification,
+} from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 
 export const messageHistory = new MessageHistory();
@@ -55,6 +61,9 @@ const handlers = (bot: typeof TelegramBot) => {
   const commandHandlers: CommandHandler = {
     COMMAND_NAME: handleUpdateName,
     COMMAND_EMAIL: handleUpdateEmail,
+    COMMAND_QUALIFICATION: handleUpdateQualification,
+    COMMAND_COVER: handleUpdateCover,
+    COMMAND_EXPERIENCE: handleUpdateExperience,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
