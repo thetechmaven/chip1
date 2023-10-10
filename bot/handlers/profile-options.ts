@@ -58,7 +58,6 @@ export const PROFILE_GROUP = [
   [{ text: 'Ex-MOE Teacher', callback_data: 'GROUP:EX_MOE' }],
   [{ text: 'Current MOE Teacher', callback_data: 'GROUP:CURRENT_MOE' }],
   [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
-  [],
 ];
 
 export const PROFILE_GENDER = [

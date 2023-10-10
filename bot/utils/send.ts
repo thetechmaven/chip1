@@ -1,7 +1,22 @@
 import prisma from '../../prisma/prisma';
 import { PROFILE_UPDATED, VIEW_EDIT_PROFILE } from '../contants';
+import {
+  PROFILE_CITIZENSHIP,
+  PROFILE_GROUP,
+} from '../handlers/profile-options';
 
 const TelegramBot = require('node-telegram-bot-api');
+
+const groupMap: { [x: string]: string } = {};
+PROFILE_GROUP.forEach((option) => {
+  const key = option[0].callback_data.substring(6, 30);
+  groupMap[key] = option[0].text;
+});
+const citizenShipMap: { [x: string]: string } = {};
+PROFILE_CITIZENSHIP.forEach((option) => {
+  const key = option[0].callback_data.substring(12, 30);
+  citizenShipMap[key] = option[0].text;
+});
 
 interface ISendProfile {
   bot: typeof TelegramBot;
@@ -18,7 +33,7 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
 
   let message = `This is your profile\n`;
   if (user?.group) {
-    message += `\n*Group:* ${user.group}`;
+    message += `\n*Group:* ${groupMap[user.group]}`;
   }
   if (user?.name) {
     message += `\n*Name* ${replaceAll(
@@ -47,7 +62,7 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
     message += `\n*Race*: ${user.race}`;
   }
   if (user?.citizenship) {
-    message += `\n*Citizenship:* ${user.citizenship}`;
+    message += `\n*Citizenship:* ${citizenShipMap[user.citizenship]}`;
   }
   if (user?.qualification) {
     message += `\n*Qualification:* ${user.qualification}`;
