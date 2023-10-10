@@ -11,6 +11,7 @@ import {
   handleProfileUpdated,
   handleUpdateCitizen,
   handleUpdateGender,
+  handleUpdateGroup,
   handleUpdateJobCategory,
   handleUpdateJobPreference,
   handleUpdateLocationPreference,
@@ -20,6 +21,7 @@ import {
   updateEmail,
   updateExperience,
   updateGender,
+  updateGroup,
   updateJobCategory,
   updateJobPreference,
   updateLocationPreference,
@@ -133,6 +135,7 @@ const inlineQueryHandlers = (
     PROFILE_JOB_PREFERENCE: updateJobPreference,
     PROFILE_LOCATION_PREFERENCE: updateLocationPreference,
     PROFILE_HP: updateProfileHp,
+    PROFILE_GROUP: updateGroup,
 
     GENDER: handleUpdateGender,
     RACE: handleUpdateRace,
@@ -143,6 +146,7 @@ const inlineQueryHandlers = (
     PROFILE_DONE: handleDone,
     PROFILE_UPDATED: handleProfileUpdated,
     COMMAND_HP: handleUpdateHp,
+    GROUP: handleUpdateGroup,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);

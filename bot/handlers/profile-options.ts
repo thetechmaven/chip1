@@ -45,17 +45,20 @@ export const ADD_EDIT_PROFILE = [
 ];
 
 export const PROFILE_GROUP = [
+  [{ text: 'NSF', callback_data: 'GROUP:NSF' }],
   [
-    { text: 'NSF', callback_data: 'c' },
-    { text: 'Waiting for university', callback_data: 'c' },
-    { text: 'Studying in poly', callback_data: 'c' },
-    { text: 'Undergraduate', callback_data: 'c' },
-    { text: 'Graduate, Part-time tutor', callback_data: 'c' },
-    { text: 'Ex-MOE Teacher', callback_data: 'c' },
-    { text: 'Current MOE Teacher', callback_data: 'c' },
-    { text: 'NSF', callback_data: 'c' },
-    { text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE },
+    {
+      text: 'Waiting for university',
+      callback_data: 'GROUP:WAITING_FOR_UNIVERSITY',
+    },
   ],
+  [{ text: 'Studying in poly', callback_data: 'GROUP:STUDYING_IN_POLY' }],
+  [{ text: 'Undergraduate', callback_data: 'GROUP:UNDERGRADUATE' }],
+  [{ text: 'Graduate, Part-time tutor', callback_data: 'GROUP:GRADUATE' }],
+  [{ text: 'Ex-MOE Teacher', callback_data: 'GROUP:EX_MOE' }],
+  [{ text: 'Current MOE Teacher', callback_data: 'GROUP:CURRENT_MOE' }],
+  [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+  [],
 ];
 
 export const PROFILE_GENDER = [

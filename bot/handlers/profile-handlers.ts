@@ -88,6 +88,34 @@ export const updateGender = (
   });
 };
 
+export const handleUpdateGroup = async (
+  bot: typeof TelegramBot,
+  [, data]: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  await prisma.user.update({
+    where: { chatId: query.message?.chat.id },
+    data: { group: data },
+  });
+  deleteMessage(
+    query.message?.chat.id as number,
+    query.message?.message_id as number
+  );
+  sendProfile({ bot, chatId: query.message?.chat.id as number });
+};
+
+export const updateGroup = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, 'Select your group', {
+    reply_markup: JSON.stringify({
+      inline_keyboard: options.PROFILE_GROUP,
+    }),
+  });
+};
+
 export const handleUpdateGender = async (
   bot: typeof TelegramBot,
   [, data]: string[],
