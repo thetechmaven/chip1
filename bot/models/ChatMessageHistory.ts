@@ -1,6 +1,6 @@
 export interface ILastMessage {
-  messageId: number;
-  command: string;
+  messageId?: number;
+  command?: string;
 }
 
 class ChatMessageHistory {
