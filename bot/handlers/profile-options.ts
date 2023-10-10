@@ -146,5 +146,6 @@ export const PROFILE_LOCATION_PREFERENCES = () => {
     [{ text: 'West', callback_data: 'LOCATION:WEST' }],
     [{ text: 'Central', callback_data: 'LOCATION:CENTRAL' }],
     [{ text: 'Northeast', callback_data: 'LOCATION:NORTHEAST' }],
+    [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
   ];
 };
