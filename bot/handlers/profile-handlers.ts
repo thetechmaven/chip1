@@ -342,3 +342,11 @@ export const handleUpdateLocationPreference = async (
   );
   sendProfile({ bot, chatId: query.message?.chat.id as number });
 };
+
+export const handleDone = async (
+  bot: typeof TelegramBot,
+  _: unknown,
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  sendProfile({ bot, chatId: query.message?.chat.id as number });
+};

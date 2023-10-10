@@ -7,6 +7,7 @@ import {
 } from '../contants';
 import * as profileOptions from './profile-options';
 import {
+  handleDone,
   handleUpdateCitizen,
   handleUpdateGender,
   handleUpdateJobCategory,
@@ -135,6 +136,7 @@ const inlineQueryHandlers = (
     JOB_CATEGORY: handleUpdateJobCategory,
     JOB_PREFERENCE: handleUpdateJobPreference,
     LOCATION: handleUpdateLocationPreference,
+    PROFILE_DONE: handleDone,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);
