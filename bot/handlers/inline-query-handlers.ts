@@ -32,6 +32,7 @@ import {
 } from './profile-handlers';
 import prisma from '../../prisma/prisma';
 import { handleUpdateHp } from './commandHandlers';
+import { messageHistory } from '.';
 const TelegramBot = require('node-telegram-bot-api');
 
 const handleUserType = async (
@@ -103,10 +104,13 @@ const handleUpdateTutorProfile = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  bot.sendMessage(query.message?.chat.id, '&nbsp;', {
+  const message = await bot.sendMessage(query.message?.chat.id, '&nbsp;', {
     reply_markup: JSON.stringify({
       inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
     }),
+  });
+  messageHistory.setLastMessage(query.message?.chat.id as number, {
+    messageId: message.message_id,
   });
 };
 

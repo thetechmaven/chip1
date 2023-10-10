@@ -3,7 +3,7 @@ import * as constants from '../contants';
 import * as options from './profile-options';
 import { messageHistory } from '.';
 import prisma from '../../prisma/prisma';
-import { deleteMessage } from '../utils/message';
+import { deleteLastMessage, deleteMessage } from '../utils/message';
 import { sendProfile } from '../utils/send';
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -12,6 +12,7 @@ export const updateName = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   messageHistory.setLastMessage(query.message?.chat.id as number, {
     messageId: query.message?.message_id as number,
     command: constants.COMMAND_NAME,
@@ -35,6 +36,7 @@ export const updateEmail = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   messageHistory.setLastMessage(query.message?.chat.id as number, {
     messageId: query.message?.message_id as number,
     command: constants.COMMAND_EMAIL,
@@ -58,6 +60,7 @@ export const updateExperience = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   bot.sendMessage(
     query.message?.chat.id,
     'How many years of experience do you have',
@@ -76,15 +79,23 @@ export const updateExperience = (
   );
 };
 
-export const updateGender = (
+export const updateGender = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  bot.sendMessage(query.message?.chat.id, 'Choose your gender', {
-    reply_markup: JSON.stringify({
-      inline_keyboard: options.PROFILE_GENDER,
-    }),
+  deleteLastMessage(query.message?.chat.id as number);
+  const message = await bot.sendMessage(
+    query.message?.chat.id,
+    'Choose your gender',
+    {
+      reply_markup: JSON.stringify({
+        inline_keyboard: options.PROFILE_GENDER,
+      }),
+    }
+  );
+  messageHistory.setLastMessage(query.message?.chat.id as number, {
+    messageId: message.message_id,
   });
 };
 
@@ -109,6 +120,7 @@ export const updateGroup = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   bot.sendMessage(query.message?.chat.id, 'Select your group', {
     reply_markup: JSON.stringify({
       inline_keyboard: options.PROFILE_GROUP,
@@ -137,6 +149,7 @@ export const updateRace = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   bot.sendMessage(
     query.message?.chat.id,
     'Select your race. If it is not in the list, type it in the message box',
@@ -169,6 +182,7 @@ export const updateCitizen = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   bot.sendMessage(query.message?.chat.id, 'Please select your citizenship', {
     reply_markup: JSON.stringify({
       inline_keyboard: options.PROFILE_CITIZENSHIP,
@@ -196,6 +210,7 @@ export const updateQualification = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   messageHistory.setLastMessage(query.message?.chat.id as number, {
     messageId: query.message?.message_id as number,
     command: constants.COMMAND_QUALIFICATION,
@@ -219,6 +234,7 @@ export const updateCover = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   messageHistory.setLastMessage(query.message?.chat.id as number, {
     messageId: query.message?.message_id as number,
     command: constants.COMMAND_COVER,
@@ -253,6 +269,7 @@ export const updateJobCategory = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   const user = await prisma.user.findUnique({
     where: { chatId: query.message?.chat.id },
   });
@@ -301,6 +318,7 @@ export const updateJobPreference = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   const user = await prisma.user.findUnique({
     where: { chatId: query.message?.chat.id },
   });
@@ -347,6 +365,7 @@ export const updateLocationPreference = (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  deleteLastMessage(query.message?.chat.id as number);
   bot.sendMessage(query.message?.chat.id, constants.MESSAGE_JOB_PREFERENCE, {
     reply_markup: JSON.stringify({
       inline_keyboard: options.PROFILE_LOCATION_PREFERENCES(),
