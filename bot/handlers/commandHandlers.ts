@@ -58,6 +58,10 @@ export const handleUpdateQualification = async ({
     where: { chatId: message.chat.id },
     data: { qualification: message.text },
   });
+  messageHistory.setLastMessage(message.chat.id, {
+    command: undefined,
+    messageId: undefined,
+  });
   sendProfile({ bot, chatId: message.chat.id });
 };
 
@@ -68,6 +72,10 @@ export const handleUpdateCover = async ({
   await prisma.user.update({
     where: { chatId: message.chat.id },
     data: { cover: message.text },
+  });
+  messageHistory.setLastMessage(message.chat.id, {
+    command: undefined,
+    messageId: undefined,
   });
   sendProfile({ bot, chatId: message.chat.id });
 };
