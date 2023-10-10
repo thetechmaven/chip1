@@ -1,4 +1,5 @@
 import prisma from '../../prisma/prisma';
+import { PROFILE_UPDATED, VIEW_EDIT_PROFILE } from '../contants';
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -53,6 +54,17 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
   }
 
   bot.sendMessage(chatId, message, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [{ text: 'Yes, save my profile', callback_data: PROFILE_UPDATED }],
+        [
+          {
+            text: 'No, I would like to do more changes',
+            callback_data: VIEW_EDIT_PROFILE,
+          },
+        ],
+      ],
+    }),
     parse_mode: 'markdown',
   });
 };

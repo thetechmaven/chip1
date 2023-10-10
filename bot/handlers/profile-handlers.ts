@@ -350,3 +350,29 @@ export const handleDone = async (
 ) => {
   sendProfile({ bot, chatId: query.message?.chat.id as number });
 };
+
+export const handleProfileUpdated = (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id, 'Your profile has been updated', {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [
+          {
+            text: 'Apply for Jobs',
+            callback_data: constants.APPLY_FOR_JOBS,
+          },
+        ],
+        [
+          {
+            text: 'View/Edit Profile',
+            callback_data: constants.VIEW_EDIT_PROFILE,
+          },
+        ],
+      ],
+    }),
+    parse_mode: 'markdown',
+  });
+};
