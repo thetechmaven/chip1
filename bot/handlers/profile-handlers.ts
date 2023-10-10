@@ -249,18 +249,26 @@ export const updateCover = (
   });
 };
 
-export const updatePicture = (
+export const updatePicture = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_PICTURE, {
-    reply_markup: JSON.stringify({
-      inline_keyboard: [
-        [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
-      ],
-    }),
-    parse_mode: 'markdown',
+  const message = await bot.sendMessage(
+    query.message?.chat.id,
+    constants.MESSAGE_PICTURE,
+    {
+      reply_markup: JSON.stringify({
+        inline_keyboard: [
+          [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+        ],
+      }),
+      parse_mode: 'markdown',
+    }
+  );
+  messageHistory.setLastMessage(query.message?.chat.id as number, {
+    command: constants.COMMAND_PICTURE,
+    messageId: message.message_id,
   });
 };
 

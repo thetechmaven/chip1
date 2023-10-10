@@ -15,3 +15,10 @@ export const deleteLastMessage = (chatId: number) => {
     }
   } catch (err) {}
 };
+
+export const resetCommand = (chatId: number) => {
+  messageHistory.setLastMessage(chatId, {
+    messageId: undefined,
+    command: undefined,
+  });
+};

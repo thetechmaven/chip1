@@ -13,6 +13,7 @@ import {
   handleUpdateEmail,
   handleUpdateExperience,
   handleUpdateName,
+  handleUpdatePicture,
   handleUpdateQualification,
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
@@ -64,6 +65,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_QUALIFICATION: handleUpdateQualification,
     COMMAND_COVER: handleUpdateCover,
     COMMAND_EXPERIENCE: handleUpdateExperience,
+    COMMAND_PICTURE: handleUpdatePicture,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {

@@ -11,7 +11,10 @@
 # next.js
 /.next/
 /out/
+
+#bot
 .bot
+bot-images
 
 # production
 /build

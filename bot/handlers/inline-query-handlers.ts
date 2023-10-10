@@ -26,12 +26,13 @@ import {
   updateJobPreference,
   updateLocationPreference,
   updateName,
+  updatePicture,
   updateProfileHp,
   updateQualification,
   updateRace,
 } from './profile-handlers';
 import prisma from '../../prisma/prisma';
-import { handleUpdateHp } from './commandHandlers';
+import { handleUpdateHp, handleUpdatePicture } from './commandHandlers';
 import { messageHistory } from '.';
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -140,6 +141,7 @@ const inlineQueryHandlers = (
     PROFILE_LOCATION_PREFERENCE: updateLocationPreference,
     PROFILE_HP: updateProfileHp,
     PROFILE_GROUP: updateGroup,
+    PROFILE_PICTURE: updatePicture,
 
     GENDER: handleUpdateGender,
     RACE: handleUpdateRace,
@@ -150,10 +152,10 @@ const inlineQueryHandlers = (
     PROFILE_DONE: handleDone,
     PROFILE_UPDATED: handleProfileUpdated,
     COMMAND_HP: handleUpdateHp,
+    COMMAND_PICTURE: handleUpdatePicture,
     GROUP: handleUpdateGroup,
   };
   const [command, data] = query.data?.split(':') || [];
-  console.log(command);
   if (command && command in register) {
     register[command](bot, [command, data], query);
   }
