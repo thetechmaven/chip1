@@ -103,9 +103,9 @@ export const handleUpdatePicture = async ({
   if (msg.photo && msg.photo[0]) {
     const filePath = await bot.downloadFile(
       msg.photo.slice(-1)[0].file_id,
-      './bot-images'
+      './public/bot-images'
     );
-    const newName = `./bot-images/i-${msg.chat.id}.jpg`;
+    const newName = `./public/bot-images/i-${msg.chat.id}.jpg`;
     fs.renameSync(filePath, newName, (err: Error) => {
       if (err) {
         bot.sendMessage(

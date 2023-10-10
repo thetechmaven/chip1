@@ -15,6 +15,7 @@
 #bot
 .bot
 bot-images
+public/bot-images
 
 # production
 /build
