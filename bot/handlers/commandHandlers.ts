@@ -80,13 +80,10 @@ export const handleUpdateCover = async ({
   sendProfile({ bot, chatId: message.chat.id });
 };
 
-// export const handleUpdateHp = async ({
-//   bot,
-//   message,
-// }: ICommandHandlerArgs) => {
-//   await prisma.user.update({
-//     where: { chatId: message.chat.id },
-//     data: { cover: message.text },
-//   });
-//   sendProfile({ bot, chatId: message.chat.id });
-// }
+export const handleUpdateHp = async ({ bot, message }: ICommandHandlerArgs) => {
+  await prisma.user.update({
+    where: { chatId: message.chat.id },
+    data: { hp: message.text },
+  });
+  sendProfile({ bot, chatId: message.chat.id });
+};

@@ -376,3 +376,22 @@ export const handleProfileUpdated = (
     parse_mode: 'markdown',
   });
 };
+
+export const updateProfileHp = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  messageHistory.setLastMessage(query.message?.chat.id as number, {
+    messageId: query.message?.message_id as number,
+    command: constants.COMMAND_HP,
+  });
+  bot.sendMessage(query.message?.chat.id, constants.MESSAGE_HP, {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [{ text: 'Back', callback_data: constants.VIEW_EDIT_PROFILE }],
+      ],
+    }),
+    parse_mode: 'markdown',
+  });
+};

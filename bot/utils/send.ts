@@ -17,6 +17,9 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
   const user = await prisma.user.findUnique({ where: { chatId } });
 
   let message = `This is your profile\n`;
+  if (user?.group) {
+    message += `\n*Group:* ${user.group}`;
+  }
   if (user?.name) {
     message += `\n*Name* ${replaceAll(
       replaceAll(user.name, '_', '-'),
@@ -33,6 +36,9 @@ export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
   }
   if (user?.experience) {
     message += `\n*Years:* ${user?.experience}`;
+  }
+  if (user?.hp) {
+    message += `\n*HP:*${user.hp}`;
   }
   if (user?.gender) {
     message += `\n*Gender*: ${user.gender}`;

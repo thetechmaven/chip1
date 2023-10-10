@@ -8,7 +8,7 @@ export const ADD_EDIT_PROFILE = [
     { text: 'Name', callback_data: constants.PROFILE_NAME },
   ],
   [
-    { text: 'HP', callback_data: 'c' },
+    { text: 'HP', callback_data: constants.PROFILE_HP },
     { text: 'Email', callback_data: constants.PROFILE_EMAIL },
   ],
   [

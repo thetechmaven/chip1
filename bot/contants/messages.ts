@@ -8,3 +8,4 @@ export const MESSAGE_PICTURE =
   'Please send your picture into this chat.\n\nWe will share this picture with the tution agent and parent.';
 export const MESSAGE_JOB_PREFERENCE =
   'Please select the type of job which you want to do';
+export const MESSAGE_HP = 'Please send your HP in the chat';

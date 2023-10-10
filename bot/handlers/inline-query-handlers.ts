@@ -24,10 +24,12 @@ import {
   updateJobPreference,
   updateLocationPreference,
   updateName,
+  updateProfileHp,
   updateQualification,
   updateRace,
 } from './profile-handlers';
 import prisma from '../../prisma/prisma';
+import { handleUpdateHp } from './commandHandlers';
 const TelegramBot = require('node-telegram-bot-api');
 
 const handleUserType = async (
@@ -130,6 +132,7 @@ const inlineQueryHandlers = (
     PROFILE_JOB_CATEGORY: updateJobCategory,
     PROFILE_JOB_PREFERENCE: updateJobPreference,
     PROFILE_LOCATION_PREFERENCE: updateLocationPreference,
+    PROFILE_HP: updateProfileHp,
 
     GENDER: handleUpdateGender,
     RACE: handleUpdateRace,
@@ -139,6 +142,7 @@ const inlineQueryHandlers = (
     LOCATION: handleUpdateLocationPreference,
     PROFILE_DONE: handleDone,
     PROFILE_UPDATED: handleProfileUpdated,
+    COMMAND_HP: handleUpdateHp,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log(command);
