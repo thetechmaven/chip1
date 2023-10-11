@@ -7,10 +7,23 @@ const typeDefs = gql`
   type User {
     id: String!
     name: String
-    email: String
-    address: String
-    state: String
-    country: String
+    chatId: Int;
+    username: String;
+    phone: String;
+    dob: String;
+    group: String;
+    experience: Int;
+    gender: String;
+    race: String;
+    citizenship: String;
+    qualification: String;
+    cover: String;
+    categoryPreference: [String]
+    typePreference: [String]
+    locationPreference: String
+    hp: String;
+
+    isStaff: Boolean
     isAdmin: Boolean
   }
 
@@ -30,6 +43,7 @@ const typeDefs = gql`
 
   type Query {
     user: User
+    users: [User]
   }
   type Mutation {
     registerUser(
