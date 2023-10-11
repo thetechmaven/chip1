@@ -22,6 +22,7 @@ const typeDefs = gql`
     typePreference: [String]
     locationPreference: String
     hp: String
+    email: String
 
     isStaff: Boolean
     isAdmin: Boolean
