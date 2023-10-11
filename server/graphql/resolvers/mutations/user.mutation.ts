@@ -1,24 +1,7 @@
 import prisma from '@/prisma/prisma';
 import type * as Prisma from '@prisma/client';
-import bcrypt from 'bcrypt';
-import {
-  isEmail,
-  isNameValid,
-  isPasswordValid,
-} from '../../../utils/validation';
+import { isNameValid, isPasswordValid } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
-import {
-  ERROR,
-  RESET_PASSWORD_RESPONSE,
-  SUCCESS,
-  URL_EXPIRED_OR_INVALID,
-  VERIFICATION_EMAIL_SENT,
-} from '@/constants';
-import {
-  sendForgetPasswordEmail,
-  sendVerificationEmail as sendVerification,
-} from '@/server/services/email';
-import { getPayload } from '@/server/services/token';
 import { adminOnly } from '../../wrappers';
 
 type RegisterUserInput = Prisma.User & { password: string };
@@ -35,19 +18,18 @@ export const registerUser = async (_: unknown, args: RegisterUserInput) => {
   });
 };
 
-type LoginUserInput = { email: string; password: string };
+type LoginUserInput = { username: string; password: string };
 export const login = async (
   _: unknown,
-  { email, password }: LoginUserInput
+  { username, password }: LoginUserInput
 ) => {
-  const user = await prisma.user.findFirst({ where: { email: email || '' } });
+  const user = await prisma.user.findFirst({ where: { username } });
   if (!user) {
     return {
-      error: 'Incorrect email or password',
+      error: 'Incorrect user or password',
     };
   }
-  /*
-  if (await bcrypt.compare(password, user.pwHash)) {
+  if (password === process.env.ADMIN_PASS) {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
     return {
       user,
@@ -55,21 +37,9 @@ export const login = async (
     };
   } else {
     return {
-      error: 'Incorrect email or password',
+      error: 'Incorrect username or password',
     };
   }
-  */
-};
-
-export const sendResetPasswordLink = async (
-  _: unknown,
-  { email }: { email: string }
-) => {
-  const user = await prisma.user.findFirst({ where: { email } });
-  if (user) {
-    await sendForgetPasswordEmail(email);
-  }
-  return { message: RESET_PASSWORD_RESPONSE };
 };
 
 type ChangeAdminStatusArgs = { userId: string; status: boolean };
