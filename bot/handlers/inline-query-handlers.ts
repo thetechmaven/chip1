@@ -46,11 +46,12 @@ const handleUserType = async (
       where: { chatId: query.message.chat.id },
       create: {
         name:
-          (query.message.from?.first_name || '') +
+          (query.message.chat?.first_name || '') +
           ' ' +
-          (query.message.from?.last_name || ''),
+          (query.message.chat?.last_name || ''),
         chatId: query.message.chat.id,
         categoryPreference: [],
+        username: query.message.chat.username,
       },
       update: {},
     });

@@ -55,13 +55,13 @@ export const updateEmail = (
   });
 };
 
-export const updateExperience = (
+export const updateExperience = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
   deleteLastMessage(query.message?.chat.id as number);
-  bot.sendMessage(
+  const message = await bot.sendMessage(
     query.message?.chat.id,
     'How many years of experience do you have',
     {
@@ -77,6 +77,10 @@ export const updateExperience = (
       }),
     }
   );
+  messageHistory.setLastMessage(query.message?.chat.id as number, {
+    messageId: message.id,
+    command: constants.COMMAND_EXPERIENCE,
+  });
 };
 
 export const updateGender = async (

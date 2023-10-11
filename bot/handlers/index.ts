@@ -12,6 +12,7 @@ import {
   handleUpdateCover,
   handleUpdateEmail,
   handleUpdateExperience,
+  handleUpdateHp,
   handleUpdateName,
   handleUpdatePicture,
   handleUpdateQualification,
@@ -66,6 +67,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_COVER: handleUpdateCover,
     COMMAND_EXPERIENCE: handleUpdateExperience,
     COMMAND_PICTURE: handleUpdatePicture,
+    COMMAND_HP: handleUpdateHp,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {

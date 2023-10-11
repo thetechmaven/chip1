@@ -21,6 +21,7 @@ model User {
   email               String?   @default("")
   phone               String?   @default("")
   dob                 String?   @default("")
+  username            String?
 
   group               String?
   experience          Int?
