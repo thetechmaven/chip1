@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Layout from '../Layout';
-import { gql, useQuery } from 'urql';
+import { gql, useMutation, useQuery } from 'urql';
 import Loading from '@/components/Elements/Loading';
 import Table, { Td, Th, Tr } from '@/components/Elements/Table';
 import ModalComponent from '@/components/Elements/Modal';
@@ -57,6 +57,28 @@ const GET_USERS = gql`
   }
 `;
 
+const UPDATE_ADMIN_STATUS = gql`
+  mutation Mutation($userId: String!, $status: Boolean) {
+    updateAdminStatus(userId: $userId, status: $status) {
+      chatId
+      id
+      isStaff
+      isAdmin
+    }
+  }
+`;
+
+const UPDATE_STAFF_STATUS = gql`
+  mutation Mutation($userId: String!, $status: Boolean) {
+    updateStaffStatus(userId: $userId, status: $status) {
+      chatId
+      id
+      isStaff
+      isAdmin
+    }
+  }
+`;
+
 function TuitorBadge() {
   return (
     <span className="mx-0.5 bg-gray-600 text-white p-1 px-2 text-xs font-medium rounded-lg cursor-default">
@@ -83,6 +105,11 @@ function StaffBadge() {
 
 function Users() {
   const [{ fetching, data }] = useQuery({ query: GET_USERS });
+  const [{ fetching: updatingAdminStatus }, updateAdminStatus] =
+    useMutation(UPDATE_ADMIN_STATUS);
+  const [{ fetching: updatingStaffStatus }, updateStaffStatus] =
+    useMutation(UPDATE_STAFF_STATUS);
+
   const [userDetailsId, setUserDetailsId] = useState('');
 
   const userDetails = useMemo(() => {
@@ -222,6 +249,68 @@ function Users() {
             <div className="mt-2 pb-2 border-b">
               <p className="text-sm font-medium text-gray-600">Experience</p>
               <p className="">{userDetails?.experience}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2">
+            <div className="mt-2 pb-2 border-b">
+              <p className="text-sm font-medium text-gray-600">Staff</p>
+              <div className="mt-2">
+                {userDetails?.isStaff ? (
+                  <button
+                    onClick={() =>
+                      updateStaffStatus({
+                        status: false,
+                        userId: userDetails?.id,
+                      })
+                    }
+                    className="border bg-white border-1 px-2 py-1 font-medium"
+                  >
+                    Remove Staff Role
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      updateStaffStatus({
+                        status: true,
+                        userId: userDetails?.id,
+                      })
+                    }
+                    className="border bg-white border-1 px-2 py-1 font-medium"
+                  >
+                    Add Staff Role
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="mt-2 pb-2 border-b">
+              <p className="text-sm font-medium text-gray-600">Admin</p>
+              <div className="mt-2">
+                {userDetails?.isAdmin ? (
+                  <button
+                    onClick={() =>
+                      updateAdminStatus({
+                        status: false,
+                        userId: userDetails?.id,
+                      })
+                    }
+                    className="border bg-white border-1 px-2 py-1 font-medium"
+                  >
+                    Remove Admin
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      updateAdminStatus({
+                        status: true,
+                        userId: userDetails?.id,
+                      })
+                    }
+                    className="border bg-white border-1 px-2 py-1 font-medium"
+                  >
+                    Make Admin
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

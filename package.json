@@ -52,6 +52,7 @@
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.1",
     "react-modal": "^3.16.1",
     "resend": "^1.1.0",
     "sanitize-markdown": "^2.6.7",
