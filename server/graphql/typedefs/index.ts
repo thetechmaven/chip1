@@ -7,21 +7,21 @@ const typeDefs = gql`
   type User {
     id: String!
     name: String
-    chatId: Int;
-    username: String;
-    phone: String;
-    dob: String;
-    group: String;
-    experience: Int;
-    gender: String;
-    race: String;
-    citizenship: String;
-    qualification: String;
-    cover: String;
+    chatId: Int
+    username: String
+    phone: String
+    dob: String
+    group: String
+    experience: Int
+    gender: String
+    race: String
+    citizenship: String
+    qualification: String
+    cover: String
     categoryPreference: [String]
     typePreference: [String]
     locationPreference: String
-    hp: String;
+    hp: String
 
     isStaff: Boolean
     isAdmin: Boolean
