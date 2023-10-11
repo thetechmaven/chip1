@@ -151,7 +151,7 @@ function Users() {
         >
           <div>
             <img
-              src={`./bot-images/i-${userDetails.chatId}.jpg`}
+              src={`./bot-images/i-${userDetails?.chatId}.jpg`}
               className="h-28 w-28"
             />
           </div>
