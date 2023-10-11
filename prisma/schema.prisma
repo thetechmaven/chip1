@@ -37,5 +37,6 @@ model User {
   hp                  String?
 
   isAdmin             Boolean   @default(false)
+  isStaff             Boolean   @default(false)
 }
 // Project schema for prisma

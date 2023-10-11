@@ -51,7 +51,21 @@ export const updateAdminStatus = adminOnly(
     }
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: { isAdmin: true },
+      data: { isAdmin: status },
+    });
+    return updatedUser;
+  }
+);
+
+export const updateStaffStatus = adminOnly(
+  async (_: unknown, { userId, status }: ChangeAdminStatusArgs) => {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User does not exist');
+    }
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { isStaff: status },
     });
     return updatedUser;
   }

@@ -61,6 +61,7 @@ const typeDefs = gql`
     sendVerificationEmail(email: String!): MessageResponse!
     verifyEmail(token: String!): StatusResponse!
     updateAdminStatus(userId: String!, status: Boolean): User
+    updateStaffStatus(userId: String!, status: Boolean): User
   }
 
   ${projectTypedefs}

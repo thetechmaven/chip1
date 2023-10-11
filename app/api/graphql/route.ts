@@ -20,7 +20,8 @@ const handler = startServerAndCreateNextHandler<NextRequest>(server, {
       const { id } = getPayload({ token });
       if (id) {
         user = await prisma.user.findUnique({ where: { id } });
-        isAdmin = user?.isAdmin || user?.email === process.env.ADMIN_EMAIL;
+        isAdmin =
+          user?.isAdmin || user?.username === process.env.ADMIN_USERNAME;
       }
     }
     return { user, isAdmin };
