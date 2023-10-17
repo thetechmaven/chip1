@@ -18,6 +18,7 @@ import {
   handleUpdateQualification,
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
+import { deleteLastMessage } from '../utils/message';
 
 export const messageHistory = new MessageHistory();
 
@@ -51,6 +52,7 @@ const handlers = (bot: typeof TelegramBot) => {
         }),
       }
     );
+    deleteLastMessage(chatId);
   });
 
   type CommandHandlerArgs = {

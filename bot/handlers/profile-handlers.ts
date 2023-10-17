@@ -119,6 +119,36 @@ export const handleUpdateGroup = async (
   sendProfile({ bot, chatId: query.message?.chat.id as number });
 };
 
+export const handleSelectUserType = async (
+  bot: typeof TelegramBot,
+  [, data]: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  const lastMessage = messageHistory.getLastMessage(
+    query.message?.chat.id as number
+  );
+  const keyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: 'Tuition Agent/Parent',
+          callback_data: constants.USER_TYPE_PARENT,
+        },
+      ],
+      [
+        {
+          text: 'Tutor',
+          callback_data: constants.USER_TYPE_TUTOR,
+        },
+      ],
+    ],
+  };
+  bot.editMessageReplyMarkup(keyboard, {
+    chat_id: query.message?.chat.id as number,
+    message_id: query.message?.message_id,
+  });
+};
+
 export const updateGroup = (
   bot: typeof TelegramBot,
   data: string[],

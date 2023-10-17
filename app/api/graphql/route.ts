@@ -16,10 +16,12 @@ const handler = startServerAndCreateNextHandler<NextRequest>(server, {
     let user;
     let isAdmin = false;
     const [, token] = req.headers.get('authorization')?.split(' ') || [];
+    console.log(token);
     if (token) {
       const { id } = getPayload({ token });
       if (id) {
         user = await prisma.user.findUnique({ where: { id } });
+        console.log(user?.username, process.env.ADMIN_USERNAME);
         isAdmin =
           user?.isAdmin || user?.username === process.env.ADMIN_USERNAME;
       }

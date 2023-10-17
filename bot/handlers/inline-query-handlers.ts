@@ -1,14 +1,10 @@
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
-import {
-  APPLY_FOR_JOBS,
-  TUTOR_BACK,
-  TUTOR_MAIN_MENU,
-  VIEW_EDIT_PROFILE,
-} from '../contants';
+import { APPLY_FOR_JOBS, TUTOR_BACK, VIEW_EDIT_PROFILE } from '../contants';
 import * as profileOptions from './profile-options';
 import {
   handleDone,
   handleProfileUpdated,
+  handleSelectUserType,
   handleUpdateCitizen,
   handleUpdateGender,
   handleUpdateGroup,
@@ -56,6 +52,35 @@ const handleUserType = async (
       update: {},
     });
     if (user.phone) {
+      bot.editMessageReplyMarkup(
+        {
+          inline_keyboard: [
+            [
+              {
+                text: 'Apply for Jobs',
+                callback_data: APPLY_FOR_JOBS,
+              },
+            ],
+            [
+              {
+                text: 'View/Edit Profile',
+                callback_data: VIEW_EDIT_PROFILE,
+              },
+            ],
+            [
+              {
+                text: 'BACK',
+                callback_data: 'SELECT_USER_TYPE',
+              },
+            ],
+          ],
+        },
+        {
+          chat_id: query.message?.chat.id,
+          message_id: query.message?.message_id,
+        }
+      );
+      /*
       bot.sendMessage(query.message?.chat.id, TUTOR_MAIN_MENU, {
         reply_markup: JSON.stringify({
           inline_keyboard: [
@@ -80,8 +105,9 @@ const handleUserType = async (
           ],
         }),
       });
+      */
     } else {
-      bot.sendMessage(
+      const message = await bot.sendMessage(
         query.message.chat.id,
         'Please provide your phone number',
         {
@@ -91,12 +117,16 @@ const handleUserType = async (
                 {
                   text: 'Share my phone number',
                   request_contact: true,
+                  one_time_keyboard: true,
                 },
               ],
             ],
           }),
         }
       );
+      messageHistory.setLastMessage(query.message.chat.id, {
+        messageId: message.message_id,
+      });
     }
   }
 };
@@ -106,14 +136,24 @@ const handleUpdateTutorProfile = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  const message = await bot.sendMessage(query.message?.chat.id, '&nbsp;', {
-    reply_markup: JSON.stringify({
-      inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
-    }),
-  });
-  messageHistory.setLastMessage(query.message?.chat.id as number, {
-    messageId: message.message_id,
-  });
+  if (true) {
+    bot.editMessageReplyMarkup(
+      { inline_keyboard: profileOptions.ADD_EDIT_PROFILE },
+      {
+        chat_id: query.message?.chat.id,
+        message_id: query.message?.message_id,
+      }
+    );
+  } else {
+    const message = await bot.sendMessage(query.message?.chat.id, '&nbsp;', {
+      reply_markup: JSON.stringify({
+        inline_keyboard: profileOptions.ADD_EDIT_PROFILE,
+      }),
+    });
+    messageHistory.setLastMessage(query.message?.chat.id as number, {
+      messageId: message.message_id,
+    });
+  }
 };
 
 const inlineQueryHandlers = (
@@ -155,8 +195,10 @@ const inlineQueryHandlers = (
     COMMAND_HP: handleUpdateHp,
     COMMAND_PICTURE: handleUpdatePicture,
     GROUP: handleUpdateGroup,
+    SELECT_USER_TYPE: handleSelectUserType,
   };
   const [command, data] = query.data?.split(':') || [];
+  console.log('COMMAND>>', command, data);
   if (command && command in register) {
     register[command](bot, [command, data], query);
   }
