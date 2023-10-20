@@ -29,50 +29,44 @@ function replaceAll(inputString: string, search: string, replacement: string) {
 }
 
 export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
-  const user = await prisma.user.findUnique({ where: { chatId } });
+  const user = await prisma.user?.findUnique({ where: { chatId } });
 
   let message = `This is your profile\n`;
   if (user?.group) {
-    message += `\n*Group:* ${groupMap[user.group]}`;
+    message += `\n*Group:* ${groupMap[user?.group]}`;
   }
   if (user?.name) {
     message += `\n*Name* ${replaceAll(
-      replaceAll(user.name, '_', '-'),
+      replaceAll(user?.name, '_', '-'),
       '_',
       '-'
     )}`;
   }
   if (user?.email) {
     message += `\n*Email:* ${replaceAll(
-      replaceAll(user.email, '_', '-'),
+      replaceAll(user?.email, '_', '-'),
       '_',
       '-'
     )}`;
   }
-  if (user?.experience) {
-    message += `\n*Years:* ${user?.experience}`;
-  }
-  if (user?.hp) {
-    message += `\n*HP:*${user.hp}`;
-  }
-  if (user?.gender) {
-    message += `\n*Gender*: ${user.gender}`;
-  }
-  if (user?.race) {
-    message += `\n*Race*: ${user.race}`;
-  }
-  if (user?.citizenship) {
-    message += `\n*Citizenship:* ${citizenShipMap[user.citizenship]}`;
-  }
-  if (user?.qualification) {
-    message += `\n*Qualification:* ${user.qualification}`;
-  }
-  if (user?.cover) {
-    message += `\n*Experience:* ${user?.cover}`;
-  }
-  if (user?.locationPreference) {
-    message += `\n*Location Preference:*${user.locationPreference}`;
-  }
+
+  message += `\n*Years:* ${user?.experience || ''}`;
+
+  message += `\n*HP:*${user?.hp || ''}`;
+
+  message += `\n*Gender*: ${user?.gender || ''}`;
+
+  message += `\n*Race*: ${user?.race || ''}`;
+
+  message += `\n*Citizenship:* ${
+    citizenShipMap[user?.citizenship || ''] || ''
+  }`;
+
+  message += `\n*Qualification:* ${user?.qualification || ''}`;
+
+  message += `\n*Experience:* ${user?.cover || ''}`;
+
+  message += `\n*Location Preference:*${user?.locationPreference || ''}`;
 
   bot.sendMessage(chatId, message, {
     reply_markup: JSON.stringify({

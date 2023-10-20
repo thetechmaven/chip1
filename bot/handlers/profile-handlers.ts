@@ -88,19 +88,34 @@ export const updateGender = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  deleteLastMessage(query.message?.chat.id as number);
-  const message = await bot.sendMessage(
-    query.message?.chat.id,
-    'Choose your gender',
+  const chatId = query.message?.chat.id as number;
+  const messageId = query.message?.message_id;
+  //deleteLastMessage(query.message?.chat.id as number);
+  //const message = await bot.sendMessage(
+  //  query.message?.chat.id,
+  //  'Choose your gender',
+  //  {
+  //    reply_markup: JSON.stringify({
+  //      inline_keyboard: options.PROFILE_GENDER,
+  //    }),
+  //  }
+  //);
+  //messageHistory.setLastMessage(query.message?.chat.id as number, {
+  //  messageId: message.message_id,
+  //});
+  bot.editMessageText('Choose your gender', {
+    chat_id: chatId,
+    message_id: messageId,
+  });
+  bot.editMessageReplyMarkup(
     {
-      reply_markup: JSON.stringify({
-        inline_keyboard: options.PROFILE_GENDER,
-      }),
+      inline_keyboard: options.PROFILE_GENDER,
+    },
+    {
+      chat_id: chatId,
+      message_id: messageId,
     }
   );
-  messageHistory.setLastMessage(query.message?.chat.id as number, {
-    messageId: message.message_id,
-  });
 };
 
 export const handleUpdateGroup = async (
@@ -438,6 +453,10 @@ export const handleDone = async (
   query: TelegramBotTypes.CallbackQuery
 ) => {
   sendProfile({ bot, chatId: query.message?.chat.id as number });
+  deleteMessage(
+    query.message?.chat.id as number,
+    query.message?.message_id as number
+  );
 };
 
 export const handleProfileUpdated = (

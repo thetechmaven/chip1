@@ -1,5 +1,10 @@
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
-import { APPLY_FOR_JOBS, TUTOR_BACK, VIEW_EDIT_PROFILE } from '../contants';
+import {
+  APPLY_FOR_JOBS,
+  MESSAGE_WHICH_GROUP,
+  TUTOR_BACK,
+  VIEW_EDIT_PROFILE,
+} from '../contants';
 import * as profileOptions from './profile-options';
 import {
   handleDone,
@@ -137,6 +142,10 @@ const handleUpdateTutorProfile = async (
   query: TelegramBotTypes.CallbackQuery
 ) => {
   if (true) {
+    bot.editMessageText(MESSAGE_WHICH_GROUP, {
+      chat_id: query.message?.chat.id,
+      message_id: query.message?.message_id,
+    });
     bot.editMessageReplyMarkup(
       { inline_keyboard: profileOptions.ADD_EDIT_PROFILE },
       {
