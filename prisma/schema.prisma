@@ -23,20 +23,23 @@ model User {
   dob                 String?   @default("")
   username            String?
 
-  group               String?
-  experience          Int?
-  gender              Gender?
-  race                String?
-  citizenship         String?
-  qualification       String?
-  cover               String?
-  photo               String?
-  categoryPreference  String[]
-  typePreference      String[]
-  locationPreference  String?
-  hp                  String?
+  userType            String
+  creator             Boolean   @default(false)
+  brand               Boolean   @default(false)
+  bio                 String?   @default("")
+  telegramId          String?   @default("")
+  twitterId           String?   @default("")
+  facebookId          String?   @default("")
+  youtubeId           String?   @default("")
+  discordId           String?   @default("")
+  evmWallet           String?   @default("")
+  solWallet           String?   @default("")
+  contentStyle        String?   @default("")
+  niche               String?   @default("")
+  schedule            String?   @default("")
+  location            String?   @default("")
 
   isAdmin             Boolean   @default(false)
   isStaff             Boolean   @default(false)
 }
-// Project schema for prisma
+

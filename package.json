@@ -9,11 +9,6 @@
     "lint": "next lint",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "schema:generate-file-windows": "cross-env OS=Windows && type ./prisma/common.schema.prisma ./prisma/project.schema.prisma > ./prisma/schema.prisma",
-    "schema:generate-file-mac": "cat ./prisma/common.schema.prisma > ./prisma/schema.prisma && tail -n +21 ./prisma/project.schema.prisma >> ./prisma/schema.prisma",
-    "schema:generate-file": "npm-run-all schema:generate-file-*",
-    "schema:generate-win": "npm run schema:generate-file-windows && npx prisma generate",
-    "schema:generate": "npm run schema:generate-file-mac && npx prisma generate",
     "run-bot": "tsc bot/index.ts --outDir .bot && nodemon ./.bot/bot/index.js",
     "dev-bot": "mkdir -p ./public/bot-images && ./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"npm run run-bot\"",
     "db-deploy": "npm run schema:generate && npx prisma generate && npx prisma migrate dev && npx prisma migrate deploy"
