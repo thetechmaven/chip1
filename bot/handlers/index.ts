@@ -1,60 +1,15 @@
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
-import {
-  MESSAGE_WHICH_GROUP,
-  USER_TYPE_PARENT,
-  USER_TYPE_TUTOR,
-} from '../contants';
 import inlineQueryHandlers from './inline-query-handlers';
 const TelegramBot = require('node-telegram-bot-api');
 import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
-import {
-  handleUpdateCover,
-  handleUpdateEmail,
-  handleUpdateExperience,
-  handleUpdateHp,
-  handleUpdateName,
-  handleUpdatePicture,
-  handleUpdateQualification,
-} from './commandHandlers';
+import { handleUpdateName, handleUpdatePicture } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 
 export const messageHistory = new MessageHistory();
 
 const handlers = (bot: typeof TelegramBot) => {
-  bot.on('contact', async (msg: TelegramBotTypes.Message) => {
-    const phone = msg.contact?.phone_number;
-    const chatId = msg.chat?.id;
-    await prisma.user.update({
-      where: { chatId },
-      data: { phone },
-    });
-    bot.sendMessage(
-      chatId,
-      'Phone number saved. Choose a user type to continue',
-      {
-        reply_markup: JSON.stringify({
-          inline_keyboard: [
-            [
-              {
-                text: 'Tuition Agent/Parent',
-                callback_data: USER_TYPE_PARENT,
-              },
-            ],
-            [
-              {
-                text: 'Tutor',
-                callback_data: USER_TYPE_TUTOR,
-              },
-            ],
-          ],
-        }),
-      }
-    );
-    deleteLastMessage(chatId);
-  });
-
   type CommandHandlerArgs = {
     bot: typeof TelegramBot;
     command: string;
@@ -64,12 +19,7 @@ const handlers = (bot: typeof TelegramBot) => {
   type CommandHandler = { [x: string]: (x: CommandHandlerArgs) => void };
   const commandHandlers: CommandHandler = {
     COMMAND_NAME: handleUpdateName,
-    COMMAND_EMAIL: handleUpdateEmail,
-    COMMAND_QUALIFICATION: handleUpdateQualification,
-    COMMAND_COVER: handleUpdateCover,
-    COMMAND_EXPERIENCE: handleUpdateExperience,
     COMMAND_PICTURE: handleUpdatePicture,
-    COMMAND_HP: handleUpdateHp,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
@@ -88,23 +38,12 @@ const handlers = (bot: typeof TelegramBot) => {
     const chatId = msg.chat.id;
     const firstName = msg.from?.first_name;
 
-    const welcomeMessage = `Hello, ${firstName}! \n${MESSAGE_WHICH_GROUP}`;
+    const welcomeMessage = `Hello`;
 
     bot.sendMessage(chatId, welcomeMessage, {
       reply_markup: JSON.stringify({
         inline_keyboard: [
-          [
-            {
-              text: 'Tuition Agent/Parent',
-              callback_data: USER_TYPE_PARENT,
-            },
-          ],
-          [
-            {
-              text: 'Tutor',
-              callback_data: USER_TYPE_TUTOR,
-            },
-          ],
+          //[],
         ],
       }),
     });
