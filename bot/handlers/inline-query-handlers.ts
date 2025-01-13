@@ -40,6 +40,28 @@ const handleUserType = async (
   }
 };
 
+const handleUpdateProfile = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  if (query.message?.chat.id) {
+    const chatId = query.message.chat.id;
+    const user = await prisma.user.findUnique({ where: { chatId } });
+    if (user?.userType === 'BRAND') {
+      bot.sendMessage(
+        chatId,
+        'Alright, we’re ready to dive in. Just share your brand name along with some key details—location, industry, the works. Let’s build something legendary together!'
+      );
+    } else if (user?.userType === 'CREATOR') {
+      bot.sendMessage(
+        chatId,
+        'Hey there, creative genius! 🚀 Let’s make magic happen! Drop your name, social links, and both SOL and EVM wallet addresses so we can make sure those well-deserved payments flow right into your pocket. 🕶️ Time to level up your creator! 🌟'
+      );
+    }
+  }
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -52,6 +74,7 @@ const inlineQueryHandlers = (
     ) => void;
   } = {
     USER_TYPE: handleUserType,
+    UPDATE_PROFILE: handleUpdateProfile,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
