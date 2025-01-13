@@ -9,20 +9,26 @@ const typeDefs = gql`
     name: String
     chatId: Int
     username: String
-    phone: String
-    dob: String
-    group: String
-    experience: Int
-    gender: String
-    race: String
-    citizenship: String
-    qualification: String
-    cover: String
-    categoryPreference: [String]
-    typePreference: [String]
-    locationPreference: String
-    hp: String
+
+    brandName: String
+    brandLocation: String
+    brandIndustry: String
+
     email: String
+    address: String
+    location: String
+    niche: String
+    bio: String
+    telegramId: String
+    twitterId: String
+    facebookId: String
+    youtubeId: String
+    evmWallet: String
+    solWallet: String
+    schedule: String
+    dob: Date
+    country: String
+    userType: String
 
     isStaff: Boolean
     isAdmin: Boolean
