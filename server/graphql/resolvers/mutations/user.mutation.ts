@@ -23,16 +23,12 @@ export const login = async (
   _: unknown,
   { username, password }: LoginUserInput
 ) => {
-  const user = await prisma.user.findFirst({ where: { username } });
-  if (!user) {
+  if (
+    username === process.env.ADMIN_USERNAME &&
+    password === process.env.ADMIN_PASS
+  ) {
+    const token = jwt.sign({ id: 'admin' }, process.env.JWT_SECRET as string);
     return {
-      error: 'Incorrect user or password',
-    };
-  }
-  if (password === process.env.ADMIN_PASS) {
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string);
-    return {
-      user,
       token,
     };
   } else {
