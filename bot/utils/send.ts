@@ -1,4 +1,5 @@
 import prisma from '../../prisma/prisma';
+import { sendRequestToGPT4 } from './openai';
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -14,14 +15,35 @@ function replaceAll(inputString: string, search: string, replacement: string) {
 
 export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
   const user = await prisma.user?.findUnique({ where: { chatId } });
+  if (user?.userType === 'BRAND') {
+    const profileData = {
+      brandName: user.brandName || 'MISSING',
+      location: user.brandLocation || 'MISSING',
+      industry: user.brandIndustry || 'MISSING',
+    };
+    const message =
+      await sendRequestToGPT4(`This is data for a brand profile: ${JSON.stringify(
+        profileData
+      )}. Create a message for the brand owner that humorously summarizes the profile data using the format:  
 
-  let message = `This is your profile\n`;
-  bot.sendMessage(chatId, message, {
-    reply_markup: JSON.stringify({
-      // inline_keyboard: [
-      //
-      // ],
-    }),
-    parse_mode: 'markdown',
-  });
+<emoji> field: value  
+
+For any missing fields:  
+Please also provide field1, field2, ... We need it to match you with good creators.  
+
+If "brandName" is missing, emphasize its importance in a polite and funny way. If "location" or "industry" is missing, joke lightly about them being optional but helpful.
+`);
+    bot.sendMessage(chatId, message, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Edit Profile',
+              callback_data: 'UPDATE_PROFILE',
+            },
+          ],
+        ],
+      },
+    });
+  }
 };

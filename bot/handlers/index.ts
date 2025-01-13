@@ -5,6 +5,7 @@ import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
 import {
   handleNewUser,
+  handleReceiveUpdateProfile,
   handleUpdateName,
   handleUpdatePicture,
 } from './commandHandlers';
@@ -24,6 +25,7 @@ const handlers = (bot: typeof TelegramBot) => {
   const commandHandlers: CommandHandler = {
     COMMAND_NAME: handleUpdateName,
     COMMAND_PICTURE: handleUpdatePicture,
+    COMMAND_RECEIVE_UPDATE_PROFILE: handleReceiveUpdateProfile,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {

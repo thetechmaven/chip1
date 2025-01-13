@@ -9,6 +9,7 @@ import {
   USER_TYPE_BRAND,
   USER_TYPE_CREATOR,
 } from '../contants/index';
+import { sendRequestToGPT4 } from '../utils/openai';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -98,4 +99,41 @@ export const handleUpdatePicture = async ({
   } else {
     bot.sendMessage(msg.chat.id, 'Error: No photo received');
   }
+};
+
+export const handleReceiveUpdateProfile = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (user?.userType === USER_TYPE_BRAND) {
+    const profileData = await sendRequestToGPT4(`
+      Extract the data from the provided text and output it as a JSON object in the following format:  
+      {
+        "brandName": "name/brandName in this text",
+        "brandLocation": "location of brand",
+        "brandIndustry": "industry of brand"
+      }  
+      NB: If something is missing. set it null.
+      Text: "${message.text}"
+    `);
+    const data = JSON.parse(profileData);
+    for (let key in data) {
+      if (data[key] === null) {
+        delete data[key];
+      }
+    }
+    await prisma.user.update({
+      where: { chatId },
+      data: {
+        ...data,
+      },
+    });
+    sendProfile({ bot, chatId });
+  } else if (user?.userType === USER_TYPE_CREATOR) {
+  }
+  messageHistory.setLastMessage(chatId, {
+    command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
+  });
 };

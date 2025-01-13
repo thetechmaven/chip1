@@ -59,6 +59,9 @@ const handleUpdateProfile = async (
         'Hey there, creative genius! 🚀 Let’s make magic happen! Drop your name, social links, and both SOL and EVM wallet addresses so we can make sure those well-deserved payments flow right into your pocket. 🕶️ Time to level up your creator! 🌟'
       );
     }
+    messageHistory.setLastMessage(chatId, {
+      command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
+    });
   }
 };
 
