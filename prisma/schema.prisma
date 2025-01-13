@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -12,9 +12,14 @@ enum Gender {
   FEMALE
 }
 
+enum UserType {
+  CREATOR
+  BRAND
+}
+
 model User {
   // id for relational database
-  id   String    @id @default(cuid())
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
 
   name                String    @default("")
   chatId              Int       @unique
@@ -23,9 +28,7 @@ model User {
   dob                 String?   @default("")
   username            String?
 
-  userType            String
-  creator             Boolean   @default(false)
-  brand               Boolean   @default(false)
+  userType            UserType?  
   bio                 String?   @default("")
   telegramId          String?   @default("")
   twitterId           String?   @default("")

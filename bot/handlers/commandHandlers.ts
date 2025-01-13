@@ -4,6 +4,11 @@ import type * as TelegramBotTypes from 'node-telegram-bot-api';
 import { sendProfile } from '../utils/send';
 import { messageHistory } from '.';
 import { resetCommand } from '../utils/message';
+import {
+  USER_TYPE,
+  USER_TYPE_BRAND,
+  USER_TYPE_CREATOR,
+} from '../contants/index';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -14,6 +19,40 @@ interface ICommandHandlerArgs {
   message: TelegramBotTypes.Message;
   lastMessage?: ILastMessage;
 }
+
+export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+  const firstName = message.from?.first_name;
+  const welcomeMessage = `Hello ${firstName}, welcome to the bot! Please choose what type of user you are.`;
+
+  let user = await prisma.user.findUnique({ where: { chatId } });
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        chatId,
+        name: firstName,
+      },
+    });
+  }
+  bot.sendMessage(chatId, welcomeMessage, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: '👨‍🎨 Creator',
+            callback_data: `${USER_TYPE}:${USER_TYPE_CREATOR}`,
+          },
+        ],
+        [
+          {
+            text: '🏢 Brand',
+            callback_data: `${USER_TYPE}:${USER_TYPE_BRAND}`,
+          },
+        ],
+      ],
+    },
+  });
+};
 
 export const handleUpdateName = async ({
   bot,

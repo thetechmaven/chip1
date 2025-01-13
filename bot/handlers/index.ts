@@ -3,7 +3,11 @@ import inlineQueryHandlers from './inline-query-handlers';
 const TelegramBot = require('node-telegram-bot-api');
 import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
-import { handleUpdateName, handleUpdatePicture } from './commandHandlers';
+import {
+  handleNewUser,
+  handleUpdateName,
+  handleUpdatePicture,
+} from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 
@@ -37,16 +41,14 @@ const handlers = (bot: typeof TelegramBot) => {
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
     const chatId = msg.chat.id;
     const firstName = msg.from?.first_name;
-
     const welcomeMessage = `Hello`;
 
-    bot.sendMessage(chatId, welcomeMessage, {
-      reply_markup: JSON.stringify({
-        inline_keyboard: [
-          //[],
-        ],
-      }),
-    });
+    let user = await prisma.user.findUnique({ where: { chatId } });
+    console.log(user?.userType);
+    if (user && user.userType) {
+    } else {
+      handleNewUser({ bot, message: msg, command: '' });
+    }
   });
 
   bot.on('callback_query', (query: TelegramBotTypes.CallbackQuery) => {
