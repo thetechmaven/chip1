@@ -6,6 +6,8 @@ import {
   USER_TYPE_BRAND,
   USER_TYPE_CREATOR,
 } from '../contants';
+import { sendProfile } from '../utils/send';
+import bot from '..';
 const TelegramBot = require('node-telegram-bot-api');
 
 const handleUserType = async (
@@ -90,6 +92,44 @@ const handleUpdateProfileAgain = async (
   }
 };
 
+const handleViewProfile = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  sendProfile({ bot, chatId: query.message?.chat.id as number });
+};
+
+const handleFindCreators = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(
+    query.message?.chat.id as number,
+    'Todo: For next milestones'
+  );
+};
+
+const handleCreatePackage = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(
+    query.message?.chat.id as number,
+    'Todo: For next milestones'
+  );
+};
+
+const handleViewPackages = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  bot.sendMessage(query.message?.chat.id as number, 'For next milestones');
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -104,6 +144,10 @@ const inlineQueryHandlers = (
     USER_TYPE: handleUserType,
     UPDATE_PROFILE: handleUpdateProfile,
     UPDATE_PROFILE_AGAIN: handleUpdateProfileAgain,
+    VIEW_PROFILE: handleViewProfile,
+    FIND_CREATORS: handleFindCreators,
+    CREATE_PACKAGE: handleCreatePackage,
+    VIEW_PACKAGES: handleViewPackages,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
