@@ -65,7 +65,7 @@ const handlers = (bot: typeof TelegramBot) => {
             [
               {
                 text: '✏️ Update Profile',
-                callback_data: 'UPDATE_PROFILE',
+                callback_data: 'UPDATE_PROFILE_AGAIN',
               },
             ],
             ...(user.userType === 'BRAND'
