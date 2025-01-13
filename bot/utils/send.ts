@@ -33,7 +33,7 @@ Please also provide field1, field2, ... We need it to match you with good creato
 
 If "brandName" is missing, emphasize its importance in a polite and funny way. If "location" or "industry" is missing, joke lightly about them being optional but helpful.
 `);
-    bot.sendMessage(chatId, message, {
+    await bot.sendMessage(chatId, message, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -77,7 +77,7 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
       `
     );
     console.log('>>>', message);
-    bot.sendMessage(chatId, message, {
+    await bot.sendMessage(chatId, message, {
       reply_markup: {
         inline_keyboard: [
           [

@@ -10,11 +10,34 @@ import { sendProfile } from '../utils/send';
 import bot from '..';
 const TelegramBot = require('node-telegram-bot-api');
 
+export async function sendLoadingMessage(chatId: number) {
+  const message = await bot.sendMessage(chatId, '⏳ Loading...');
+  return message.message_id;
+}
+
+export async function deleteMessage(
+  bot: typeof TelegramBot,
+  chatId: number,
+  messageId: number
+) {
+  try {
+    await bot.deleteMessage(chatId, messageId.toString());
+  } catch (error) {
+    console.error(
+      `Failed to delete message ${messageId} in chat ${chatId}:`,
+      error
+    );
+  }
+}
+
 const handleUserType = async (
   bot: typeof TelegramBot,
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
+  const loadingMessageId = await sendLoadingMessage(
+    query.message?.chat.id as number
+  );
   if (query.message?.chat.id) {
     const [, userType] = data;
     if (userType !== USER_TYPE_BRAND && userType !== USER_TYPE_CREATOR) {
@@ -27,6 +50,7 @@ const handleUserType = async (
     });
     const profileEmoji = userType === USER_TYPE_BRAND ? '🏢' : '🎨';
     const message = `You are now a ${userType.toLowerCase()} ${profileEmoji}. Update your profile to get started!`;
+    deleteMessage(bot, chatId, loadingMessageId);
     bot.sendMessage(chatId, message, {
       reply_markup: {
         inline_keyboard: [
@@ -97,7 +121,9 @@ const handleViewProfile = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  sendProfile({ bot, chatId: query.message?.chat.id as number });
+  const messageId = await sendLoadingMessage(query.message?.chat.id as number);
+  await sendProfile({ bot, chatId: query.message?.chat.id as number });
+  deleteMessage(bot, query.message?.chat.id as number, messageId);
 };
 
 const handleFindCreators = async (

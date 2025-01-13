@@ -10,6 +10,7 @@ import {
   USER_TYPE_CREATOR,
 } from '../contants/index';
 import { sendRequestToGPT4 } from '../utils/openai';
+import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -106,6 +107,7 @@ export const handleReceiveUpdateProfile = async ({
   message,
 }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
+  const loadingMessageId = await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
     const profileData = await sendRequestToGPT4(`
@@ -130,9 +132,8 @@ export const handleReceiveUpdateProfile = async ({
         ...data,
       },
     });
-    sendProfile({ bot, chatId });
+    await sendProfile({ bot, chatId });
   } else if (user?.userType === USER_TYPE_CREATOR) {
-    console.log('Checking...');
     const profileData = await sendRequestToGPT4(`
       Extract the data from the provided text and output it as a JSON object in the following format:  
       {
@@ -164,9 +165,10 @@ export const handleReceiveUpdateProfile = async ({
         ...data,
       },
     });
-    sendProfile({ bot, chatId });
+    await sendProfile({ bot, chatId });
   }
   messageHistory.setLastMessage(chatId, {
     command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
   });
+  deleteMessage(bot, chatId, loadingMessageId);
 };
