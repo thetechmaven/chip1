@@ -45,5 +45,49 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
         ],
       },
     });
+  } else if (user?.userType === 'CREATOR') {
+    let data: any = { ...user };
+
+    delete data.chatId;
+    delete data.id;
+    delete data.userType;
+    delete data.name;
+    delete data.isAdmin;
+    delete data.brandName;
+    delete data.brandLocation;
+    delete data.brandIndustry;
+    delete data.username;
+    delete data.dob;
+    delete data.email;
+    delete data.isStaff;
+
+    for (const key in data) {
+      if (!data[key]) {
+        data[key] = 'MISSING';
+      }
+    }
+
+    const message = await sendRequestToGPT4(
+      `This is data for a creator profile: ${JSON.stringify(
+        data
+      )}. Create a message for the creator that humorously summarizes the profile data using the format:
+      <emoji> field: value
+
+      In the end, ask the creator to update their profile with the missing information only if some data is missing
+      `
+    );
+    console.log('>>>', message);
+    bot.sendMessage(chatId, message, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Edit Profile',
+              callback_data: 'UPDATE_PROFILE_AGAIN',
+            },
+          ],
+        ],
+      },
+    });
   }
 };

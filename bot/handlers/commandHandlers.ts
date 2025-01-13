@@ -132,6 +132,39 @@ export const handleReceiveUpdateProfile = async ({
     });
     sendProfile({ bot, chatId });
   } else if (user?.userType === USER_TYPE_CREATOR) {
+    console.log('Checking...');
+    const profileData = await sendRequestToGPT4(`
+      Extract the data from the provided text and output it as a JSON object in the following format:  
+      {
+        "name": "name/brandName in this text",
+        "bio": "bio of creator",
+        "telegramId": "telegram account of creator",
+        "twitterId": "x/twitter handle",
+        "facebookId": "facebook id of the creator",
+        "youtubeId": "youtube profile of the creator",
+        "evmWallet": "EVM Wallet Address of the creator",
+        "solWallet": "Solana wallet address of the creator",
+        "niche": "niche/field/industry of creator",
+        "schedule": "Working schedule of the creator",
+        "location": "Location of the creator"
+      }  
+      NB: If something is missing. set it null.
+      Text: "${message.text}"
+    `);
+    console.log(profileData);
+    const data = JSON.parse(profileData);
+    for (let key in data) {
+      if (data[key] === null) {
+        delete data[key];
+      }
+    }
+    await prisma.user.update({
+      where: { chatId },
+      data: {
+        ...data,
+      },
+    });
+    sendProfile({ bot, chatId });
   }
   messageHistory.setLastMessage(chatId, {
     command: 'COMMAND_RECEIVE_UPDATE_PROFILE',

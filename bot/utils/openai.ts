@@ -9,7 +9,7 @@ const axios = require('axios');
  */
 export async function sendRequestToGPT4(
   prompt: string,
-  maxTokens = 100,
+  maxTokens = 500,
   apiKey = process.env.OPENAI_KEY
 ) {
   if (!apiKey) {
