@@ -65,6 +65,31 @@ const handleUpdateProfile = async (
   }
 };
 
+const handleUpdateProfileAgain = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  if (query.message?.chat.id) {
+    const chatId = query.message.chat.id;
+    const user = await prisma.user.findUnique({ where: { chatId } });
+    if (user?.userType === 'BRAND') {
+      bot.sendMessage(
+        chatId,
+        'Just share your brand name along with some key details—location and industry which you want to update.'
+      );
+    } else if (user?.userType === 'CREATOR') {
+      bot.sendMessage(
+        chatId,
+        '🕶️ Time to change! 🌟. Send us your info which you want to update'
+      );
+    }
+    messageHistory.setLastMessage(chatId, {
+      command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
+    });
+  }
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -78,6 +103,7 @@ const inlineQueryHandlers = (
   } = {
     USER_TYPE: handleUserType,
     UPDATE_PROFILE: handleUpdateProfile,
+    UPDATE_PROFILE_AGAIN: handleUpdateProfileAgain,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);

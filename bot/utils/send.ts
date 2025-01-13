@@ -39,7 +39,7 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
           [
             {
               text: 'Edit Profile',
-              callback_data: 'UPDATE_PROFILE',
+              callback_data: 'UPDATE_PROFILE_AGAIN',
             },
           ],
         ],
