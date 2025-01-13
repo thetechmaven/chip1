@@ -42,12 +42,56 @@ const handlers = (bot: typeof TelegramBot) => {
 
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
     const chatId = msg.chat.id;
-    const firstName = msg.from?.first_name;
-    const welcomeMessage = `Hello`;
 
     let user = await prisma.user.findUnique({ where: { chatId } });
     console.log(user?.userType);
     if (user && user.userType) {
+      let message = '';
+      if (user.userType === 'BRAND') {
+        message = "Hey there, brand owner! Let's choose what you want to do";
+      } else {
+        message =
+          'Hey there, creative genius! 🚀 Let’s make magic happen! Choose an option to continue 🌟';
+      }
+      bot.sendMessage(chatId, message, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: '👤 View Profile',
+                callback_data: 'VIEW_PROFILE',
+              },
+            ],
+            [
+              {
+                text: '✏️ Update Profile',
+                callback_data: 'UPDATE_PROFILE',
+              },
+            ],
+            ...(user.userType === 'BRAND'
+              ? [
+                  [
+                    {
+                      text: '🔍 Find Creators',
+                      callback_data: 'FIND_CREATORS',
+                    },
+                  ],
+                ]
+              : [
+                  [
+                    {
+                      text: '📦 View My Packages',
+                      callback_data: 'VIEW_PACKAGES',
+                    },
+                    {
+                      text: '➕ Create Package',
+                      callback_data: 'CREATE_PACKAGE',
+                    },
+                  ],
+                ]),
+          ],
+        },
+      });
     } else {
       handleNewUser({ bot, message: msg, command: '' });
     }
