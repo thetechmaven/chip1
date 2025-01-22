@@ -48,5 +48,19 @@ model User {
 
   isAdmin             Boolean   @default(false)
   isStaff             Boolean   @default(false)
+
+  packages            Package[]
 }
 
+model Package {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  description         String
+  price               Float
+  creatorId           String    @db.ObjectId
+  creator             User      @relation(fields: [creatorId], references: [id])
+  tags                String[]
+  status              String
+  createdAt           DateTime  @default(now())
+  negotationLimit     Int
+}
