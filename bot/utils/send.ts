@@ -34,16 +34,7 @@ Please also provide field1, field2, ... We need it to match you with good creato
 If "brandName" is missing, emphasize its importance in a polite and funny way. If "location" or "industry" is missing, joke lightly about them being optional but helpful.
 `);
     await bot.sendMessage(chatId, message, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Edit Profile',
-              callback_data: 'UPDATE_PROFILE_AGAIN',
-            },
-          ],
-        ],
-      },
+      reply_markup: {},
     });
   } else if (user?.userType === 'CREATOR') {
     let data: any = { ...user };
@@ -76,17 +67,9 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
       In the end, ask the creator to update their profile with the missing information only if some data is missing
       `
     );
-    console.log('>>>', message);
     await bot.sendMessage(chatId, message, {
       reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Edit Profile',
-              callback_data: 'UPDATE_PROFILE_AGAIN',
-            },
-          ],
-        ],
+        inline_keyboard: [],
       },
     });
   }
