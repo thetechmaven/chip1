@@ -9,6 +9,7 @@ import {
   handleReceiveUpdateProfile,
   handleUpdateName,
   handleUpdatePicture,
+  viewMyPackages,
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
@@ -67,10 +68,12 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_RECEIVE_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_ADD_PACKAGE: handleCommandAddPackage,
+    COMMAND_VIEW_PACKAGES: viewMyPackages,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
     const { command } = await getCommandAndData(msg.text || '', sellerCommands);
+    console.log('Command', command);
     const lastMessage = messageHistory.getLastMessage(msg.chat.id);
     const currentCommand = command || lastMessage?.command;
     if (currentCommand && commandHandlers[currentCommand]) {

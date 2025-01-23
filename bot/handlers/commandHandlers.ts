@@ -227,3 +227,22 @@ export const handleReceiveUpdateProfile = async ({
   });
   deleteMessage(bot, chatId, loadingMessageId);
 };
+
+export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (user?.userType === USER_TYPE_CREATOR) {
+    const packages = await prisma.package.findMany({
+      where: {
+        creatorId: user.id,
+      },
+    });
+    if (packages.length === 0) {
+      bot.sendMessage(chatId, 'You have no packages yet');
+    } else {
+      packages.forEach((pack) => {
+        sendPackage(bot, chatId, pack.id);
+      });
+    }
+  }
+};

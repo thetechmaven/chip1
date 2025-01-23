@@ -14,7 +14,7 @@ export const sendPackage = async (
   if (_package) {
     const message = `Package Name: ${_package.name}\nDescription: ${_package.description}\nPrice: ${_package.price} $\nNegotiation Limit: ${_package.negotitationLimit}`;
     const updatedMessage = await sendRequestToGPT4(`
-            Update this message, add some humor to it. Make it friendly. Add emojis also. Im something is missing motivate user to add it. Format is markdown and highlight important things. Avoid adding a lot of extra text. Name should be on top.
+            Update this message. Add emojis also. Im something is missing motivate user to add it. Format is markdown and highlight important things. Avoid adding a lot of extra text. Name should be on top. Make it friendly and natural.
             Text: ${message}
         `);
     await bot.sendMessage(chatId, updatedMessage, {
