@@ -156,6 +156,25 @@ const handleViewPackages = async (
   bot.sendMessage(query.message?.chat.id as number, 'For next milestones');
 };
 
+const handleDeletePackage = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  const [, id] = data;
+  const _package = await prisma.package.delete({
+    where: { id },
+  });
+  if (_package) {
+    bot.sendMessage(query.message?.chat.id as number, '🗑️ Package deleted');
+  } else {
+    bot.sendMessage(
+      query.message?.chat.id as number,
+      '📦 Package not found 🗑️'
+    );
+  }
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -174,6 +193,7 @@ const inlineQueryHandlers = (
     FIND_CREATORS: handleFindCreators,
     CREATE_PACKAGE: handleCreatePackage,
     VIEW_PACKAGES: handleViewPackages,
+    DELETE_PACKAGE: handleDeletePackage,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);

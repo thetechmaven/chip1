@@ -24,7 +24,7 @@ export const sendPackage = async (
           [
             {
               text: 'Delete',
-              callback_data: `DELETE:${_package.id}`,
+              callback_data: `DELETE_PACKAGE:${_package.id}`,
             },
           ],
         ],
