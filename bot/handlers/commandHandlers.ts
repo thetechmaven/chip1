@@ -13,6 +13,7 @@ import { sendRequestToGPT4 } from '../utils/openai';
 import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
 import { getResponseFormat } from '../utils/getCommand';
 import { sendPackage } from '../utils/sendPackage';
+import { sellerFaqs } from '../contants/faqs';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -245,4 +246,37 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
       });
     }
   }
+};
+
+export const handleSendProfile = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  sendProfile({ bot, chatId: message.chat.id });
+};
+
+export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
+  const document = await prisma.user.findUnique({
+    where: { chatId: message.chat.id },
+    include: { packages: true },
+  });
+  if (!document) {
+    return;
+  }
+  const { packages, ...user } = document;
+  const prompt =
+    user.userType === USER_TYPE_CREATOR
+      ? `
+    Answer the users question in a friendly manner. User is a UGC (Content creator). Im providing you knowledge base so please dont answer anything
+    outside this knowledgebase.
+
+    User Info: ${JSON.stringify(user)}
+    Creator Packages: ${JSON.stringify(packages)}
+    FAQs: ${JSON.stringify(sellerFaqs)}
+
+    Users query: ${message.text}
+  `
+      : '';
+  const response = await sendRequestToGPT4(prompt);
+  bot.sendMessage(message.chat.id, response);
 };

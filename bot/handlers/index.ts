@@ -6,7 +6,9 @@ import MessageHistory from '../models/MessageHistory';
 import {
   handleCommandAddPackage,
   handleNewUser,
+  handleOther,
   handleReceiveUpdateProfile,
+  handleSendProfile,
   handleUpdateName,
   handleUpdatePicture,
   viewMyPackages,
@@ -18,6 +20,9 @@ import { getCommandAndData } from '../utils/getCommand';
 export const messageHistory = new MessageHistory();
 
 export const sellerCommands = {
+  VIEW_PROFILE: {
+    condition: 'Choose this command if user wants to view his profile',
+  },
   ADD_PACKAGE: {
     condition:
       'Choose this command if the creator has sent a message in which he asks to save/create/add a package',
@@ -48,6 +53,10 @@ export const sellerCommands = {
   VIEW_PACKAGES: {
     condition: 'Choose this command if you the user wants to view his packages',
   },
+  OTHER: {
+    condition:
+      'Choose this command if you want to do something else or the user has asked a suggestion',
+  },
 };
 
 const buyerCommands = {
@@ -69,6 +78,8 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_ADD_PACKAGE: handleCommandAddPackage,
     COMMAND_VIEW_PACKAGES: viewMyPackages,
+    COMMAND_VIEW_PROFILE: handleSendProfile,
+    COMMAND_OTHER: handleOther,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
@@ -83,6 +94,8 @@ const handlers = (bot: typeof TelegramBot) => {
         message: msg,
         lastMessage,
       });
+    } else {
+      handleOther({ bot, message: msg, command: '' });
     }
   });
 
@@ -94,50 +107,12 @@ const handlers = (bot: typeof TelegramBot) => {
     if (user && user.userType) {
       let message = '';
       if (user.userType === 'BRAND') {
-        message = "Hey there, brand owner! Let's choose what you want to do";
+        message = 'Hey there, brand owner! Let me know what do you need';
       } else {
         message =
-          'Hey there, creative genius! 🚀 Let’s make magic happen! Choose an option to continue 🌟';
+          'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
       }
-      bot.sendMessage(chatId, message, {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: '👤 View Profile',
-                callback_data: 'VIEW_PROFILE',
-              },
-            ],
-            [
-              {
-                text: '✏️ Update Profile',
-                callback_data: 'UPDATE_PROFILE_AGAIN',
-              },
-            ],
-            ...(user.userType === 'BRAND'
-              ? [
-                  [
-                    {
-                      text: '🔍 Find Creators',
-                      callback_data: 'FIND_CREATORS',
-                    },
-                  ],
-                ]
-              : [
-                  [
-                    {
-                      text: '📦 View My Packages',
-                      callback_data: 'VIEW_PACKAGES',
-                    },
-                    {
-                      text: '➕ Create Package',
-                      callback_data: 'CREATE_PACKAGE',
-                    },
-                  ],
-                ]),
-          ],
-        },
-      });
+      bot.sendMessage(chatId, message, {});
     } else {
       handleNewUser({ bot, message: msg, command: '' });
     }
