@@ -2,7 +2,7 @@ import prisma from '../../prisma/prisma';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
 import { sendProfile } from '../utils/send';
-import { messageHistory } from '.';
+import { messageHistory, sellerCommands } from '.';
 import { resetCommand } from '../utils/message';
 import {
   USER_TYPE,
@@ -11,6 +11,7 @@ import {
 } from '../contants/index';
 import { sendRequestToGPT4 } from '../utils/openai';
 import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
+import { getResponseFormat } from '../utils/getCommand';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -21,6 +22,59 @@ interface ICommandHandlerArgs {
   message: TelegramBotTypes.Message;
   lastMessage?: ILastMessage | undefined;
 }
+
+export const handleCommandAddPackage = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  console.log('Im called');
+  const chatId = message.chat.id;
+  const loadingMessageId = await sendLoadingMessage(chatId);
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  const commandData = sellerCommands['ADD_PACKAGE'];
+  if (user?.userType === USER_TYPE_CREATOR) {
+    const profileData = {
+      brandName: user.brandName || 'MISSING',
+      location: user.brandLocation || 'MISSING',
+      industry: user.brandIndustry || 'MISSING',
+    };
+    const prompt = `${
+      commandData.commandPrompt
+    }\n If required fields return an error message. List of fields:${JSON.stringify(
+      commandData.data
+    )}  \nOUTPUT AS JSON IN THIS Format: ${getResponseFormat({
+      ...commandData.data,
+      error: { details: 'Set it to true if required fields are missing' },
+      message: {
+        details:
+          'Ask user to send message again if any required field is missing in data. If optional fields are missing, motivate user to send optional fields',
+      },
+    })}\n Text: ${message.text}`;
+    const responseText = await sendRequestToGPT4(prompt);
+    const response = JSON.parse(responseText);
+    console.log('Res', response);
+    if (!response.error) {
+      await prisma.package.create({
+        data: {
+          status: 'ACTIVE',
+          name: response.name,
+          description: response.description || null,
+          price: response.price,
+          negotitationLimit: response.negotitationLimit || null,
+          creator: {
+            connect: {
+              chatId,
+            },
+          },
+        },
+      });
+      bot.sendMessage(chatId, response.message);
+    } else {
+      bot.sendMessage(chatId, response.message);
+    }
+    console.log('Response', response);
+  }
+};
 
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;

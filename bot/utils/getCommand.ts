@@ -1,5 +1,12 @@
 import { sendRequestToGPT4 } from './openai';
 
+interface ICommandData {
+  [key: string]: {
+    details: string;
+    required?: boolean;
+  };
+}
+
 interface ICommandList {
   [key: string]: {
     condition: string;
@@ -12,6 +19,18 @@ const getCommandsAsText = (commandsList: ICommandList) => {
       return `${key}: ${commandsList[key].condition}`;
     })
     .join('\n');
+};
+
+export const getResponseFormat = (data: ICommandData) => {
+  return `
+        {
+            ${Object.keys(data)
+              .map((key) => {
+                return `${key}: ${data[key].details}`;
+              })
+              .join(',\n')}
+        }
+    `;
 };
 
 export const getCommandAndData = async (

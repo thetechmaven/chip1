@@ -55,12 +55,12 @@ model User {
 model Package {
   id                  String    @id @default(auto()) @map("_id") @db.ObjectId
   name                String
-  description         String
+  description         String?
   price               Float
   creatorId           String    @db.ObjectId
   creator             User      @relation(fields: [creatorId], references: [id])
   tags                String[]
   status              String
   createdAt           DateTime  @default(now())
-  negotationLimit     Int
+  negotitationLimit   Int?
 }

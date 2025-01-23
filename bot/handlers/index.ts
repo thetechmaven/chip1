@@ -4,6 +4,7 @@ const TelegramBot = require('node-telegram-bot-api');
 import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
 import {
+  handleCommandAddPackage,
   handleNewUser,
   handleReceiveUpdateProfile,
   handleUpdateName,
@@ -19,6 +20,25 @@ export const sellerCommands = {
   ADD_PACKAGE: {
     condition:
       'Choose this command if the creator has sent a message in which he asks to save/create/add a package',
+    commandPrompt: 'The user is a creator and wants to add a package.',
+    data: {
+      name: {
+        details: 'Name of the package',
+        required: true,
+      },
+      description: {
+        details: 'Description of the package, nicely formatted',
+        required: false,
+      },
+      price: {
+        details: 'Price of the package. It should be a float number',
+        required: true,
+      },
+      negotitationLimit: {
+        details: 'Negotiation limit',
+        required: false,
+      },
+    },
   },
   UPDATE_PROFILE: {
     condition: 'Choose if user want to update their profile',
@@ -45,6 +65,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_PICTURE: handleUpdatePicture,
     COMMAND_RECEIVE_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_UPDATE_PROFILE: handleReceiveUpdateProfile,
+    COMMAND_ADD_PACKAGE: handleCommandAddPackage,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
