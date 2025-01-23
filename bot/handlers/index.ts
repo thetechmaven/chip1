@@ -11,29 +11,50 @@ import {
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
+import { getCommandAndData } from '../utils/getCommand';
 
 export const messageHistory = new MessageHistory();
+
+export const sellerCommands = {
+  ADD_PACKAGE: {
+    condition:
+      'Choose this command if the creator has sent a message in which he asks to save/create/add a package',
+  },
+  UPDATE_PROFILE: {
+    condition: 'Choose if user want to update their profile',
+  },
+  VIEW_PACKAGES: {
+    condition: 'Choose this command if you the user wants to view his packages',
+  },
+};
+
+const buyerCommands = {
+  find_creators: 'Choose this command if you want to find creators',
+};
 
 const handlers = (bot: typeof TelegramBot) => {
   type CommandHandlerArgs = {
     bot: typeof TelegramBot;
     command: string;
     message: TelegramBotTypes.Message;
-    lastMessage: ILastMessage;
+    lastMessage: ILastMessage | undefined;
   };
   type CommandHandler = { [x: string]: (x: CommandHandlerArgs) => void };
   const commandHandlers: CommandHandler = {
     COMMAND_NAME: handleUpdateName,
     COMMAND_PICTURE: handleUpdatePicture,
     COMMAND_RECEIVE_UPDATE_PROFILE: handleReceiveUpdateProfile,
+    COMMAND_UPDATE_PROFILE: handleReceiveUpdateProfile,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
+    const { command } = await getCommandAndData(msg.text || '', sellerCommands);
     const lastMessage = messageHistory.getLastMessage(msg.chat.id);
-    if (lastMessage?.command && lastMessage.command in commandHandlers) {
-      commandHandlers[lastMessage.command]({
+    const currentCommand = command || lastMessage?.command;
+    if (currentCommand && commandHandlers[currentCommand]) {
+      commandHandlers[currentCommand]({
         bot,
-        command: lastMessage.command,
+        command: currentCommand,
         message: msg,
         lastMessage,
       });

@@ -19,7 +19,7 @@ interface ICommandHandlerArgs {
   bot: typeof TelegramBot;
   command: string;
   message: TelegramBotTypes.Message;
-  lastMessage?: ILastMessage;
+  lastMessage?: ILastMessage | undefined;
 }
 
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
