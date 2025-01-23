@@ -12,6 +12,7 @@ import {
 import { sendRequestToGPT4 } from '../utils/openai';
 import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
 import { getResponseFormat } from '../utils/getCommand';
+import { sendPackage } from '../utils/sendPackage';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -52,9 +53,8 @@ export const handleCommandAddPackage = async ({
     })}\n Text: ${message.text}`;
     const responseText = await sendRequestToGPT4(prompt);
     const response = JSON.parse(responseText);
-    console.log('Res', response);
     if (!response.error) {
-      await prisma.package.create({
+      const newPackge = await prisma.package.create({
         data: {
           status: 'ACTIVE',
           name: response.name,
@@ -69,6 +69,7 @@ export const handleCommandAddPackage = async ({
         },
       });
       bot.sendMessage(chatId, response.message);
+      sendPackage(bot, chatId, newPackge.id);
     } else {
       bot.sendMessage(chatId, response.message);
     }

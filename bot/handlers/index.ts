@@ -27,7 +27,8 @@ export const sellerCommands = {
         required: true,
       },
       description: {
-        details: 'Description of the package, nicely formatted',
+        details:
+          'Description of the package, nicely formatted. Empty string if missing',
         required: false,
       },
       price: {
@@ -35,7 +36,7 @@ export const sellerCommands = {
         required: true,
       },
       negotitationLimit: {
-        details: 'Negotiation limit',
+        details: 'Negotiation limit. 0 if missing',
         required: false,
       },
     },
