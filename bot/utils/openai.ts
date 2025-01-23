@@ -9,6 +9,7 @@ const axios = require('axios');
  */
 export async function sendRequestToGPT4(
   prompt: string,
+  ignorePersonalization = false,
   maxTokens = 500,
   apiKey = process.env.OPENAI_KEY
 ) {
@@ -29,9 +30,12 @@ export async function sendRequestToGPT4(
     model: 'gpt-4',
     messages: [
       { role: 'user', content: prompt },
-      {
-        role: 'system',
-        content: `{
+      ...(ignorePersonalization
+        ? []
+        : [
+            {
+              role: 'system',
+              content: `{
     "name": "Chip",
     "username": "Chip",
     "plugins": [],
@@ -197,12 +201,12 @@ export async function sendRequestToGPT4(
         "dynamic"
     ]
 }`,
-      },
+            },
+          ]),
     ],
     max_tokens: maxTokens,
     temperature: 0.7,
   };
-
   try {
     const response = await axios.post(url, data, { headers });
     return response.data.choices[0].message.content.trim();

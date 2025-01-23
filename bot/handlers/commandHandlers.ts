@@ -53,7 +53,7 @@ export const handleCommandAddPackage = async ({
           'Ask user to send message again if any required field is missing in data. If optional fields are missing, motivate user to send optional fields',
       },
     })}\n Text: ${message.text}`;
-    const responseText = await sendRequestToGPT4(prompt);
+    const responseText = await sendRequestToGPT4(prompt, true);
     const response = JSON.parse(responseText);
     if (!response.error) {
       const newPackge = await prisma.package.create({
@@ -168,7 +168,8 @@ export const handleReceiveUpdateProfile = async ({
   const loadingMessageId = await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
-    const profileData = await sendRequestToGPT4(`
+    const profileData = await sendRequestToGPT4(
+      `
       Extract the data from the provided text and output it as a JSON object in the following format:  
       {
         "brandName": "name/brandName in this text",
@@ -177,7 +178,9 @@ export const handleReceiveUpdateProfile = async ({
       }  
       NB: If something is missing. set it null.
       Text: "${message.text}"
-    `);
+    `,
+      true
+    );
     const data = JSON.parse(profileData);
     for (let key in data) {
       if (data[key] === null) {
@@ -192,24 +195,29 @@ export const handleReceiveUpdateProfile = async ({
     });
     await sendProfile({ bot, chatId });
   } else if (user?.userType === USER_TYPE_CREATOR) {
-    const profileData = await sendRequestToGPT4(`
+    const profileData = await sendRequestToGPT4(
+      `
       Extract the data from the provided text and output it as a JSON object in the following format:  
       {
         "name": "name/brandName in this text",
         "bio": "bio of creator",
         "telegramId": "telegram account of creator",
         "twitterId": "x/twitter handle",
+        "discordId": "discord id of the creator",
         "facebookId": "facebook id of the creator",
         "youtubeId": "youtube profile of the creator",
         "evmWallet": "EVM Wallet Address of the creator",
         "solWallet": "Solana wallet address of the creator",
         "niche": "niche/field/industry of creator",
         "schedule": "Working schedule of the creator",
-        "location": "Location of the creator"
+        "location": "Location of the creator",
+        "contentStyle": "Content style of the creator",
       }  
       NB: If something is missing. set it null.
       Text: "${message.text}"
-    `);
+    `,
+      true
+    );
     const data = JSON.parse(profileData);
     for (let key in data) {
       if (data[key] === null) {

@@ -48,7 +48,7 @@ export const getCommandAndData = async (
             command: The choosen command, null if no command matches the result,
         }
     `;
-  const responseText = await sendRequestToGPT4(prompt);
+  const responseText = await sendRequestToGPT4(prompt, true);
   const response = await JSON.parse(responseText);
   if (response.command) {
     response.command = 'COMMAND_' + response.command.toUpperCase();
