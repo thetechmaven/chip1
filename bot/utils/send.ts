@@ -51,6 +51,7 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
     delete data.dob;
     delete data.email;
     delete data.isStaff;
+    delete data.tags;
 
     for (const key in data) {
       if (!data[key]) {

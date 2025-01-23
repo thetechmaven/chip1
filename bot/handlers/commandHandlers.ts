@@ -14,6 +14,7 @@ import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
 import { getResponseFormat } from '../utils/getCommand';
 import { sendPackage } from '../utils/sendPackage';
 import { sellerFaqs } from '../contants/faqs';
+import { updateTags } from '../utils/profile';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -71,6 +72,7 @@ export const handleCommandAddPackage = async ({
       });
       bot.sendMessage(chatId, response.message);
       sendPackage(bot, chatId, newPackge.id);
+      updateTags(user.id);
     } else {
       bot.sendMessage(chatId, response.message);
     }
@@ -208,13 +210,13 @@ export const handleReceiveUpdateProfile = async ({
       NB: If something is missing. set it null.
       Text: "${message.text}"
     `);
-    console.log(profileData);
     const data = JSON.parse(profileData);
     for (let key in data) {
       if (data[key] === null) {
         delete data[key];
       }
     }
+    updateTags(user.id);
     await prisma.user.update({
       where: { chatId },
       data: {
