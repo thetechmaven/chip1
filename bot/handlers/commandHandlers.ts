@@ -13,7 +13,7 @@ import { sendRequestToGPT4 } from '../utils/openai';
 import { deleteMessage, sendLoadingMessage } from './inline-query-handlers';
 import { getResponseFormat } from '../utils/getCommand';
 import { sendPackage } from '../utils/sendPackage';
-import { sellerFaqs } from '../contants/faqs';
+import { buyerFaqs, sellerFaqs } from '../contants/faqs';
 import { updateTags } from '../utils/profile';
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -312,7 +312,15 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
 
     Users query: ${message.text}
   `
-      : '';
+      : `
+      Answer the users question in a friendly manner. User is a brand owner and they might need a UGC (content creator). Im providing you knowledge base so please dont answer anything
+    outside this knowledgebase.
+
+    User Info: ${JSON.stringify(user)}
+    FAQs: ${JSON.stringify(buyerFaqs)}
+
+    Users query: ${message.text}
+      `;
   const response = await sendRequestToGPT4(
     prompt,
     false,

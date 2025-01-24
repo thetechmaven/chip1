@@ -17,6 +17,7 @@ import {
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 import { getCommandAndData } from '../utils/getCommand';
+import { USER_TYPE_BRAND } from '../contants';
 
 export const messageHistory = new MessageHistory();
 
@@ -58,13 +59,18 @@ export const sellerCommands = {
     condition:
       'Choose this command if you want to do something else or the user has asked a suggestion',
   },
-  FIND_CREATORS: {
-    condition: 'Choose this command if you want to find creators',
-  },
 };
 
 const buyerCommands = {
-  find_creators: 'Choose this command if you want to find creators',
+  FIND_CREATORS: {
+    condition: 'Choose this command if you want to find creators',
+  },
+  UPDATE_PROFILE: {
+    condition: 'Choose if user want to update their profile',
+  },
+  VIEW_PROFILE: {
+    condition: 'Choose this command if user wants to view his profile',
+  },
 };
 
 const handlers = (bot: typeof TelegramBot) => {
@@ -88,9 +94,16 @@ const handlers = (bot: typeof TelegramBot) => {
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
+    const user = await prisma.user.findUnique({
+      where: { chatId: msg.chat.id },
+    });
+    if (!user) {
+      return;
+    }
+
     const { command } = await getCommandAndData(
       msg.text || '',
-      sellerCommands,
+      user.userType === USER_TYPE_BRAND ? buyerCommands : sellerCommands,
       msg.chat.id
     );
     console.log('Command', command);
