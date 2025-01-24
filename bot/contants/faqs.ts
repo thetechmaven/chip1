@@ -1,4 +1,10 @@
-export const commonFaqs = [];
+export const commonFaqs = [
+  {
+    question: 'How does this bot work?',
+    answer:
+      'In order to use this bot, first you have to set up your profile. After that clients can find creators. Once client finds a creator, client will contact creator. Ceator will create a group to discuss project.',
+  },
+];
 
 export const sellerFaqs = [
   ...commonFaqs,
@@ -16,6 +22,11 @@ export const sellerFaqs = [
     question: 'How can I know if a client has contacted me?',
     answer:
       'You will get a notification from the bot. You can also check your messages in the bot.',
+  },
+  {
+    question: 'What can this bot can do?',
+    answer:
+      'This bot can help you in find clients related to your field. Moreover, it can also be your assistant and give info to the clients about your services. The best thing about this bot is that it can negotiate with the clients on your behalf.',
   },
 ];
 
@@ -40,5 +51,10 @@ export const buyerFaqs = [
     question: 'How does it work?',
     answer:
       'The buyer will send you a group link. You can join the group and start chatting with the buyer.',
+  },
+  {
+    question: 'What can this bot can do?',
+    answer:
+      'This bot can help you find creators according to your requirements.',
   },
 ];
