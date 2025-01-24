@@ -88,7 +88,11 @@ const handlers = (bot: typeof TelegramBot) => {
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
-    const { command } = await getCommandAndData(msg.text || '', sellerCommands);
+    const { command } = await getCommandAndData(
+      msg.text || '',
+      sellerCommands,
+      msg.chat.id
+    );
     console.log('Command', command);
     const lastMessage = messageHistory.getLastMessage(msg.chat.id);
     const currentCommand = command || lastMessage?.command;

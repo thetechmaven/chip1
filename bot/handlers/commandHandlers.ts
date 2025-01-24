@@ -53,7 +53,11 @@ export const handleCommandAddPackage = async ({
           'Ask user to send message again if any required field is missing in data. If optional fields are missing, motivate user to send optional fields',
       },
     })}\n Text: ${message.text}`;
-    const responseText = await sendRequestToGPT4(prompt, true);
+    const responseText = await sendRequestToGPT4(
+      prompt,
+      true,
+      messageHistory.getRecentConversations(chatId)
+    );
     const response = JSON.parse(responseText);
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
@@ -184,7 +188,8 @@ export const handleReceiveUpdateProfile = async ({
       NB: If something is missing. set it null.
       Text: "${message.text}"
     `,
-      true
+      true,
+      messageHistory.getRecentConversations(chatId)
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
@@ -226,7 +231,8 @@ export const handleReceiveUpdateProfile = async ({
       NB: If something is missing. set it null.
       Text: "${message.text}"
     `,
-      true
+      true,
+      messageHistory.getRecentConversations(chatId)
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
@@ -307,7 +313,11 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
     Users query: ${message.text}
   `
       : '';
-  const response = await sendRequestToGPT4(prompt);
+  const response = await sendRequestToGPT4(
+    prompt,
+    false,
+    messageHistory.getRecentConversations(message.chat.id)
+  );
   messageHistory.addRecentConversation(message.chat.id, {
     time: Date.now(),
     query: message.text || '',
@@ -347,7 +357,8 @@ export const handleFindCreators = async ({
       Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
       ["id1", "id2", ...]
       `,
-      true
+      true,
+      messageHistory.getRecentConversations(chatId)
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),

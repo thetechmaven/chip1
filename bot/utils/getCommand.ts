@@ -1,3 +1,4 @@
+import { messageHistory } from '../handlers';
 import { sendRequestToGPT4 } from './openai';
 
 interface ICommandData {
@@ -35,7 +36,8 @@ export const getResponseFormat = (data: ICommandData) => {
 
 export const getCommandAndData = async (
   message: string,
-  commandsList: ICommandList
+  commandsList: ICommandList,
+  chatId: number
 ) => {
   const prompt = `
         From this following text, choose one of the following commands:
@@ -48,7 +50,11 @@ export const getCommandAndData = async (
             command: The choosen command, null if no command matches the result,
         }
     `;
-  const responseText = await sendRequestToGPT4(prompt, true);
+  const responseText = await sendRequestToGPT4(
+    prompt,
+    true,
+    messageHistory.getRecentConversations(chatId)
+  );
   const response = await JSON.parse(responseText);
   if (response.command) {
     response.command = 'COMMAND_' + response.command.toUpperCase();

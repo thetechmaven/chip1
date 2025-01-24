@@ -1,3 +1,5 @@
+import { IRecentConversation } from '../models/ChatMessageHistory';
+
 const axios = require('axios');
 
 /**
@@ -10,6 +12,7 @@ const axios = require('axios');
 export async function sendRequestToGPT4(
   prompt: string,
   ignorePersonalization = false,
+  previousConversation?: IRecentConversation[],
   maxTokens = 500,
   apiKey = process.env.OPENAI_KEY
 ) {
