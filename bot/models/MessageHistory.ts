@@ -29,10 +29,13 @@ class MessageHistory {
   ) => {
     if (this.users[chatId]) {
       this.users[chatId].addRecentConversation(conversation);
+    } else {
+      this.users[chatId] = new ChatMessageHistory(chatId);
+      this.users[chatId].addRecentConversation(conversation);
     }
   };
   getRecentConversations = (chatId: number) => {
-    return this.users[chatId]?.getRecentConversations();
+    return this.users[chatId]?.getRecentConversations() || [];
   };
 }
 

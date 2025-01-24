@@ -27,7 +27,7 @@ class ChatMessageHistory {
   }
 
   addRecentConversation = (conversation: IRecentConversation) => {
-    if (this.recentConversation.length >= 10) {
+    if (this.recentConversation.length >= 7) {
       this.recentConversation.shift();
     }
     this.recentConversation.push(conversation);

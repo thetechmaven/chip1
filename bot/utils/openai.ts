@@ -2,6 +2,24 @@ import { IRecentConversation } from '../models/ChatMessageHistory';
 
 const axios = require('axios');
 
+const getPreviousMessages = (conversation: IRecentConversation[]) => {
+  const messages: Array<{
+    role: string;
+    content: string;
+  }> = [];
+  conversation.forEach((message) => {
+    messages.push({
+      role: 'user',
+      content: message.query,
+    });
+    messages.push({
+      role: 'assistant',
+      content: message.answer,
+    });
+  });
+  return messages;
+};
+
 /**
  * Sends a request to OpenAI's GPT-4 model and returns the response.
  * @param {string} prompt - The prompt to send to the GPT-4 model.
@@ -32,6 +50,9 @@ export async function sendRequestToGPT4(
   const data = {
     model: 'gpt-4',
     messages: [
+      ...(previousConversation
+        ? getPreviousMessages(previousConversation)
+        : []),
       { role: 'user', content: prompt },
       ...(ignorePersonalization
         ? []
@@ -210,6 +231,7 @@ export async function sendRequestToGPT4(
     max_tokens: maxTokens,
     temperature: 0.7,
   };
+  console.log('Recent', getPreviousMessages(previousConversation || []));
   try {
     const response = await axios.post(url, data, { headers });
     return response.data.choices[0].message.content.trim();
