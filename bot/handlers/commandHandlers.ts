@@ -290,3 +290,84 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
   const response = await sendRequestToGPT4(prompt);
   bot.sendMessage(message.chat.id, response);
 };
+
+export const handleFindCreators = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+  const loadingMessageId = await sendLoadingMessage(chatId);
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (user?.userType === USER_TYPE_BRAND || true) {
+    const creators = await prisma.user.findMany({
+      where: {
+        userType: USER_TYPE_CREATOR,
+      },
+      select: {
+        id: true,
+        tags: true,
+      },
+    });
+    const searchResultString = await sendRequestToGPT4(
+      `Here is the list of creators:
+      ${creators
+        .map((creator) => {
+          return `${creator.id}: ${creator.tags}`;
+        })
+        .join('\n')}
+      
+      Find the top 5 creators which match the user requirements. Requirements are:
+      ${JSON.stringify(message.text)}
+
+      Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
+      ["id1", "id2", ...]
+      `,
+      true
+    );
+    const searchResult = JSON.parse(searchResultString);
+    const relatedCreators = await prisma.user.findMany({
+      where: {
+        id: {
+          in: searchResult,
+        },
+      },
+      include: {
+        packages: true,
+      },
+    });
+    relatedCreators.forEach((creator) => {
+      bot.sendMessage(
+        chatId,
+        `*${creator.name}\n*${
+          creator.bio ? `${creator.bio}\n` : ''
+        }*Packages*\n${creator.packages
+          .map((pack) => {
+            return `Name: ${pack.name}\nDescription: ${pack.description}\nPrice: ${pack.price}\n`;
+          })
+          .join('\n')}
+        `,
+        {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: 'Contact',
+                  url: `t.me/${
+                    creator.telegramId?.startsWith('@')
+                      ? creator.telegramId.substring(
+                          1,
+                          creator.telegramId.length
+                        )
+                      : `${creator.telegramId}`
+                  }`,
+                },
+              ],
+            ],
+          },
+        }
+      );
+    });
+  }
+  deleteMessage(bot, chatId, loadingMessageId);
+};

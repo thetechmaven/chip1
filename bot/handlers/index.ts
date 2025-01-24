@@ -5,6 +5,7 @@ import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
 import {
   handleCommandAddPackage,
+  handleFindCreators,
   handleNewUser,
   handleOther,
   handleReceiveUpdateProfile,
@@ -57,6 +58,9 @@ export const sellerCommands = {
     condition:
       'Choose this command if you want to do something else or the user has asked a suggestion',
   },
+  FIND_CREATORS: {
+    condition: 'Choose this command if you want to find creators',
+  },
 };
 
 const buyerCommands = {
@@ -80,6 +84,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_VIEW_PACKAGES: viewMyPackages,
     COMMAND_VIEW_PROFILE: handleSendProfile,
     COMMAND_OTHER: handleOther,
+    COMMAND_FIND_CREATORS: handleFindCreators,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
