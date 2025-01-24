@@ -55,6 +55,11 @@ export const handleCommandAddPackage = async ({
     })}\n Text: ${message.text}`;
     const responseText = await sendRequestToGPT4(prompt, true);
     const response = JSON.parse(responseText);
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: responseText,
+    });
     if (!response.error) {
       const newPackge = await prisma.package.create({
         data: {
@@ -181,6 +186,11 @@ export const handleReceiveUpdateProfile = async ({
     `,
       true
     );
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: profileData,
+    });
     const data = JSON.parse(profileData);
     for (let key in data) {
       if (data[key] === null) {
@@ -218,6 +228,11 @@ export const handleReceiveUpdateProfile = async ({
     `,
       true
     );
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: profileData,
+    });
     const data = JSON.parse(profileData);
     for (let key in data) {
       if (data[key] === null) {
@@ -247,6 +262,11 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
       where: {
         creatorId: user.id,
       },
+    });
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: `${JSON.stringify(packages)}`,
     });
     if (packages.length === 0) {
       bot.sendMessage(chatId, 'You have no packages yet');
@@ -288,6 +308,11 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
   `
       : '';
   const response = await sendRequestToGPT4(prompt);
+  messageHistory.addRecentConversation(message.chat.id, {
+    time: Date.now(),
+    query: message.text || '',
+    answer: response,
+  });
   bot.sendMessage(message.chat.id, response);
 };
 
@@ -324,6 +349,11 @@ export const handleFindCreators = async ({
       `,
       true
     );
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: searchResultString,
+    });
     const searchResult = JSON.parse(searchResultString);
     const relatedCreators = await prisma.user.findMany({
       where: {

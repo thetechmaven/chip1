@@ -1,6 +1,7 @@
 import { parse } from 'path';
 import prisma from '../../prisma/prisma';
 import { sendRequestToGPT4 } from './openai';
+import { messageHistory } from '../handlers';
 const TelegramBot = require('node-telegram-bot-api');
 
 export const sendPackage = async (

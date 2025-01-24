@@ -1,4 +1,5 @@
 import prisma from '../../prisma/prisma';
+import { messageHistory } from '../handlers';
 import { sendRequestToGPT4 } from './openai';
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -33,6 +34,11 @@ Please also provide field1, field2, ... We need it to match you with good creato
 
 If "brandName" is missing, emphasize its importance in a polite and funny way. If "location" or "industry" is missing, joke lightly about them being optional but helpful.
 `);
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: 'Show me my profile',
+      answer: message,
+    });
     await bot.sendMessage(chatId, message, {
       reply_markup: {},
     });
@@ -68,6 +74,11 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
       In the end, ask the creator to update their profile with the missing information only if some data is missing
       `
     );
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: 'Show me my profile',
+      answer: message,
+    });
     await bot.sendMessage(chatId, message, {
       reply_markup: {
         inline_keyboard: [],

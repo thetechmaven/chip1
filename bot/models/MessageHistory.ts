@@ -1,4 +1,7 @@
-import ChatMessageHistory, { ILastMessage } from './ChatMessageHistory';
+import ChatMessageHistory, {
+  ILastMessage,
+  IRecentConversation,
+} from './ChatMessageHistory';
 
 class MessageHistory {
   users: { [x: number]: ChatMessageHistory };
@@ -19,6 +22,17 @@ class MessageHistory {
       messageHistory.lastMessage = m;
       this.users[chatId] = messageHistory;
     }
+  };
+  addRecentConversation = (
+    chatId: number,
+    conversation: IRecentConversation
+  ) => {
+    if (this.users[chatId]) {
+      this.users[chatId].addRecentConversation(conversation);
+    }
+  };
+  getRecentConversations = (chatId: number) => {
+    return this.users[chatId]?.getRecentConversations();
   };
 }
 
