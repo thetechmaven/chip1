@@ -179,7 +179,7 @@ export const handleReceiveUpdateProfile = async ({
   if (user?.userType === USER_TYPE_BRAND) {
     const profileData = await sendRequestToGPT4(
       `
-      Extract the data from the provided text and output it as a JSON object in the following format:  
+      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
       {
         "brandName": "name/brandName in this text",
         "brandLocation": "location of brand",
@@ -212,7 +212,7 @@ export const handleReceiveUpdateProfile = async ({
   } else if (user?.userType === USER_TYPE_CREATOR) {
     const profileData = await sendRequestToGPT4(
       `
-      Extract the data from the provided text and output it as a JSON object in the following format:  
+      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
       {
         "name": "name/brandName in this text",
         "bio": "bio of creator",
