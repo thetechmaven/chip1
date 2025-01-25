@@ -302,7 +302,25 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
   if (!document) {
     return;
   }
-  const { packages, ...user } = document;
+  const { packages, ...user }: any = document;
+  if (user.userType === USER_TYPE_BRAND) {
+    delete user.niche;
+    delete user.schedule;
+    delete user.contentStyle;
+    delete user.location;
+    delete user.telegramId;
+    delete user.twitterId;
+    delete user.discordId;
+    delete user.facebookId;
+    delete user.youtubeId;
+    delete user.evmWallet;
+    delete user.solWallet;
+    delete user.bio;
+  } else {
+    delete user.brandName;
+    delete user.brandLocation;
+    delete user.brandIndustry;
+  }
   const prompt =
     user.userType === USER_TYPE_CREATOR
       ? `
