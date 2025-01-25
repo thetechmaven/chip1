@@ -387,7 +387,10 @@ export const handleFindCreators = async ({
       ["id1", "id2", ...]
       `,
       true,
-      messageHistory.getRecentConversations(chatId)
+      messageHistory.getRecentConversations(chatId),
+      {
+        jsonResponse: true,
+      }
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),

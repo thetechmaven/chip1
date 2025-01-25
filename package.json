@@ -9,7 +9,7 @@
     "lint": "next lint",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "run-bot": "tsc bot/index.ts --outDir .bot && nodemon ./.bot/bot/index.js",
+    "run-bot": "tsc bot/index.ts --outDir .bot && node ./.bot/bot/index.js",
     "dev-bot": "mkdir -p ./public/bot-images && ./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"npm run run-bot\"",
     "db-deploy": "npm run schema:generate && npx prisma generate && npx prisma migrate dev && npx prisma migrate deploy"
   },
