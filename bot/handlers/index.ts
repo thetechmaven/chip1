@@ -71,6 +71,10 @@ const buyerCommands = {
   VIEW_PROFILE: {
     condition: 'Choose this command if user wants to view his profile',
   },
+  OTHER: {
+    condition:
+      'Choose this command if you want to do something else or the user has asked a suggestion or a question. Also choose other if user is asking what data in their profile or search is missing.',
+  },
 };
 
 const handlers = (bot: typeof TelegramBot) => {

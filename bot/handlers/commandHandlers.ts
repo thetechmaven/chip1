@@ -398,10 +398,17 @@ export const handleFindCreators = async ({
       answer: searchResultString,
     });
     const searchResult = JSON.parse(searchResultString);
+    if (!searchResult.creators) {
+      bot.sendMessage(
+        chatId,
+        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
+      );
+      return;
+    }
     const relatedCreators = await prisma.user.findMany({
       where: {
         id: {
-          in: searchResult,
+          in: searchResult.creators,
         },
       },
       include: {
