@@ -56,7 +56,10 @@ export const handleCommandAddPackage = async ({
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
-      messageHistory.getRecentConversations(chatId)
+      messageHistory.getRecentConversations(chatId),
+      {
+        jsonResponse: true,
+      }
     );
     const response = JSON.parse(responseText);
     messageHistory.addRecentConversation(chatId, {

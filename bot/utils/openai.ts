@@ -31,9 +31,12 @@ export async function sendRequestToGPT4(
   prompt: string,
   ignorePersonalization = false,
   previousConversation?: IRecentConversation[],
-  maxTokens = 500,
-  apiKey = process.env.OPENAI_KEY
+  options: {
+    jsonResponse?: boolean;
+  } = {}
 ) {
+  const apiKey = process.env.OPENAI_KEY;
+  const maxTokens = 500;
   if (!apiKey) {
     throw new Error(
       'OpenAI API key is required. Make sure to set it in the environment variables or pass it as an argument.'
@@ -48,7 +51,7 @@ export async function sendRequestToGPT4(
   };
 
   const data = {
-    model: 'gpt-4',
+    model: options?.jsonResponse ? 'gpt-3.5-turbo-0125' : 'gpt-4',
     messages: [
       ...(previousConversation
         ? getPreviousMessages(previousConversation)
@@ -230,8 +233,10 @@ export async function sendRequestToGPT4(
     ],
     max_tokens: maxTokens,
     temperature: 0.7,
+    ...(options.jsonResponse
+      ? { response_format: { type: 'json_object' } }
+      : {}),
   };
-  console.log('Recent', getPreviousMessages(previousConversation || []));
   try {
     const response = await axios.post(url, data, { headers });
     return response.data.choices[0].message.content.trim();

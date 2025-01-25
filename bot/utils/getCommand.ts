@@ -47,13 +47,16 @@ export const getCommandAndData = async (
 
         Output as json in the following format:
         {
-            command: The choosen command, null if no command matches the result,
+            command: The choosen command, null if no command matches the result. Take help from the context if required
         }
     `;
   const responseText = await sendRequestToGPT4(
     prompt,
     true,
-    messageHistory.getRecentConversations(chatId)
+    messageHistory.getRecentConversations(chatId),
+    {
+      jsonResponse: true,
+    }
   );
   const response = await JSON.parse(responseText);
   if (response.command) {

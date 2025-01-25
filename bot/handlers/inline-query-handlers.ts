@@ -49,20 +49,18 @@ const handleUserType = async (
       data: { userType },
     });
     const profileEmoji = userType === USER_TYPE_BRAND ? '🏢' : '🎨';
-    const message = `You are now a ${userType.toLowerCase()} ${profileEmoji}. Update your profile to get started!`;
-    deleteMessage(bot, chatId, loadingMessageId);
-    bot.sendMessage(chatId, message, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: '👨‍🎨 Update Profile',
-              callback_data: UPDATE_PROFILE,
-            },
-          ],
-        ],
-      },
+    const message =
+      `You are now a ${userType.toLowerCase()} ${profileEmoji}. Update your profile to get started!\n` +
+      (userType === USER_TYPE_BRAND
+        ? `Set your company name, location and industry.`
+        : `Set your name, social links, and sol and ethereum addresses.`);
+    messageHistory.addRecentConversation(chatId, {
+      query: `I am a new ${userType}`,
+      answer: message,
+      time: Date.now(),
     });
+    deleteMessage(bot, chatId, loadingMessageId);
+    bot.sendMessage(chatId, message, {});
   }
 };
 
@@ -74,19 +72,23 @@ const handleUpdateProfile = async (
   if (query.message?.chat.id) {
     const chatId = query.message.chat.id;
     const user = await prisma.user.findUnique({ where: { chatId } });
+    let message = '';
     if (user?.userType === 'BRAND') {
-      bot.sendMessage(
-        chatId,
-        'Alright, we’re ready to dive in. Just share your brand name along with some key details—location, industry, the works. Let’s build something legendary together!'
-      );
+      message =
+        'Alright, we’re ready to dive in. Just share your brand name along with some key details—location, industry, the works. Let’s build something legendary together!';
+      bot.sendMessage(chatId, message);
     } else if (user?.userType === 'CREATOR') {
-      bot.sendMessage(
-        chatId,
-        'Hey there, creative genius! 🚀 Let’s make magic happen! Drop your name, social links, and both SOL and EVM wallet addresses so we can make sure those well-deserved payments flow right into your pocket. 🕶️ Time to level up your creator! 🌟'
-      );
+      message =
+        'Hey there, creative genius! 🚀 Let’s make magic happen! Drop your name, social links, and both SOL and EVM wallet addresses so we can make sure those well-deserved payments flow right into your pocket. 🕶️ Time to level up your creator! 🌟';
+      bot.sendMessage(chatId, message);
     }
     messageHistory.setLastMessage(chatId, {
       command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
+    });
+    messageHistory.addRecentConversation(chatId, {
+      query: 'Im a new ' + user?.userType,
+      answer: message,
+      time: Date.now(),
     });
   }
 };
