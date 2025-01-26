@@ -287,7 +287,29 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
       bot.sendMessage(chatId, 'You have no packages yet');
     } else {
       packages.forEach((pack) => {
-        sendPackage(bot, chatId, pack.id);
+        bot.sendMessage(
+          chatId,
+          `*${pack.name}*\n${pack.description || ''}\nPrice: ${
+            pack.price
+          } \nNegotiation Limit: ${pack.negotitationLimit || 'Not set'}`,
+          {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Edit',
+                    callback_data: `EDIT_PACKAGE:${pack.id}`,
+                  },
+                  {
+                    text: 'Delete',
+                    callback_data: `DELETE_PACKAGE:${pack.id}`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
       });
     }
   }

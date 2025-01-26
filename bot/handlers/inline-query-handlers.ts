@@ -164,18 +164,20 @@ const handleDeletePackage = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  const [, id] = data;
-  const _package = await prisma.package.delete({
-    where: { id },
-  });
-  if (_package) {
-    bot.sendMessage(query.message?.chat.id as number, '🗑️ Package deleted');
-  } else {
-    bot.sendMessage(
-      query.message?.chat.id as number,
-      '📦 Package not found 🗑️'
-    );
-  }
+  try {
+    const [, id] = data;
+    const _package = await prisma.package.delete({
+      where: { id },
+    });
+    if (_package) {
+      bot.sendMessage(query.message?.chat.id as number, '🗑️ Package deleted');
+    } else {
+      bot.sendMessage(
+        query.message?.chat.id as number,
+        '📦 Package not found 🗑️'
+      );
+    }
+  } catch (err) {}
 };
 
 const inlineQueryHandlers = (
