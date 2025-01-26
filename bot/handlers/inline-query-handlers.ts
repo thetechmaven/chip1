@@ -12,6 +12,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 export async function sendLoadingMessage(chatId: number) {
   const message = await bot.sendMessage(chatId, '⏳ Loading...');
+  messageHistory.addLoadingMessage(chatId, message.message_id);
   return message.message_id;
 }
 
@@ -59,7 +60,7 @@ const handleUserType = async (
       answer: message,
       time: Date.now(),
     });
-    deleteMessage(bot, chatId, loadingMessageId);
+    messageHistory.deleteLoadingMessages(chatId, bot);
     bot.sendMessage(chatId, message, {});
   }
 };
@@ -123,9 +124,9 @@ const handleViewProfile = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  const messageId = await sendLoadingMessage(query.message?.chat.id as number);
+  await sendLoadingMessage(query.message?.chat.id as number);
   await sendProfile({ bot, chatId: query.message?.chat.id as number });
-  deleteMessage(bot, query.message?.chat.id as number, messageId);
+  messageHistory.deleteLoadingMessages(query.message?.chat.id as number, bot);
 };
 
 const handleFindCreators = async (

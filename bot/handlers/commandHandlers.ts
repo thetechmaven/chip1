@@ -87,7 +87,7 @@ export const handleCommandAddPackage = async ({
     } else {
       bot.sendMessage(chatId, response.message);
     }
-    console.log('Response', response);
+    messageHistory.deleteLoadingMessages(chatId, bot);
   }
 };
 
@@ -176,7 +176,7 @@ export const handleReceiveUpdateProfile = async ({
   message,
 }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
-  const loadingMessageId = await sendLoadingMessage(chatId);
+  await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
     const profileData = await sendRequestToGPT4(
@@ -191,7 +191,10 @@ export const handleReceiveUpdateProfile = async ({
       Text: "${message.text}"
     `,
       true,
-      messageHistory.getRecentConversations(chatId)
+      messageHistory.getRecentConversations(chatId),
+      {
+        jsonResponse: true,
+      }
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
@@ -234,7 +237,10 @@ export const handleReceiveUpdateProfile = async ({
       Text: "${message.text}"
     `,
       true,
-      messageHistory.getRecentConversations(chatId)
+      messageHistory.getRecentConversations(chatId),
+      {
+        jsonResponse: true,
+      }
     );
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
@@ -259,11 +265,12 @@ export const handleReceiveUpdateProfile = async ({
   messageHistory.setLastMessage(chatId, {
     command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
   });
-  deleteMessage(bot, chatId, loadingMessageId);
+  messageHistory.deleteLoadingMessages(chatId, bot);
 };
 
 export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
+  await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_CREATOR) {
     const packages = await prisma.package.findMany({
@@ -284,21 +291,27 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
       });
     }
   }
+  messageHistory.deleteLoadingMessages(chatId, bot);
 };
 
 export const handleSendProfile = async ({
   bot,
   message,
 }: ICommandHandlerArgs) => {
-  sendProfile({ bot, chatId: message.chat.id });
+  await sendLoadingMessage(message.chat.id);
+  await sendProfile({ bot, chatId: message.chat.id });
+  messageHistory.deleteLoadingMessages(message.chat.id, bot);
 };
 
 export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+  await sendLoadingMessage(chatId);
   const document = await prisma.user.findUnique({
     where: { chatId: message.chat.id },
     include: { packages: true },
   });
   if (!document) {
+    messageHistory.deleteLoadingMessages(chatId, bot);
     return;
   }
   const { packages, ...user }: any = document;
@@ -351,7 +364,10 @@ export const handleOther = async ({ bot, message }: ICommandHandlerArgs) => {
     query: message.text || '',
     answer: response,
   });
-  bot.sendMessage(message.chat.id, response);
+  bot.sendMessage(message.chat.id, response, {
+    parse_mode: 'Markdown',
+  });
+  messageHistory.deleteLoadingMessages(chatId, bot);
 };
 
 export const handleFindCreators = async ({
@@ -448,5 +464,5 @@ export const handleFindCreators = async ({
       );
     });
   }
-  deleteMessage(bot, chatId, loadingMessageId);
+  messageHistory.deleteLoadingMessages(chatId, bot);
 };

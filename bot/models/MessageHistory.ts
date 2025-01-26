@@ -37,6 +37,17 @@ class MessageHistory {
   getRecentConversations = (chatId: number) => {
     return this.users[chatId]?.getRecentConversations() || [];
   };
+  addLoadingMessage = (chatId: number, messageId: number) => {
+    if (this.users[chatId]) {
+      this.users[chatId].addLoadingMessage(messageId);
+    } else {
+      this.users[chatId] = new ChatMessageHistory(chatId);
+      this.users[chatId].addLoadingMessage(messageId);
+    }
+  };
+  deleteLoadingMessages = (chatId: number, bot: any) => {
+    this.users[chatId]?.deleteLoadingMessages(bot);
+  };
 }
 
 export default MessageHistory;

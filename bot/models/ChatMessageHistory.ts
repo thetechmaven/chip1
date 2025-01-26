@@ -11,11 +11,13 @@ export interface IRecentConversation {
 
 class ChatMessageHistory {
   chatId: number;
+  loadingMessages: number[];
   _lastMessage?: ILastMessage;
   recentConversation: IRecentConversation[];
   constructor(chatId: number) {
     this.chatId = chatId;
     this.recentConversation = [];
+    this.loadingMessages = [];
   }
 
   get lastMessage() {
@@ -35,6 +37,24 @@ class ChatMessageHistory {
 
   getRecentConversations = () => {
     return this.recentConversation;
+  };
+
+  addLoadingMessage = (messageId: number) => {
+    this.loadingMessages.push(messageId);
+  };
+
+  deleteLoadingMessages = (bot: any) => {
+    try {
+      this.loadingMessages.forEach((messageId) => {
+        bot.deleteMessage(this.chatId, messageId);
+      });
+      this.loadingMessages = [];
+    } catch (error) {
+      console.error(
+        `Failed to delete loading messages in chat ${this.chatId}:`,
+        error
+      );
+    }
   };
 }
 
