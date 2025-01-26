@@ -5,6 +5,7 @@ import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
 import {
   handleCommandAddPackage,
+  handleCommandUpdatePackage,
   handleFindCreators,
   handleNewUser,
   handleOther,
@@ -92,6 +93,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_RECEIVE_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_UPDATE_PROFILE: handleReceiveUpdateProfile,
     COMMAND_ADD_PACKAGE: handleCommandAddPackage,
+    UPDATE_PACKAGE: handleCommandUpdatePackage,
     COMMAND_VIEW_PACKAGES: viewMyPackages,
     COMMAND_VIEW_PROFILE: handleSendProfile,
     COMMAND_OTHER: handleOther,
@@ -105,12 +107,15 @@ const handlers = (bot: typeof TelegramBot) => {
     if (!user) {
       return;
     }
-
-    const { command } = await getCommandAndData(
-      msg.text || '',
-      user.userType === USER_TYPE_BRAND ? buyerCommands : sellerCommands,
-      msg.chat.id
-    );
+    let command = messageHistory.getSuperCommand(msg.chat.id);
+    if (!command) {
+      const response = await getCommandAndData(
+        msg.text || '',
+        user.userType === USER_TYPE_BRAND ? buyerCommands : sellerCommands,
+        msg.chat.id
+      );
+      command = response.command;
+    }
     console.log('Command', command);
     const lastMessage = messageHistory.getLastMessage(msg.chat.id);
     const currentCommand = command || lastMessage?.command;

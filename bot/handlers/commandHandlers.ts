@@ -91,6 +91,78 @@ export const handleCommandAddPackage = async ({
   }
 };
 
+export const handleCommandUpdatePackage = async ({
+  bot,
+  message,
+  command,
+  lastMessage,
+}: ICommandHandlerArgs) => {
+  console.log('Im called');
+  const chatId = message.chat.id;
+  const packageId = lastMessage?.command?.split(':')[1];
+  const packageData = await prisma.package.findUnique({
+    where: { id: packageId },
+  });
+  await sendLoadingMessage(chatId);
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  const commandData = sellerCommands['ADD_PACKAGE'];
+  if (user?.userType === USER_TYPE_CREATOR) {
+    const prompt = `${
+      commandData.commandPrompt
+    }\n Content creator wants to update his/her package. 
+    
+    Current Package: ${JSON.stringify(packageData)}
+    
+    Only return the fields which are present in text and skip the fields which are not there. List of fields:${JSON.stringify(
+      commandData.data
+    )}  \nOUTPUT AS JSON IN THIS Format: ${getResponseFormat({
+      ...commandData.data,
+      message: {
+        details:
+          'Let user know that the package has been updated successfully. If any field is missing, ask user to send the message again with the missing field',
+      },
+    })}\n Text: ${message.text}`;
+    const responseText = await sendRequestToGPT4(
+      prompt,
+      true,
+      messageHistory.getRecentConversations(chatId),
+      {
+        jsonResponse: true,
+      }
+    );
+    const response = JSON.parse(responseText);
+    console.log('RESPONSE>>', response);
+    messageHistory.addRecentConversation(chatId, {
+      time: Date.now(),
+      query: message.text || '',
+      answer: responseText,
+    });
+    if (!response.error) {
+      const newPackge = await prisma.package.update({
+        where: { id: packageId },
+        data: {
+          status: 'ACTIVE',
+          name: response.name,
+          description: response.description || null,
+          price: response.price,
+          negotitationLimit: response.negotitationLimit || null,
+          creator: {
+            connect: {
+              chatId,
+            },
+          },
+        },
+      });
+      bot.sendMessage(chatId, response.message);
+      sendPackage(bot, chatId, newPackge.id);
+      updateTags(user.id);
+    } else {
+      bot.sendMessage(chatId, response.message);
+    }
+    messageHistory.deleteLoadingMessages(chatId, bot);
+  }
+};
+
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const firstName = message.from?.first_name;

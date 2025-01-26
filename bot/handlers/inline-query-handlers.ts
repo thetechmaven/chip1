@@ -180,6 +180,35 @@ const handleDeletePackage = async (
   } catch (err) {}
 };
 
+const handleUpdatePackage = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  const [, id] = data;
+  const _package = await prisma.package.findUnique({
+    where: { id },
+  });
+  if (!_package) {
+    bot.sendMessage(
+      query.message?.chat.id as number,
+      '📦 Package not found 🗑️'
+    );
+    return;
+  }
+  bot.sendMessage(
+    query.message?.chat.id as number,
+    '📦 Please send the updated package details! ✏️'
+  );
+  messageHistory.setSuperCommand(
+    query.message?.chat?.id as number,
+    'UPDATE_PACKAGE'
+  );
+  messageHistory.setLastMessage(query.message?.chat?.id as number, {
+    command: `COMMAND_UPDATE_PACKAGE:${id}`,
+  });
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -199,6 +228,7 @@ const inlineQueryHandlers = (
     CREATE_PACKAGE: handleCreatePackage,
     VIEW_PACKAGES: handleViewPackages,
     DELETE_PACKAGE: handleDeletePackage,
+    EDIT_PACKAGE: handleUpdatePackage,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);

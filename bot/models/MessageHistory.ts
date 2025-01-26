@@ -48,6 +48,18 @@ class MessageHistory {
   deleteLoadingMessages = (chatId: number, bot: any) => {
     this.users[chatId]?.deleteLoadingMessages(bot);
   };
+
+  setSuperCommand = (chatId: number, command: string) => {
+    if (this.users[chatId]) {
+      this.users[chatId].setSuperCommand(command);
+    } else {
+      this.users[chatId] = new ChatMessageHistory(chatId);
+      this.users[chatId].setSuperCommand(command);
+    }
+  };
+  getSuperCommand = (chatId: number) => {
+    return this.users[chatId]?.getSuperCommand() || '';
+  };
 }
 
 export default MessageHistory;

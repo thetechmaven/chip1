@@ -13,11 +13,13 @@ class ChatMessageHistory {
   chatId: number;
   loadingMessages: number[];
   _lastMessage?: ILastMessage;
+  superCommand: string;
   recentConversation: IRecentConversation[];
   constructor(chatId: number) {
     this.chatId = chatId;
     this.recentConversation = [];
     this.loadingMessages = [];
+    this.superCommand = '';
   }
 
   get lastMessage() {
@@ -55,6 +57,15 @@ class ChatMessageHistory {
         error
       );
     }
+  };
+
+  setSuperCommand = (command: string) => {
+    this.superCommand = command;
+  };
+  getSuperCommand = () => {
+    const superCommand = this.superCommand;
+    this.superCommand = '';
+    return superCommand;
   };
 }
 
