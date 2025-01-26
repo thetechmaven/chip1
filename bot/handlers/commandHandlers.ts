@@ -220,7 +220,7 @@ export const handleReceiveUpdateProfile = async ({
         "name": "name/brandName in this text",
         "bio": "bio of creator",
         "telegramId": "telegram account of creator",
-        "twitterId": "x/twitter handle",
+        "twitterId": "x/twitter handle, x.com or twitter.com link",
         "discordId": "discord id of the creator",
         "facebookId": "facebook id of the creator",
         "youtubeId": "youtube profile of the creator",

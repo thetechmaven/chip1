@@ -50,7 +50,8 @@ export const sellerCommands = {
     },
   },
   UPDATE_PROFILE: {
-    condition: 'Choose if user want to update their profile',
+    condition:
+      'Choose if user want to update their profile or send any info about them in message',
   },
   VIEW_PACKAGES: {
     condition: 'Choose this command if you the user wants to view his packages',
