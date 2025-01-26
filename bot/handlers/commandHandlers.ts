@@ -30,7 +30,6 @@ export const handleCommandAddPackage = async ({
   bot,
   message,
 }: ICommandHandlerArgs) => {
-  console.log('Im called');
   const chatId = message.chat.id;
   const loadingMessageId = await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
