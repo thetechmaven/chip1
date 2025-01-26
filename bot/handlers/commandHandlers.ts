@@ -97,7 +97,6 @@ export const handleCommandUpdatePackage = async ({
   command,
   lastMessage,
 }: ICommandHandlerArgs) => {
-  console.log('Im called');
   const chatId = message.chat.id;
   const packageId = lastMessage?.command?.split(':')[1];
   const packageData = await prisma.package.findUnique({
