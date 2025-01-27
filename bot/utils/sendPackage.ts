@@ -24,6 +24,10 @@ export const sendPackage = async (
         inline_keyboard: [
           [
             {
+              text: 'Edit',
+              callback_data: `EDIT_PACKAGE:${_package.id}`,
+            },
+            {
               text: 'Delete',
               callback_data: `DELETE_PACKAGE:${_package.id}`,
             },
