@@ -473,18 +473,19 @@ export const handleFindCreators = async ({
   if (user?.userType === USER_TYPE_BRAND || true) {
     const creators = await prisma.user.findMany({
       where: {
-        userType: USER_TYPE_CREATOR,
+        //userType: USER_TYPE_CREATOR,
       },
       select: {
         id: true,
         tags: true,
       },
     });
+    console.log('Creators', creators);
     const searchResultString = await sendRequestToGPT4(
       `Here is the list of creators:
       ${creators
         .map((creator) => {
-          return `${creator.id}: ${creator.tags}`;
+          return `${creator.id}: ${creator.tags.join(', ')}`;
         })
         .join('\n')}
       

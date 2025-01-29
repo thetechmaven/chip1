@@ -50,6 +50,7 @@ model User {
   isStaff             Boolean   @default(false)
   tags                String[]
 
+  groups              Group[]
   packages            Package[]
 }
 
@@ -64,4 +65,13 @@ model Package {
   status              String
   createdAt           DateTime  @default(now())
   negotitationLimit   Int?
+}
+
+model Group {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  creatorId           String    @db.ObjectId
+  groupChatId         Int       @unique
+  creator             User      @relation(fields: [creatorId], references: [id])
+  createdAt           DateTime  @default(now())
 }

@@ -19,6 +19,7 @@ import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 import { getCommandAndData } from '../utils/getCommand';
 import { USER_TYPE_BRAND } from '../contants';
+import { groupHandler } from './groupHandlers';
 
 export const messageHistory = new MessageHistory();
 
@@ -101,6 +102,10 @@ const handlers = (bot: typeof TelegramBot) => {
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
+    if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
+      console.log(`Message from [${msg.chat.title}]: ${msg.text}`);
+      groupHandler(bot, msg);
+    }
     const user = await prisma.user.findUnique({
       where: { chatId: msg.chat.id },
     });
