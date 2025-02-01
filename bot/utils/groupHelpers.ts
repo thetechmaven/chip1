@@ -1,5 +1,28 @@
 import prisma from '../../prisma/prisma';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
+import { dealUsingOpenAi } from './openai';
+import { getSystemPrompt } from './getSystemPrompt';
+
+export const dealOpenaiWrapper = async (chatId: number, newMessage: any[]) => {
+  const group = await prisma.group.findUnique({
+    where: { groupChatId: chatId },
+  });
+  if (!group) {
+    return 'Group not found';
+  }
+  if (!group.chat) {
+    group.chat = [newMessage].flat();
+  } else {
+    group.chat = [...(group.chat as any), ...newMessage].flat();
+  }
+  const updatedGroup = await prisma.group.update({
+    where: { groupChatId: chatId },
+    data: {
+      chat: group.chat,
+    },
+  });
+  return dealUsingOpenAi(updatedGroup.chat);
+};
 
 const groupCreatorMap: {
   [key: number]: {
@@ -77,6 +100,54 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
     const { packages, ...user } = document;
     const prompt =
       `Hello Chip!` +
+      `Below are the details of creator. You are manager of the creator: \n` +
+      `${Object.keys(user)
+        .map((key: any) => `${key}: ${(user as any)[key]}`)
+        .join('\n')}\n` +
+      `Creators packages are: \n` +
+      `${packages
+        .map(
+          (p: any) =>
+            `${p.name}(Price: ${p.price} USD${
+              p.negotitationLimit ? ` with a ± ${p.negotitationLimit}%` : ``
+            }): ${p.description || 'No Description'}`
+        )
+        .join('\n')}\n` +
+      `Now, your role will be inform my clients about the creators packages and negotiate with them. Dont tell them negotiation limit but try to make a good deal. Dont let the client go!`;
+    return dealOpenaiWrapper(getChatId(message), [
+      {
+        role: 'system',
+        content: [
+          {
+            type: 'text',
+            text: prompt,
+          },
+        ],
+      },
+      {
+        role: 'system',
+        content: [
+          {
+            type: 'text',
+            text: getSystemPrompt(),
+          },
+        ],
+      },
+    ]);
+  }
+};
+
+export const initGroupv1 = async (message: TelegramBotTypes.Message) => {
+  const document = await prisma.user.findUnique({
+    where: { chatId: message.from?.id },
+    include: {
+      packages: true,
+    },
+  });
+  if (document) {
+    const { packages, ...user } = document;
+    const prompt =
+      `Hello Chip!` +
       `Im a content creator. Here are my details: \n` +
       `${Object.keys(user)
         .map((key: any) => `${key}: ${(user as any)[key]}`)
@@ -123,6 +194,7 @@ export const isCreatorGroup = async (
           groupChatId: chatId,
           creatorId: user?.id as string,
           name: message.chat.title as string,
+          chat: [],
         },
         include: {
           creator: true,

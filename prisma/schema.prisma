@@ -73,5 +73,6 @@ model Group {
   creatorId           String    @db.ObjectId
   groupChatId         Int       @unique
   creator             User      @relation(fields: [creatorId], references: [id])
+  chat                Json?
   createdAt           DateTime  @default(now())
 }

@@ -248,3 +248,37 @@ export async function sendRequestToGPT4(
     throw new Error('Failed to get a response from GPT-4.');
   }
 }
+
+export async function dealUsingOpenAi(messages: any) {
+  const apiKey = process.env.OPENAI_KEY;
+  const maxTokens = 500;
+  if (!apiKey) {
+    throw new Error(
+      'OpenAI API key is required. Make sure to set it in the environment variables or pass it as an argument.'
+    );
+  }
+
+  const url = 'https://api.openai.com/v1/chat/completions';
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${apiKey}`,
+  };
+
+  const data = {
+    model: 'gpt-4',
+    messages,
+    max_tokens: maxTokens,
+    temperature: 0.4,
+  };
+  try {
+    const response = await axios.post(url, data, { headers });
+    return response.data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error(
+      'Error communicating with OpenAI:',
+      (error as any).response?.data || (error as any).message
+    );
+    throw new Error('Failed to get a response from GPT-4.');
+  }
+}
