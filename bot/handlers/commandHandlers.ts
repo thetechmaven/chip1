@@ -2,7 +2,7 @@ import prisma from '../../prisma/prisma';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
 import { sendProfile } from '../utils/send';
-import { messageHistory, sellerCommands } from '.';
+import { messageHistory } from '.';
 import { resetCommand } from '../utils/message';
 import {
   USER_TYPE,
@@ -15,6 +15,7 @@ import { getResponseFormat } from '../utils/getCommand';
 import { sendPackage } from '../utils/sendPackage';
 import { buyerFaqs, sellerFaqs } from '../contants/faqs';
 import { updateTags } from '../utils/profile';
+import { sellerCommands } from '../prompts/commandPrompts';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
