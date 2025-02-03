@@ -103,7 +103,7 @@ const handlers = (bot: typeof TelegramBot) => {
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
     if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-      console.log(`Message from [${msg.chat.title}]: ${msg.text}`);
+      console.log(`Message from [${msg.chat.title}]: ${msg}`);
       groupHandler(bot, msg);
     }
     const user = await prisma.user.findUnique({
