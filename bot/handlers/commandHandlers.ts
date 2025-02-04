@@ -165,7 +165,7 @@ export const handleCommandUpdatePackage = async ({
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const firstName = message.from?.first_name;
-  const welcomeMessage = `Hey ${firstName}, I'm Chip Sterling, the Agent Agent! I manage thousands of creators and help brands craft the perfect campaigns, First tell me are you.....`;
+  const welcomeMessage = `Hello ${firstName}, welcome to the bot! Please choose what type of user you are.`;
 
   let user = await prisma.user.findUnique({ where: { chatId } });
   if (!user) {
@@ -290,19 +290,12 @@ export const handleReceiveUpdateProfile = async ({
       `
       Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
       {
-        "phone": "Phone number of the creator. E.g. +1 234 567 8901",
+      
         "name": "name/brandName in this text",
-        "bio": "bio of creator",
-        "telegramId": "telegram account of creator",
-        "twitterId": "x/twitter handle, x.com or twitter.com link",
-        "discordId": "discord id of the creator",
-        "facebookId": "facebook id of the creator",
-        "youtubeId": "youtube profile of the creator",
+        "All Social Media": "All social media links of the creator",
         "evmWallet": "EVM Wallet Address of the creator",
         "solWallet": "Solana wallet address of the creator",
         "niche": "niche/field/industry of creator",
-        "schedule": "Working schedule of the creator",
-        "location": "Location of the creator",
         "contentStyle": "Content style of the creator",
       }  
       NB: If something is missing. set it null.
@@ -470,94 +463,134 @@ export const handleFindCreators = async ({
 }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const loadingMessageId = await sendLoadingMessage(chatId);
-  const user = await prisma.user.findUnique({ where: { chatId } });
-  if (user?.userType === USER_TYPE_BRAND || true) {
-    const creators = await prisma.user.findMany({
-      where: {
-        //userType: USER_TYPE_CREATOR,
-      },
-      select: {
-        id: true,
-        tags: true,
-      },
-    });
-    console.log('Creators', creators);
-    const searchResultString = await sendRequestToGPT4(
-      `Here is the list of creators:
-      ${creators
-        .map((creator) => {
-          return `${creator.id}: ${creator.tags.join(', ')}`;
-        })
-        .join('\n')}
-      
-      Find the top 5 creators which match the user requirements. Requirements are:
-      ${JSON.stringify(message.text)}
 
-      Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
-      ["id1", "id2", ...]
-      `,
-      true,
-      messageHistory.getRecentConversations(chatId),
-      {
-        jsonResponse: true,
-      }
-    );
-    messageHistory.addRecentConversation(chatId, {
-      time: Date.now(),
-      query: message.text || '',
-      answer: searchResultString,
-    });
-    const searchResult = JSON.parse(searchResultString);
-    if (!searchResult.creators) {
-      bot.sendMessage(
-        chatId,
-        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
-      );
-      return;
-    }
-    const relatedCreators = await prisma.user.findMany({
-      where: {
-        id: {
-          in: searchResult.creators,
+  try {
+    const user = await prisma.user.findUnique({ where: { chatId } });
+
+    if (user?.userType === USER_TYPE_BRAND) {
+      const creators = await prisma.user.findMany({
+        where: {
+          userType: USER_TYPE_CREATOR, // Uncommented the userType filter
         },
-      },
-      include: {
-        packages: true,
-      },
-    });
-    relatedCreators.forEach((creator) => {
-      bot.sendMessage(
-        chatId,
-        `*${creator.name}\n*${
-          creator.bio ? `${creator.bio}\n` : ''
-        }*Packages*\n${creator.packages
-          .map((pack) => {
-            return `Name: ${pack.name}\nDescription: ${pack.description}\nPrice: ${pack.price}\n`;
+        select: {
+          id: true,
+          tags: true,
+        },
+      });
+
+      console.log('Creators', creators);
+
+      if (creators.length === 0) {
+        bot.sendMessage(chatId, "No creators found. Let's try that again!");
+        return;
+      }
+
+      const searchResultString = await sendRequestToGPT4(
+        `Here is the list of creators:
+        ${creators
+          .map((creator) => {
+            return `${creator.id}: ${creator.tags.join(', ')}`;
           })
           .join('\n')}
-        `,
+        
+        Find the top 5 creators which match the user requirements: ${
+          message.text
+        }
+
+        Output as array of creator ids (JSON format):
+        ["id1", "id2", ...]`,
+        true,
+        messageHistory.getRecentConversations(chatId),
         {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: 'Contact',
-                  url: `t.me/${
-                    creator.telegramId?.startsWith('@')
-                      ? creator.telegramId.substring(
-                          1,
-                          creator.telegramId.length
-                        )
-                      : `${creator.telegramId}`
-                  }`,
-                },
-              ],
-            ],
-          },
+          jsonResponse: true,
         }
       );
-    });
+
+      messageHistory.addRecentConversation(chatId, {
+        time: Date.now(),
+        query: message.text || '',
+        answer: searchResultString,
+      });
+
+      let searchResult;
+      try {
+        searchResult = JSON.parse(searchResultString);
+      } catch (error) {
+        console.error('Failed to parse GPT-4 response:', error);
+        bot.sendMessage(
+          chatId,
+          'Sorry, there was an error processing your request. Please try again!'
+        );
+        return;
+      }
+
+      if (!Array.isArray(searchResult) || searchResult.length === 0) {
+        bot.sendMessage(
+          chatId,
+          "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
+        );
+        return;
+      }
+
+      const relatedCreators = await prisma.user.findMany({
+        where: {
+          id: {
+            in: searchResult, // Use searchResult directly since it's already an array
+          },
+        },
+        include: {
+          packages: true,
+        },
+      });
+
+      if (relatedCreators.length === 0) {
+        bot.sendMessage(
+          chatId,
+          'No matching creators found. Please try again with different requirements!'
+        );
+        return;
+      }
+
+      relatedCreators.forEach((creator) => {
+        bot.sendMessage(
+          chatId,
+          `*${creator.name}\n*${
+            creator.bio ? `${creator.bio}\n` : ''
+          }*Packages*\n${creator.packages
+            .map((pack) => {
+              return `Name: ${pack.name}\nDescription: ${pack.description}\nPrice: ${pack.price}\n`;
+            })
+            .join('\n')}`,
+          {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Contact',
+                    url: `t.me/${
+                      creator.telegramId?.startsWith('@')
+                        ? creator.telegramId.substring(
+                            1,
+                            creator.telegramId.length
+                          )
+                        : `${creator.telegramId}`
+                    }`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
+      });
+    }
+  } catch (error) {
+    console.error('Error in handleFindCreators:', error);
+    bot.sendMessage(
+      chatId,
+      'Sorry, there was an error processing your request. Please try again!'
+    );
+  } finally {
+    messageHistory.deleteLoadingMessages(chatId, bot);
   }
-  messageHistory.deleteLoadingMessages(chatId, bot);
 };
