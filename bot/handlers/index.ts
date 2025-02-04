@@ -15,7 +15,7 @@ import {
   handleUpdatePicture,
   viewMyPackages,
 } from './commandHandlers';
-import { ILastMessage } from '../models/ChatMessageHistory';
+import type { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 import { getCommandAndData } from '../utils/getCommand';
 import { USER_TYPE_BRAND } from '../contants';
@@ -102,59 +102,81 @@ const handlers = (bot: typeof TelegramBot) => {
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
-    if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-      console.log(
-        `Message from [${msg.chat.title}]: ${JSON.stringify(msg.text, null, 2)}`
-      );
-      groupHandler(bot, msg);
-    }
-    const user = await prisma.user.findUnique({
-      where: { chatId: msg.chat.id },
-    });
-    if (!user) {
-      return;
-    }
-    let command = messageHistory.getSuperCommand(msg.chat.id);
-    if (!command) {
-      const response = await getCommandAndData(
-        msg.text || '',
-        user.userType === USER_TYPE_BRAND ? buyerCommands : sellerCommands,
-        msg.chat.id
-      );
-      command = response.command;
-    }
-    console.log('Command', command);
-    const lastMessage = messageHistory.getLastMessage(msg.chat.id);
-    const currentCommand = command || lastMessage?.command;
-    if (currentCommand && commandHandlers[currentCommand]) {
-      commandHandlers[currentCommand]({
-        bot,
-        command: currentCommand,
-        message: msg,
-        lastMessage,
+    try {
+      // Check if the message is from a group or supergroup
+      if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
+        console.log(
+          `Message from [${msg.chat.title}]: ${JSON.stringify(msg, null, 2)}`
+        );
+
+        // Handle text messages
+        if (msg.text) {
+          groupHandler(bot, msg);
+        } else if (msg.photo || msg.video || msg.sticker) {
+          console.log('Message contains media. Ignoring for now...');
+        } else {
+          console.log('Message does not contain text or media. Ignoring...');
+        }
+      }
+
+      // Fetch user from the database
+      const user = await prisma.user.findUnique({
+        where: { chatId: msg.from?.id },
       });
-    } else {
-      handleOther({ bot, message: msg, command: '' });
+      if (!user) {
+        console.log('User not found in the database.');
+        return;
+      }
+
+      // Handle commands
+      let command = messageHistory.getSuperCommand(msg.chat.id);
+      console.log('Super Command:', command);
+
+      if (!command) {
+        const response = await getCommandAndData(
+          msg.text || '',
+          user.userType === USER_TYPE_BRAND ? buyerCommands : sellerCommands,
+          msg.chat.id
+        );
+        command = response.command;
+        console.log('Command from getCommandAndData:', command);
+      }
+
+      const lastMessage = messageHistory.getLastMessage(msg.chat.id);
+      const currentCommand = command || lastMessage?.command;
+
+      if (currentCommand && commandHandlers[currentCommand]) {
+        commandHandlers[currentCommand]({
+          bot,
+          command: currentCommand,
+          message: msg,
+          lastMessage,
+        });
+      } else {
+        handleOther({ bot, message: msg, command: '' });
+      }
+    } catch (error) {
+      console.error('Error handling message:', error);
     }
   });
 
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
     const chatId = msg.chat.id;
 
-    let user = await prisma.user.findUnique({ where: { chatId } });
-    console.log(user?.userType);
-    if (user && user.userType) {
-      let message = '';
-      if (user.userType === 'BRAND') {
-        message = 'Hey there, brand owner! Let me know what do you need';
-      } else {
-        message =
-          'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
-      }
-      bot.sendMessage(chatId, message, {});
-    } else {
+    const user = await prisma.user.findUnique({ where: { chatId } });
+    if (!user) {
       handleNewUser({ bot, message: msg, command: '' });
+      return;
     }
+
+    let message = '';
+    if (user.userType === 'BRAND') {
+      message = 'Hey there, brand owner! Let me know what you need';
+    } else {
+      message =
+        'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
+    }
+    bot.sendMessage(chatId, message, {});
   });
 
   bot.on('callback_query', (query: TelegramBotTypes.CallbackQuery) => {

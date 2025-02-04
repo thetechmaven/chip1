@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prisma';
-import { ILastMessage } from '../models/ChatMessageHistory';
+import type { ILastMessage } from '../models/ChatMessageHistory';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
 import { sendProfile } from '../utils/send';
 import { messageHistory, sellerCommands } from '.';
@@ -165,7 +165,7 @@ export const handleCommandUpdatePackage = async ({
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const firstName = message.from?.first_name;
-  const welcomeMessage = `Hello ${firstName}, welcome to the bot! Please choose what type of user you are.`;
+  const welcomeMessage = `Hey ${firstName}, I'm Chip Sterling, the Agent Agent! I manage thousands of creators and help brands craft the perfect campaigns, First tell me are you.....`;
 
   let user = await prisma.user.findUnique({ where: { chatId } });
   if (!user) {
@@ -273,7 +273,7 @@ export const handleReceiveUpdateProfile = async ({
       answer: profileData,
     });
     const data = JSON.parse(profileData);
-    for (let key in data) {
+    for (const key in data) {
       if (data[key] === null) {
         delete data[key];
       }
@@ -320,7 +320,7 @@ export const handleReceiveUpdateProfile = async ({
       answer: profileData,
     });
     const data = JSON.parse(profileData);
-    for (let key in data) {
+    for (const key in data) {
       if (data[key] === null) {
         delete data[key];
       }
