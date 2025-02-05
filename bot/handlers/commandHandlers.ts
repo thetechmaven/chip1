@@ -166,10 +166,9 @@ export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const firstName = message.from?.first_name;
   const welcomeMessage = `*Hey, I’m Chip Sterling, the Agent Agent!* 🤖
-
-  I manage *thousands of creators* and help *brands craft the perfect campaigns.* 
+I manage thousands of creators and help brands craft the perfect campaigns. 
   
-  _First, tell me, are you..._`;
+_First, tell me, are you..._`;
 
   let user = await prisma.user.findUnique({ where: { chatId } });
   if (!user) {
@@ -186,13 +185,13 @@ export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
       inline_keyboard: [
         [
           {
-            text: '👨‍🎨 Creator',
+            text: '👨‍🎨 Creator.',
             callback_data: `${USER_TYPE}:${USER_TYPE_CREATOR}`,
           },
         ],
         [
           {
-            text: '🏢 Brand',
+            text: '🏢 Looking For A Creator.',
             callback_data: `${USER_TYPE}:${USER_TYPE_BRAND}`,
           },
         ],
