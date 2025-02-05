@@ -50,18 +50,22 @@ const handleUserType = async (
       data: { userType },
     });
     const profileEmoji = userType === USER_TYPE_BRAND ? '🏢' : '🎨';
-    const message =
-      `You are now a ${userType.toLowerCase()} ${profileEmoji}. Update your profile to get started!\n` +
-      (userType === USER_TYPE_BRAND
-        ? `Set your company name, location and industry.`
-        : `Set your name, social links, and sol and ethereum addresses.`);
+
+    let message =
+      userType === USER_TYPE_BRAND
+        ? `*Hey there! I’m CHIP, head honcho of the CAAA.* 🤖\n\nI’ve got *thousands of creators* crushing deals for my clients. I can help you build the *perfect campaign.* You got a deal for me?`
+        : `*Hey there! I’m going to be your new manager.* 🤖\n\nLet me handle the business while *you make the magic!* I’ll bring you as many deals as I can, and you can add me to chats with your clients so I can handle:\n\n` +
+          `• *Sales*\n• *Negotiations*\n• *Strategy*\n• *Scheduling*\n• *Payments*\n\n` +
+          `You can also *chat with me anytime* for tips, guidance, or support on your creator journey. I have a *wide breadth of knowledge* I can pull from to help you. But first, let’s get you set up! After you set up your profile, I can give you your *first deal!* 💰\n\n` +
+          `*Please provide your:*\n- Name\n- All Social Links\n- SOL Wallet\n- EVM Wallet\n- Niche\n- Content Style`;
+
     messageHistory.addRecentConversation(chatId, {
       query: `I am a new ${userType}`,
       answer: message,
       time: Date.now(),
     });
     messageHistory.deleteLoadingMessages(chatId, bot);
-    bot.sendMessage(chatId, message, {});
+    bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
   }
 };
 
