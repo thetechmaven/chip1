@@ -59,8 +59,8 @@ model Package {
   name                String
   description         String?
   price               Float
-  creatorId           String    @db.ObjectId
-  creator             User      @relation(fields: [creatorId], references: [id])
+  creatorId           String?    @db.ObjectId
+  creator             User?      @relation(fields: [creatorId], references: [id])
   tags                String[]
   status              String
   createdAt           DateTime  @default(now())

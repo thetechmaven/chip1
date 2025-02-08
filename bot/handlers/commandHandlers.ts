@@ -326,13 +326,22 @@ export const handleReceiveUpdateProfile = async ({
       }
     }
     updateTags(user.id);
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { chatId },
       data: {
         ...data,
       },
+      include: {
+        packages: true,
+      },
     });
     await sendProfile({ bot, chatId });
+    if (updatedUser.packages.length === 0) {
+      await bot.sendMessage(
+        chatId,
+        `Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!`
+      );
+    }
   }
   messageHistory.setLastMessage(chatId, {
     command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
