@@ -13,14 +13,16 @@ import {
   handleSendProfile,
   handleUpdateName,
   handleUpdatePicture,
+  handleXLink,
   viewMyPackages,
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
 import { deleteLastMessage } from '../utils/message';
 import { getCommandAndData } from '../utils/getCommand';
-import { USER_TYPE_BRAND } from '../contants';
+import { USER_TYPE_BRAND, USER_TYPE_CREATOR } from '../contants';
 import { groupHandler } from './groupHandlers';
 import { buyerCommands, sellerCommands } from '../prompts/commandPrompts';
+import { isXLink } from '../utils/isXLink';
 
 export const messageHistory = new MessageHistory();
 
@@ -57,6 +59,14 @@ const handlers = (bot: typeof TelegramBot) => {
       where: { chatId: msg.chat.id },
     });
     if (!user) {
+      return;
+    }
+    if (isXLink(msg.text || '') && user.userType === USER_TYPE_CREATOR) {
+      handleXLink({
+        bot,
+        message: msg,
+        command: '',
+      });
       return;
     }
     let command = messageHistory.getSuperCommand(msg.chat.id);

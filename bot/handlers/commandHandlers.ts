@@ -572,3 +572,10 @@ export const handleFindCreators = async ({
   }
   messageHistory.deleteLoadingMessages(chatId, bot);
 };
+
+export const handleXLink = async ({ bot, message }: ICommandHandlerArgs) => {
+  bot.sendMessage(
+    message.chat.id,
+    'Boom!! Hop in our Discord to get instant access to your new deals.\n\nhttps://discord.gg/uKrdskvm.\n\nSoon I’ll be able to bring you deals directly to your DMs!! \n\nIn the meantime, setup your content packages if you want deals brought directly to your DMs. \n\nUse the /packages command to get started! Then you can start adding me to chats with your clients!'
+  );
+};
