@@ -46,6 +46,9 @@ const handlers = (bot: typeof TelegramBot) => {
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
+    if (msg.text?.indexOf('/') === 0) {
+      return;
+    }
     if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
       console.log(`Message from [${msg.chat.title}]: ${msg.text}`);
       groupHandler(bot, msg);
