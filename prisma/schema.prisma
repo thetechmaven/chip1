@@ -32,6 +32,8 @@ model User {
   bio                 String?   @default("")
   telegramId          String?   @default("")
   twitterId           String?   @default("")
+  tiktokId            String?   @default("")
+  twitchId            String?   @default("")
   facebookId          String?   @default("")
   youtubeId           String?   @default("")
   discordId           String?   @default("")

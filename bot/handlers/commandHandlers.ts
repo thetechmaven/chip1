@@ -17,6 +17,7 @@ import { buyerFaqs, sellerFaqs } from '../contants/faqs';
 import { updateTags } from '../utils/profile';
 import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
+import { EDIT_PROFILE_FIELD } from '../../constants';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -577,5 +578,78 @@ export const handleXLink = async ({ bot, message }: ICommandHandlerArgs) => {
   bot.sendMessage(
     message.chat.id,
     'Boom!! Hop in our Discord to get instant access to your new deals.\n\nhttps://discord.gg/uKrdskvm.\n\nSoon I’ll be able to bring you deals directly to your DMs!! \n\nIn the meantime, setup your content packages if you want deals brought directly to your DMs. \n\nUse the /packages command to get started! Then you can start adding me to chats with your clients!'
+  );
+};
+
+export const handleProfileCommand = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  bot.sendMessage(
+    message.chat.id,
+    'Hey there, brand owner! Let me know what do you need',
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: '*Bio',
+              callback_data: `${EDIT_PROFILE_FIELD}:bio`,
+            },
+            {
+              text: '*X Account',
+              callback_data: `${EDIT_PROFILE_FIELD}:twitterId`,
+            },
+            {
+              text: 'Youtube',
+              callback_data: `${EDIT_PROFILE_FIELD}:youtubeId`,
+            },
+          ],
+          [
+            {
+              text: 'Tiktok',
+              callback_data: `${EDIT_PROFILE_FIELD}:tiktokId`,
+            },
+            {
+              text: 'Discord',
+              callback_data: `${EDIT_PROFILE_FIELD}:discordId`,
+            },
+            {
+              text: 'Twitch',
+              callback_data: `${EDIT_PROFILE_FIELD}:twitchId`,
+            },
+          ],
+          [
+            {
+              text: '*EVM Wallet',
+              callback_data: `${EDIT_PROFILE_FIELD}:evmWallet`,
+            },
+            {
+              text: '*Sol Wallet',
+              callback_data: `${EDIT_PROFILE_FIELD}:solWallet`,
+            },
+            {
+              text: 'Location',
+              callback_data: `${EDIT_PROFILE_FIELD}:location`,
+            },
+          ],
+          [
+            {
+              text: '*Content Style',
+              callback_data: `${EDIT_PROFILE_FIELD}:contentStyle`,
+            },
+            {
+              text: '*Niche',
+              callback_data: `${EDIT_PROFILE_FIELD}:niche`,
+            },
+            {
+              text: 'Hours',
+              callback_data: `${EDIT_PROFILE_FIELD}:schedule`,
+            },
+          ],
+        ],
+      },
+    }
   );
 };

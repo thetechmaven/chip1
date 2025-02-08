@@ -9,6 +9,7 @@ import {
   handleFindCreators,
   handleNewUser,
   handleOther,
+  handleProfileCommand,
   handleReceiveUpdateProfile,
   handleSendProfile,
   handleUpdateName,
@@ -91,6 +92,10 @@ const handlers = (bot: typeof TelegramBot) => {
     } else {
       handleOther({ bot, message: msg, command: '' });
     }
+  });
+
+  bot.onText(/\/profile/, async (msg: TelegramBotTypes.Message) => {
+    handleProfileCommand({ bot, message: msg, command: '' });
   });
 
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
