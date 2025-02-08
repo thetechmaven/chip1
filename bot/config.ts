@@ -27,4 +27,5 @@ Please provide:
 - **EVM Wallet**  
 - **Niche**  
 - **Content Style**  `,
+  brandStartMessage: `Hey there! I’m CHIP, head honcho of the CAAA. I’ve got thousands of creators crushing deals for my clients. I can help you build the perfect campaign. You got a deal for me?`,
 };

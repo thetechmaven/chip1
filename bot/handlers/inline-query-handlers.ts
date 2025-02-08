@@ -8,6 +8,7 @@ import {
 } from '../contants';
 import { sendProfile } from '../utils/send';
 import bot from '..';
+import { config } from '../config';
 const TelegramBot = require('node-telegram-bot-api');
 
 export async function sendLoadingMessage(chatId: number) {
@@ -49,19 +50,22 @@ const handleUserType = async (
       where: { chatId },
       data: { userType },
     });
-    const profileEmoji = userType === USER_TYPE_BRAND ? '🏢' : '🎨';
     const message =
-      `You are now a ${userType.toLowerCase()} ${profileEmoji}. Update your profile to get started!\n` +
-      (userType === USER_TYPE_BRAND
-        ? `Set your company name, location and industry.`
-        : `Set your name, social links, and sol and ethereum addresses.`);
+      userType === USER_TYPE_BRAND
+        ? config.brandStartMessage
+        : config.creatorStartMessage;
     messageHistory.addRecentConversation(chatId, {
       query: `I am a new ${userType}`,
       answer: message,
       time: Date.now(),
     });
+    messageHistory.setLastMessage(chatId, {
+      command: 'NEW_PROFILE_UPDATE',
+    });
     messageHistory.deleteLoadingMessages(chatId, bot);
-    bot.sendMessage(chatId, message, {});
+    bot.sendMessage(chatId, message, {
+      parse_mode: 'Markdown',
+    });
   }
 };
 
