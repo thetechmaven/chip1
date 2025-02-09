@@ -155,7 +155,11 @@ const handleCreatePackage = async (
 ) => {
   bot.sendMessage(
     query.message?.chat.id as number,
-    'Todo: For next milestones'
+    'Hey Creator! Let’s create a package for your services. Please send the package details including name, price, description and negotitation limit.'
+  );
+  messageHistory.setSuperCommand(
+    query.message?.chat.id as number,
+    'ADD_PACKAGE'
   );
 };
 
@@ -359,6 +363,7 @@ const inlineQueryHandlers = (
     EDIT_PACKAGE: handleUpdatePackage,
     EDIT_PROFILE_FIELD: handleEditProfileField,
     COMPLETE_SETUP: handleCompleteProfileSetup,
+    ADD_PACKAGE: handleCreatePackage,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
