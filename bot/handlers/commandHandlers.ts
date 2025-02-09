@@ -27,6 +27,7 @@ interface ICommandHandlerArgs {
   command: string;
   message: TelegramBotTypes.Message;
   lastMessage?: ILastMessage | undefined;
+  commandData?: string;
 }
 
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
@@ -652,4 +653,28 @@ export const handleProfileCommand = async ({
       },
     }
   );
+};
+
+export const handleEditProfileField = async ({
+  bot,
+  message,
+  command,
+  commandData,
+}: ICommandHandlerArgs) => {
+  try {
+    const chatId = message.chat.id;
+    const user = await prisma.user.findUnique({ where: { chatId } });
+    if (!user) {
+      return;
+    }
+    await prisma.user.update({
+      where: { chatId },
+      data: {
+        [commandData as string]: message.text,
+      },
+    });
+    await sendProfile({ bot, chatId });
+  } catch (err) {
+    console.log(err);
+  }
 };

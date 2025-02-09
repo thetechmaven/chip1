@@ -6,6 +6,7 @@ import MessageHistory from '../models/MessageHistory';
 import {
   handleCommandAddPackage,
   handleCommandUpdatePackage,
+  handleEditProfileField,
   handleFindCreators,
   handleNewUser,
   handleOther,
@@ -33,6 +34,7 @@ const handlers = (bot: typeof TelegramBot) => {
     command: string;
     message: TelegramBotTypes.Message;
     lastMessage: ILastMessage | undefined;
+    commandData?: string;
   };
   type CommandHandler = { [x: string]: (x: CommandHandlerArgs) => void };
   const commandHandlers: CommandHandler = {
@@ -46,6 +48,7 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_VIEW_PROFILE: handleSendProfile,
     COMMAND_OTHER: handleOther,
     COMMAND_FIND_CREATORS: handleFindCreators,
+    COMMAND_HANDLE_EDIT_PROFILE_FIELD: handleEditProfileField,
   };
 
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
@@ -71,6 +74,11 @@ const handlers = (bot: typeof TelegramBot) => {
       return;
     }
     let command = messageHistory.getSuperCommand(msg.chat.id);
+    console.log('Command', command);
+    let commandData = '';
+    if (command) {
+      [command, commandData] = command.split(':');
+    }
     if (!command) {
       const response = await getCommandAndData(
         msg.text || '',
@@ -79,7 +87,7 @@ const handlers = (bot: typeof TelegramBot) => {
       );
       command = response.command;
     }
-    console.log('Command', command);
+    console.log('Command', command, commandData);
     const lastMessage = messageHistory.getLastMessage(msg.chat.id);
     const currentCommand = command || lastMessage?.command;
     if (currentCommand && commandHandlers[currentCommand]) {
@@ -88,6 +96,7 @@ const handlers = (bot: typeof TelegramBot) => {
         command: currentCommand,
         message: msg,
         lastMessage,
+        commandData,
       });
     } else {
       handleOther({ bot, message: msg, command: '' });

@@ -9,6 +9,10 @@ import {
 import { sendProfile } from '../utils/send';
 import bot from '..';
 import { config } from '../config';
+import {
+  COMMAND_HANDLE_EDIT_PROFILE_FIELD,
+  EDIT_PROFILE_FIELD,
+} from '../../constants';
 const TelegramBot = require('node-telegram-bot-api');
 
 export async function sendLoadingMessage(chatId: number) {
@@ -213,6 +217,88 @@ const handleUpdatePackage = async (
   });
 };
 
+const handleEditProfileField = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  const [, field] = data;
+  console.log('Field', field);
+  const chatId = query.message?.chat.id as number;
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (!user) {
+    return;
+  }
+  let message = '';
+  if (user.userType === USER_TYPE_BRAND) {
+    switch (field) {
+      case 'name':
+        message = 'Please send your brand name';
+        break;
+      case 'location':
+        message = 'Please send your location';
+        break;
+      case 'industry':
+        message = 'Please send your industry';
+        break;
+      default:
+        message = 'Please send your brand name';
+    }
+  } else if (user.userType === USER_TYPE_CREATOR) {
+    switch (field) {
+      case 'bio':
+        message = 'Please send your bio';
+        break;
+      case 'twitterId':
+        message = 'Please send your X/Twitter Profile link';
+        break;
+      case 'youtubeId':
+        message = 'Please send your Youtube Profile link';
+        break;
+      case 'tiktokId':
+        message = 'Please send your Tiktok Profile link';
+        break;
+      case 'discordId':
+        message = 'Please send your Discord Profile link';
+        break;
+      case 'twitchId':
+        message = 'Please send your Twitch Profile link';
+        break;
+      case 'solWallet':
+        message = 'Please send your SOL wallet address';
+        break;
+      case 'evmWallet':
+        message = 'Please send your EVM wallet address';
+        break;
+      case 'location':
+        message = 'Please send your location';
+        break;
+      case 'location':
+        message = 'Please send your location';
+        break;
+      case 'contentStyle':
+        message = 'Please send your content style';
+        break;
+      case 'niche':
+        message = 'Please send your niche';
+        break;
+      case 'schedule':
+        message = 'Please send your schedule';
+        break;
+      default:
+        message = 'Please send your name';
+    }
+  }
+  messageHistory.setSuperCommand(
+    chatId,
+    `${COMMAND_HANDLE_EDIT_PROFILE_FIELD}:${field}`
+  );
+  bot.sendMessage(chatId, message);
+  messageHistory.setLastMessage(chatId, {
+    command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
+  });
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -233,6 +319,7 @@ const inlineQueryHandlers = (
     VIEW_PACKAGES: handleViewPackages,
     DELETE_PACKAGE: handleDeletePackage,
     EDIT_PACKAGE: handleUpdatePackage,
+    EDIT_PROFILE_FIELD: handleEditProfileField,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
