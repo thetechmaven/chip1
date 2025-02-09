@@ -305,7 +305,10 @@ export const handleCompleteProfileSetup = async (
   query: TelegramBotTypes.CallbackQuery
 ) => {
   const chatId = query.message?.chat.id as number;
-  const user = await prisma.user.findUnique({ where: { chatId } });
+  const user = await prisma.user.findUnique({
+    where: { chatId },
+    include: { packages: true },
+  });
   if (!user) {
     return;
   }
@@ -320,6 +323,11 @@ export const handleCompleteProfileSetup = async (
     bot.sendMessage(
       chatId,
       'Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!'
+    );
+  } else if (user.packages.length === 0) {
+    bot.sendMessage(
+      chatId,
+      'You need to create a package to proceed. Please create a package to proceed. Use /package command to manage packages.'
     );
   } else {
     bot.sendMessage(
