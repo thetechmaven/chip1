@@ -649,6 +649,12 @@ export const handleProfileCommand = async ({
               callback_data: `${EDIT_PROFILE_FIELD}:schedule`,
             },
           ],
+          [
+            {
+              text: 'Complete Setup ✅',
+              callback_data: 'COMPLETE_SETUP',
+            },
+          ],
         ],
       },
     }

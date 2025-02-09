@@ -299,6 +299,36 @@ const handleEditProfileField = async (
   });
 };
 
+export const handleCompleteProfileSetup = async (
+  bot: typeof TelegramBot,
+  data: string[],
+  query: TelegramBotTypes.CallbackQuery
+) => {
+  const chatId = query.message?.chat.id as number;
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (!user) {
+    return;
+  }
+  if (
+    user.bio &&
+    user.twitterId &&
+    user.solWallet &&
+    user.evmWallet &&
+    user.contentStyle &&
+    user.niche
+  ) {
+    bot.sendMessage(
+      chatId,
+      'Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!'
+    );
+  } else {
+    bot.sendMessage(
+      chatId,
+      'Your profile is incomplete. Please complete your profile to proceed. The fields with * symbol are mandatory.'
+    );
+  }
+};
+
 const inlineQueryHandlers = (
   bot: typeof TelegramBot,
   query: TelegramBotTypes.CallbackQuery
@@ -320,6 +350,7 @@ const inlineQueryHandlers = (
     DELETE_PACKAGE: handleDeletePackage,
     EDIT_PACKAGE: handleUpdatePackage,
     EDIT_PROFILE_FIELD: handleEditProfileField,
+    COMPLETE_SETUP: handleCompleteProfileSetup,
   };
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
