@@ -684,3 +684,30 @@ export const handleEditProfileField = async ({
     console.log(err);
   }
 };
+
+export const handlePackageCommand = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  bot.sendMessage(
+    message.chat.id,
+    'Hey there, content creator! Let me know what do you need',
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Add Package',
+              callback_data: 'ADD_PACKAGE',
+            },
+            {
+              text: 'View My Packages',
+              callback_data: 'VIEW_MY_PACKAGES',
+            },
+          ],
+        ],
+      },
+    }
+  );
+};

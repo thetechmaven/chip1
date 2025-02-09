@@ -10,6 +10,7 @@ import {
   handleFindCreators,
   handleNewUser,
   handleOther,
+  handlePackageCommand,
   handleProfileCommand,
   handleReceiveUpdateProfile,
   handleSendProfile,
@@ -105,6 +106,9 @@ const handlers = (bot: typeof TelegramBot) => {
 
   bot.onText(/\/profile/, async (msg: TelegramBotTypes.Message) => {
     handleProfileCommand({ bot, message: msg, command: '' });
+  });
+  bot.onText(/\/package/, async (msg: TelegramBotTypes.Message) => {
+    handlePackageCommand({ bot, message: msg, command: '' });
   });
 
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
