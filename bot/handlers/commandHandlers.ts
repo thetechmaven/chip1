@@ -722,6 +722,13 @@ export const handlePackageCommand = async ({
     where: { chatId: message.chat.id },
     include: { packages: true },
   });
+  if (user?.userType === USER_TYPE_BRAND) {
+    bot.sendMessage(
+      message.chat.id,
+      'Hey there, brand owner! This command is for creators only'
+    );
+    return;
+  }
   if (user?.packages.length === 0) {
     bot.sendMessage(
       message.chat.id,
