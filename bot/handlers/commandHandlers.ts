@@ -304,6 +304,7 @@ export const handleReceiveUpdateProfile = async ({
       `
       Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
       {
+        "phone": "Phone number of the creator. E.g. +1 234 567 8901",
         "name": "name/brandName in this text",
         "bio": "bio of creator",
         "telegramId": "telegram account of creator",
