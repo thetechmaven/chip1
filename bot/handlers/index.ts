@@ -75,7 +75,6 @@ const handlers = (bot: typeof TelegramBot) => {
       return;
     }
     let command = messageHistory.getSuperCommand(msg.chat.id);
-    console.log('Command', command);
     let commandData = '';
     if (command) {
       [command, commandData] = command.split(':');

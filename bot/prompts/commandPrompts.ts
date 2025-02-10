@@ -8,20 +8,22 @@ export const sellerCommands = {
     commandPrompt: 'The user is a creator and wants to add a package.',
     data: {
       name: {
-        details: 'Name of the package',
+        details: 'Name of the package, empty string if missing',
         required: true,
       },
       description: {
         details:
-          'Description of the package, nicely formatted. Empty string if missing',
+          'Description of the package, nicely formatted. Empty string if missing, empty string is missing',
         required: false,
       },
       price: {
-        details: 'Price of the package. It should be a float number',
+        details:
+          'Price of the package. It should be a float number. 0 if missing',
         required: true,
       },
       negotitationLimit: {
-        details: 'Negotiation limit. 0 if missing',
+        details:
+          'Negotiation limit. 0 if missing. negotitation Limit or max discount is also this same field. Some number with percentage can be a negotitation limit too. There can be typos too.',
         required: false,
       },
     },

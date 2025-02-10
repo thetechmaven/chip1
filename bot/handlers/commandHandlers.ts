@@ -79,18 +79,18 @@ export const handleCommandAddPackage = async ({
       location: user.brandLocation || 'MISSING',
       industry: user.brandIndustry || 'MISSING',
     };
-    const prompt = `${
-      commandData.commandPrompt
-    }\n If required fields return an error message. List of fields:${JSON.stringify(
-      commandData.data
-    )}  \nOUTPUT AS JSON IN THIS Format: ${getResponseFormat({
-      ...commandData.data,
-      error: { details: 'Set it to true if required fields are missing' },
-      message: {
-        details:
-          'Ask user to send message again if any required field is missing in data. If optional fields are missing, motivate user to send optional fields',
-      },
-    })}\n Text: ${message.text}`;
+    const prompt = `${commandData.commandPrompt}\n If required fields, use fefault values.
+    
+    OUTPUT AS JSON IN THIS Format: 
+    
+    {
+      "name": "Name of the package, empty string if missing",
+      "description": "Description of the package, nicely formatted. Empty string if missing, empty string is missing",
+      "price": "Price of the package. It should be a float number. 0 if missing",
+      "negotitationLimit": "Negotiation limit. 0 if missing. negotitation Limit or max discount is also this same field. Some number with percentage can be a negotitation limit too. There can be typos too."
+    }
+    
+    \n Text: ${message.text}`;
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
@@ -100,19 +100,22 @@ export const handleCommandAddPackage = async ({
       }
     );
     const response = JSON.parse(responseText);
+    console.log(response);
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
       query: message.text || '',
       answer: responseText,
     });
-    if (!response.error) {
+    if (response.name && response.price) {
       const newPackge = await prisma.package.create({
         data: {
           status: 'ACTIVE',
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotitationLimit: response.negotitationLimit || null,
+          negotitationLimit: response.negotitationLimit
+            ? parseFloat(response.negotitationLimit)
+            : null,
           creator: {
             connect: {
               chatId,
@@ -120,11 +123,17 @@ export const handleCommandAddPackage = async ({
           },
         },
       });
-      bot.sendMessage(chatId, response.message);
+      bot.sendMessage(
+        chatId,
+        `Nice! You officially have your first package. I’d suggest adding a couple more with varying prices/services so your clients can have OPTIONS! Drop more info to add another!`
+      );
       sendPackage(bot, chatId, newPackge.id);
       updateTags(user.id);
     } else {
-      bot.sendMessage(chatId, response.message);
+      bot.sendMessage(
+        chatId,
+        `I wasn’t able to pick up the following info to create the package:\n\n* Name\n* Price\n\nCan you please send it again!`
+      );
     }
     messageHistory.deleteLoadingMessages(chatId, bot);
   }
@@ -689,6 +698,20 @@ export const handlePackageCommand = async ({
   bot,
   message,
 }: ICommandHandlerArgs) => {
+  const user = await prisma.user.findUnique({
+    where: { chatId: message.chat.id },
+    include: { packages: true },
+  });
+  if (user?.packages.length === 0) {
+    bot.sendMessage(
+      message.chat.id,
+      `Time to get you paid! 
+
+Your content packages are what I will use to consider you for hire, and to share with your clients.   For your first package, please provide the required fields: title, price. You can also include description and negotiation limit for a more detailed package!`
+    );
+    messageHistory.setSuperCommand(message.chat.id, 'COMMAND_ADD_PACKAGE');
+    return;
+  }
   bot.sendMessage(
     message.chat.id,
     'Hey there, content creator! Let me know what do you need',

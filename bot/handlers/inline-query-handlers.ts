@@ -159,7 +159,7 @@ const handleCreatePackage = async (
   );
   messageHistory.setSuperCommand(
     query.message?.chat.id as number,
-    'ADD_PACKAGE'
+    'COMMAND_ADD_PACKAGE'
   );
 };
 
