@@ -596,6 +596,25 @@ export const handleProfileCommand = async ({
   bot,
   message,
 }: ICommandHandlerArgs) => {
+  const user = await prisma.user.findUnique({
+    where: { chatId: message.chat.id },
+  });
+
+  if (user?.userType === USER_TYPE_BRAND) {
+    bot.sendMessage(
+      message.chat.id,
+      'Hey there, brand owner! Let us know your brand name, location, and industry',
+      {
+        parse_mode: 'Markdown',
+      }
+    );
+    messageHistory.setSuperCommand(
+      message.chat.id,
+      'COMMAND_RECEIVE_UPDATE_PROFILE'
+    );
+    return;
+  }
+
   bot.sendMessage(
     message.chat.id,
     'Hey there, brand owner! Let me know what do you need',
