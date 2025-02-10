@@ -168,7 +168,46 @@ const handleViewPackages = async (
   data: string[],
   query: TelegramBotTypes.CallbackQuery
 ) => {
-  bot.sendMessage(query.message?.chat.id as number, 'For next milestones');
+  const chatId = query.message?.chat.id as number;
+  await sendLoadingMessage(chatId);
+  const user = await prisma.user.findUnique({ where: { chatId } });
+  if (user?.userType === USER_TYPE_CREATOR) {
+    const packages = await prisma.package.findMany({
+      where: {
+        creatorId: user.id,
+      },
+    });
+    if (packages.length === 0) {
+      bot.sendMessage(chatId, 'You have no packages yet');
+    } else {
+      packages.forEach((pack) => {
+        bot.sendMessage(
+          chatId,
+          `*${pack.name}*\n${pack.description || ''}\nPrice: ${
+            pack.price
+          } \nNegotiation Limit: ${pack.negotitationLimit || 'Not set'}`,
+          {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Edit',
+                    callback_data: `EDIT_PACKAGE:${pack.id}`,
+                  },
+                  {
+                    text: 'Delete',
+                    callback_data: `DELETE_PACKAGE:${pack.id}`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
+      });
+    }
+  }
+  messageHistory.deleteLoadingMessages(chatId, bot);
 };
 
 const handleDeletePackage = async (
@@ -359,6 +398,7 @@ const inlineQueryHandlers = (
     FIND_CREATORS: handleFindCreators,
     CREATE_PACKAGE: handleCreatePackage,
     VIEW_PACKAGES: handleViewPackages,
+    VIEW_MY_PACKAGES: handleViewPackages,
     DELETE_PACKAGE: handleDeletePackage,
     EDIT_PACKAGE: handleUpdatePackage,
     EDIT_PROFILE_FIELD: handleEditProfileField,
