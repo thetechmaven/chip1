@@ -52,6 +52,16 @@ const handlers = (bot: typeof TelegramBot) => {
     COMMAND_HANDLE_EDIT_PROFILE_FIELD: handleEditProfileField,
   };
 
+  const commands = [
+    { command: 'profile', description: 'Update your profile' },
+    { command: 'package', description: 'Manage Packages' },
+  ];
+
+  bot
+    .setMyCommands(commands)
+    .then(() => console.log('Bot commands set successfully'))
+    .catch((err: any) => console.error('Error setting bot commands:', err));
+
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
     if (msg.text?.indexOf('/') === 0) {
       return;
