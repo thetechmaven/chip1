@@ -18,6 +18,7 @@ import { updateTags } from '../utils/profile';
 import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
 import { EDIT_PROFILE_FIELD } from '../../constants';
+import { generateImage } from '../utils/imageGeneration';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -351,6 +352,7 @@ export const handleReceiveUpdateProfile = async ({
     });
     await sendProfile({ bot, chatId });
     if (updatedUser.packages.length === 0) {
+      generateImage(bot, message);
       await bot.sendMessage(
         chatId,
         `Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!`
