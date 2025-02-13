@@ -124,7 +124,7 @@ async function processImage(
     } while (fontSizeSub > 10);
     const subTextHeight = ctx.measureText(text2).height;
     ctx2.font = `${fontSizeSub}px IGORE-BoldItalic`;
-    ctx2.fillStyle = '#dd2173';
+    ctx2.fillStyle = '#000000';
     ctx2.textBaseline = 'top';
     ctx2.fillText(text2, 0, (textHeight - fontSizeSub) / 2);
 
