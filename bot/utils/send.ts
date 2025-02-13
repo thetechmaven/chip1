@@ -97,7 +97,7 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
     const missingFields = getMissingFields(user);
     if (missingFields.length > 0) {
       message += '\n\n⚠️ Required fields are missing.';
-      message += '\n Please update: ';
+      message += '\nPlease update: ';
       message += missingFields.map((f) => camelToNormalCase(f)).join(', ');
       message += '\nComplete your profile to get matched with brands.';
     }

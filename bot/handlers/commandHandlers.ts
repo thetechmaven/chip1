@@ -601,6 +601,23 @@ export const handleXLink = async ({ bot, message }: ICommandHandlerArgs) => {
   );
 };
 
+export const handleBadgeCommand = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  const user = await prisma.user.findUnique({
+    where: { chatId: message.chat.id },
+  });
+  if (user?.userType === USER_TYPE_CREATOR) {
+    generateImage(bot, message);
+    return;
+  } else {
+    bot.sendMessage(
+      'Hey there, brand owner! This command is only for the creators'
+    );
+  }
+};
+
 export const handleProfileCommand = async ({
   bot,
   message,

@@ -4,6 +4,7 @@ const TelegramBot = require('node-telegram-bot-api');
 import prisma from '../../prisma/prisma';
 import MessageHistory from '../models/MessageHistory';
 import {
+  handleBadgeCommand,
   handleCommandAddPackage,
   handleCommandUpdatePackage,
   handleEditProfileField,
@@ -54,6 +55,7 @@ const handlers = (bot: typeof TelegramBot) => {
 
   const commands = [
     { command: 'profile', description: 'Update your profile' },
+    { command: 'badge', description: 'Get your badge' },
     { command: 'package', description: 'Manage Packages' },
   ];
 
@@ -117,6 +119,9 @@ const handlers = (bot: typeof TelegramBot) => {
 
   bot.onText(/\/profile/, async (msg: TelegramBotTypes.Message) => {
     handleProfileCommand({ bot, message: msg, command: '' });
+  });
+  bot.onText(/\/badge/, async (msg: TelegramBotTypes.Message) => {
+    handleBadgeCommand({ bot, message: msg, command: '' });
   });
   bot.onText(/\/package/, async (msg: TelegramBotTypes.Message) => {
     handlePackageCommand({ bot, message: msg, command: '' });
