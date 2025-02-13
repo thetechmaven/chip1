@@ -643,79 +643,75 @@ export const handleProfileCommand = async ({
     return;
   }
 
-  bot.sendMessage(
-    message.chat.id,
-    'Hey there, brand owner! Let me know what do you need',
-    {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: '*Bio',
-              callback_data: `${EDIT_PROFILE_FIELD}:bio`,
-            },
-            {
-              text: '*X Account',
-              callback_data: `${EDIT_PROFILE_FIELD}:twitterId`,
-            },
-            {
-              text: 'Youtube',
-              callback_data: `${EDIT_PROFILE_FIELD}:youtubeId`,
-            },
-          ],
-          [
-            {
-              text: 'Tiktok',
-              callback_data: `${EDIT_PROFILE_FIELD}:tiktokId`,
-            },
-            {
-              text: 'Discord',
-              callback_data: `${EDIT_PROFILE_FIELD}:discordId`,
-            },
-            {
-              text: 'Twitch',
-              callback_data: `${EDIT_PROFILE_FIELD}:twitchId`,
-            },
-          ],
-          [
-            {
-              text: '*EVM Wallet',
-              callback_data: `${EDIT_PROFILE_FIELD}:evmWallet`,
-            },
-            {
-              text: '*Sol Wallet',
-              callback_data: `${EDIT_PROFILE_FIELD}:solWallet`,
-            },
-            {
-              text: 'Location',
-              callback_data: `${EDIT_PROFILE_FIELD}:location`,
-            },
-          ],
-          [
-            {
-              text: '*Content Style',
-              callback_data: `${EDIT_PROFILE_FIELD}:contentStyle`,
-            },
-            {
-              text: '*Niche',
-              callback_data: `${EDIT_PROFILE_FIELD}:niche`,
-            },
-            {
-              text: 'Hours',
-              callback_data: `${EDIT_PROFILE_FIELD}:schedule`,
-            },
-          ],
-          [
-            {
-              text: 'Complete Setup ✅',
-              callback_data: 'COMPLETE_SETUP',
-            },
-          ],
-        ],
-      },
-    }
-  );
+  sendProfile({
+    bot,
+    chatId: message.chat.id,
+    note: '✏️ To edit any field, click on the field name below',
+    inline_keyboard: [
+      [
+        {
+          text: '*Bio',
+          callback_data: `${EDIT_PROFILE_FIELD}:bio`,
+        },
+        {
+          text: '*X Account',
+          callback_data: `${EDIT_PROFILE_FIELD}:twitterId`,
+        },
+        {
+          text: 'Youtube',
+          callback_data: `${EDIT_PROFILE_FIELD}:youtubeId`,
+        },
+      ],
+      [
+        {
+          text: 'Tiktok',
+          callback_data: `${EDIT_PROFILE_FIELD}:tiktokId`,
+        },
+        {
+          text: 'Discord',
+          callback_data: `${EDIT_PROFILE_FIELD}:discordId`,
+        },
+        {
+          text: 'Twitch',
+          callback_data: `${EDIT_PROFILE_FIELD}:twitchId`,
+        },
+      ],
+      [
+        {
+          text: '*EVM Wallet',
+          callback_data: `${EDIT_PROFILE_FIELD}:evmWallet`,
+        },
+        {
+          text: '*Sol Wallet',
+          callback_data: `${EDIT_PROFILE_FIELD}:solWallet`,
+        },
+        {
+          text: 'Location',
+          callback_data: `${EDIT_PROFILE_FIELD}:location`,
+        },
+      ],
+      [
+        {
+          text: '*Content Style',
+          callback_data: `${EDIT_PROFILE_FIELD}:contentStyle`,
+        },
+        {
+          text: '*Niche',
+          callback_data: `${EDIT_PROFILE_FIELD}:niche`,
+        },
+        {
+          text: 'Hours',
+          callback_data: `${EDIT_PROFILE_FIELD}:schedule`,
+        },
+      ],
+      [
+        {
+          text: 'Complete Setup ✅',
+          callback_data: 'COMPLETE_SETUP',
+        },
+      ],
+    ],
+  });
 };
 
 export const handleEditProfileField = async ({

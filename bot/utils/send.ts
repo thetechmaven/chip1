@@ -10,6 +10,8 @@ interface ISendProfile {
   bot: typeof TelegramBot;
   chatId: number;
   specificField?: string;
+  inline_keyboard?: any;
+  note?: string;
 }
 
 function replaceAll(inputString: string, search: string, replacement: string) {
@@ -21,6 +23,8 @@ export const sendProfile = async ({
   bot,
   chatId,
   specificField,
+  inline_keyboard,
+  note,
 }: ISendProfile) => {
   const user = await prisma.user?.findUnique({ where: { chatId } });
 
@@ -102,6 +106,10 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
       message += '\nComplete your profile to get matched with brands.';
     }
 
+    if (note) {
+      message += `\n\n${note}`;
+    }
+
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
       query: 'Show me my profile',
@@ -110,7 +118,7 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
     await bot.sendMessage(chatId, message, {
       parse_mode: 'Markdown',
       reply_markup: {
-        inline_keyboard: [],
+        inline_keyboard: inline_keyboard || [],
       },
     });
   }
