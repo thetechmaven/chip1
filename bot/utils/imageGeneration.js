@@ -161,12 +161,12 @@ async function processImage(profilePicPath, outputImagePath, text, text2) {
     const textHeight = fontSize; // Use exact font size (no extra padding)
 
     // Create a real canvas with correct dimensions for the SVG
-    const canvas = createCanvas(textWidth, textHeight, 'svg');
+    const canvas = createCanvas(420, textHeight, 'svg');
     const ctx = canvas.getContext('2d');
     ctx.font = `${fontSize}px IGORE-BoldItalic`;
     ctx.fillStyle = '#dd2173';
     ctx.textBaseline = 'top';
-    ctx.fillText(text, 0, 0);
+    ctx.fillText(text, (420 - textWidth) / 2, 0);
 
     const canvas2 = createCanvas(420, textHeight + 10, 'svg');
     const ctx2 = canvas2.getContext('2d');
@@ -194,7 +194,7 @@ async function processImage(profilePicPath, outputImagePath, text, text2) {
     await background
       .composite([
         { input: profileImage, top: 255, left: 195 },
-        { input: Buffer.from(svgBuffer), top: 570, left: 224 }, // Text position
+        { input: Buffer.from(svgBuffer), top: 570, left: 116 }, // Text position
         { input: Buffer.from(nicheSVG), top: 634, left: 116 }, // Text position
         // { input: Buffer.from(nicheSVG), top: 654, left: 390 } // Text position
       ]) // Position the profile image
