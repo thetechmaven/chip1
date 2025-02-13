@@ -609,7 +609,9 @@ export const handleBadgeCommand = async ({
     where: { chatId: message.chat.id },
   });
   if (user?.userType === USER_TYPE_CREATOR) {
-    generateImage(bot, message);
+    sendLoadingMessage(message.chat.id, 'Generating ...');
+    await generateImage(bot, message);
+    messageHistory.deleteLoadingMessages(message.chat.id, bot);
     return;
   } else {
     bot.sendMessage(

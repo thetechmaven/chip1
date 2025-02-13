@@ -15,9 +15,22 @@ import {
 } from '../../constants';
 const TelegramBot = require('node-telegram-bot-api');
 
-export async function sendLoadingMessage(chatId: number) {
-  const message = await bot.sendMessage(chatId, '⏳ Loading...');
+export async function sendLoadingMessage(
+  chatId: number,
+  showProcessMessage = '📝 Typing...'
+) {
+  const message = await bot.sendMessage(chatId, '🤔 Thinking...');
   messageHistory.addLoadingMessage(chatId, message.message_id);
+
+  try {
+    setTimeout(() => {
+      bot.editMessageText(showProcessMessage, {
+        chat_id: chatId,
+        message_id: message.message_id,
+      });
+    }, 1000);
+  } catch (err) {}
+
   return message.message_id;
 }
 
