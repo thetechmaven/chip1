@@ -1,5 +1,6 @@
 import prisma from '../../prisma/prisma';
 import { sendRequestToGPT4 } from './openai';
+import type * as Prisma from '@prisma/client';
 
 export const updateTags = async (userId: string) => {
   try {
@@ -39,4 +40,22 @@ Along with other tags, Tags should also include max price of packages and locati
   } catch (e) {
     console.log(e);
   }
+};
+
+export const getMissingFields = (user: Prisma.User) => {
+  const missingFields = [];
+  const requiredFields = [
+    'bio',
+    'twitterId',
+    'evmWallet',
+    'solWallet',
+    'contentStyle',
+    'niche',
+  ];
+  for (const field of requiredFields) {
+    if (!(user as any)[field]) {
+      missingFields.push(field);
+    }
+  }
+  return missingFields;
 };

@@ -2,6 +2,7 @@ import prisma from '../../prisma/prisma';
 import { messageHistory } from '../handlers';
 import camelToNormalCase from './camelcaseToNormal';
 import { sendRequestToGPT4 } from './openai';
+import { getMissingFields } from './profile';
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -80,21 +81,34 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
       }
     }
 
-    const message = await sendRequestToGPT4(
-      `This is data for a creator profile: ${JSON.stringify(
-        data
-      )}. Create a message for the creator that humorously summarizes the profile data using the format:
-      <emoji> field: value
+    let message = '*👨‍🎨 Your Creator Profile*\n';
+    message += `\n🎯 Bio: ${user.bio || 'Not Set'}`;
+    message += `\n🐦 X Account: ${user.twitterId || 'Not Set'}`;
+    message += `\n📺 Youtube: ${user.youtubeId || 'Not Set'}`;
+    message += `\n📱 Tiktok: ${user.tiktokId || 'Not Set'}`;
+    message += `\n🎮 Twitch: ${user.twitchId || 'Not Set'}`;
+    message += `\n💰 EVM Wallet: ${user.evmWallet || 'Not Set'}`;
+    message += `\n💎 Sol Wallet: ${user.solWallet || 'Not Set'}`;
+    message += `\n📍 Location: ${user.location || 'Not Set'}`;
+    message += `\n🎨 Content Style: ${user.contentStyle || 'Not Set'}`;
+    message += `\n🎯 Niche: ${user.niche || 'Not Set'}`;
+    message += `\n⏰ Hours: ${user.schedule || 'Not Set'}`;
 
-      In the end, ask the creator to update their profile with the missing information only if some data is missing
-      `
-    );
+    const missingFields = getMissingFields(user);
+    if (missingFields.length > 0) {
+      message += '\n\n⚠️ Required fields are missing.';
+      message += '\n Please update: ';
+      message += missingFields.map((f) => camelToNormalCase(f)).join(', ');
+      message += '\nComplete your profile to get matched with brands.';
+    }
+
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
       query: 'Show me my profile',
       answer: message,
     });
     await bot.sendMessage(chatId, message, {
+      parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [],
       },
