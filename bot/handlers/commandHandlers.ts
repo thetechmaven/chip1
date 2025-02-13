@@ -219,7 +219,7 @@ export const handleUpdateName = async ({
     where: { chatId: message.chat.id },
     data: { name: message.text },
   });
-  sendProfile({ bot, chatId: message.chat.id });
+  sendProfile({ bot, chatId: message.chat.id, specificField: 'name' });
   resetCommand(message.chat.id);
 };
 
@@ -250,7 +250,6 @@ export const handleUpdatePicture = async ({
       msg.chat.id,
       'Your profile picture has been updated successfully'
     );
-    sendProfile({ bot, chatId: msg.chat.id });
     resetCommand(msg.chat.id);
   } else {
     bot.sendMessage(msg.chat.id, 'Error: No photo received');
@@ -299,7 +298,10 @@ export const handleReceiveUpdateProfile = async ({
         ...data,
       },
     });
-    await sendProfile({ bot, chatId });
+    bot.sendMessage(
+      chatId,
+      'Your profile has been updated! Use /profile to view or edit your profile.'
+    );
   } else if (user?.userType === USER_TYPE_CREATOR) {
     const profileData = await sendRequestToGPT4(
       `
@@ -350,12 +352,17 @@ export const handleReceiveUpdateProfile = async ({
         packages: true,
       },
     });
-    await sendProfile({ bot, chatId });
+
     if (updatedUser.packages.length === 0) {
       generateImage(bot, message);
       await bot.sendMessage(
         chatId,
         `Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!`
+      );
+    } else {
+      bot.sendMessage(
+        chatId,
+        'Your profile has been updated! Use /profile to view or edit your profile.'
       );
     }
   }
@@ -710,7 +717,7 @@ export const handleEditProfileField = async ({
         [commandData as string]: message.text,
       },
     });
-    await sendProfile({ bot, chatId });
+    await sendProfile({ bot, chatId, specificField: commandData });
   } catch (err) {
     console.log(err);
   }

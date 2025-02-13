@@ -1,5 +1,6 @@
 import prisma from '../../prisma/prisma';
 import { messageHistory } from '../handlers';
+import camelToNormalCase from './camelcaseToNormal';
 import { sendRequestToGPT4 } from './openai';
 
 const TelegramBot = require('node-telegram-bot-api');
@@ -7,6 +8,7 @@ const TelegramBot = require('node-telegram-bot-api');
 interface ISendProfile {
   bot: typeof TelegramBot;
   chatId: number;
+  specificField?: string;
 }
 
 function replaceAll(inputString: string, search: string, replacement: string) {
@@ -14,8 +16,21 @@ function replaceAll(inputString: string, search: string, replacement: string) {
   return inputString.replace(regex, replacement);
 }
 
-export const sendProfile = async ({ bot, chatId }: ISendProfile) => {
+export const sendProfile = async ({
+  bot,
+  chatId,
+  specificField,
+}: ISendProfile) => {
   const user = await prisma.user?.findUnique({ where: { chatId } });
+
+  if (specificField && typeof (user as any)[specificField] !== 'undefined') {
+    const message = `Your ${camelToNormalCase(specificField)} is ${
+      (user as any)[specificField]
+    }.`;
+    bot.sendMessage(chatId, message);
+    return;
+  }
+
   if (user?.userType === 'BRAND') {
     const profileData = {
       brandName: user.brandName || 'MISSING',
