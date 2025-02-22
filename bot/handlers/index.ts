@@ -80,7 +80,12 @@ const handlers = (bot: typeof TelegramBot) => {
     if (!user) {
       return;
     }
-    if (isXLink(msg.text || '') && user.userType === USER_TYPE_CREATOR) {
+    const lastMessage = messageHistory.getLastMessage(msg.chat.id);
+    if (
+      isXLink(msg.text || '') &&
+      user.userType === USER_TYPE_CREATOR &&
+      lastMessage?.command === 'COMMAND_RECEIVE_X_LINK'
+    ) {
       handleXLink({
         bot,
         message: msg,
@@ -102,7 +107,6 @@ const handlers = (bot: typeof TelegramBot) => {
       command = response.command;
     }
     console.log('Command', command, commandData);
-    const lastMessage = messageHistory.getLastMessage(msg.chat.id);
     const currentCommand = command || lastMessage?.command;
     if (currentCommand && commandHandlers[currentCommand]) {
       commandHandlers[currentCommand]({

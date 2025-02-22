@@ -359,6 +359,9 @@ export const handleReceiveUpdateProfile = async ({
         chatId,
         `Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!`
       );
+      messageHistory.setLastMessage(chatId, {
+        command: 'COMMAND_RECEIVE_X_LINK',
+      });
     } else {
       bot.sendMessage(
         chatId,
