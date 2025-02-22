@@ -12,54 +12,67 @@ export const generateImage = async (bot: any, msg: any) => {
   const userId = msg.from.id;
 
   try {
-    // Get user profile photos
-    const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-
-    if (!userPhotos.total_count) {
-      return bot.sendMessage(chatId, "You don't have a profile picture!");
+    const user = await prisma.user.findUnique({
+      where: { chatId: msg.chat.id },
+    });
+    if (!user) {
+      return;
     }
-
-    // Get the highest resolution profile picture
-    const photoVariants = userPhotos.photos[0];
-    const fileId = photoVariants[photoVariants.length - 1].file_id;
-
-    // Get file path from Telegram API
-    const file = await bot.getFile(fileId);
-    const fileUrl = `https://api.telegram.org/file/bot${TOKEN}/${file.file_path}`;
-
-    // Define file paths
-    const profilePicPath = `./profile_${userId}.jpg`;
     const finalImagePath = `./final_${userId}.jpg`;
-
-    // Download the image
-    const response = await axios({ url: fileUrl, responseType: 'stream' });
-    const writer = fs.createWriteStream(profilePicPath);
-
-    response.data.pipe(writer);
-    writer.on('finish', async () => {
-      console.log('Profile picture downloaded:', profilePicPath);
-      const user = await prisma.user.findUnique({
-        where: { chatId: msg.chat.id },
-      });
-      if (!user) {
-        return;
-      }
+    const profilePicPath = `./profile_${userId}.jpg`;
+    const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
+    const missingProfilePic = !userPhotos.total_count;
+    if (missingProfilePic) {
       await processImage(
-        profilePicPath,
+        path.join(__dirname, './defaultPhoto.jpg'),
         finalImagePath,
         msg.from.first_name + ' ' + (msg.from.last_name || ''),
         user.niche + '    ' + user.contentStyle
       );
-
       if (fs.existsSync(finalImagePath)) {
         await bot.sendPhoto(chatId, finalImagePath);
 
-        fs.unlinkSync(profilePicPath);
         fs.unlinkSync(finalImagePath);
       } else {
         bot.sendMessage(chatId, 'Something went wrong, image not generated.');
       }
-    });
+    } else {
+      const photoVariants = userPhotos.photos[0] || [];
+      const fileId = photoVariants[photoVariants.length - 1].file_id;
+      const file = await bot.getFile(fileId);
+      const fileUrl = `https://api.telegram.org/file/bot${TOKEN}/${file.file_path}`;
+
+      // Define file paths
+      const profilePicPath = `./profile_${userId}.jpg`;
+      const finalImagePath = `./final_${userId}.jpg`;
+
+      // Download the image
+      const response = await axios({ url: fileUrl, responseType: 'stream' });
+      const writer = fs.createWriteStream(profilePicPath);
+
+      response.data.pipe(writer);
+      writer.on('finish', async () => {
+        console.log('Profile picture downloaded:', profilePicPath);
+        if (!user) {
+          return;
+        }
+        await processImage(
+          missingProfilePic ? './defaultPhoto.jpg' : profilePicPath,
+          finalImagePath,
+          msg.from.first_name + ' ' + (msg.from.last_name || ''),
+          user.niche + '    ' + user.contentStyle
+        );
+
+        if (fs.existsSync(finalImagePath)) {
+          await bot.sendPhoto(chatId, finalImagePath);
+
+          fs.unlinkSync(profilePicPath);
+          fs.unlinkSync(finalImagePath);
+        } else {
+          bot.sendMessage(chatId, 'Something went wrong, image not generated.');
+        }
+      });
+    }
   } catch (error) {
     console.error('Error:', error);
     bot.sendMessage(chatId, 'Failed to generate the image.');
