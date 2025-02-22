@@ -41,6 +41,7 @@ export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
       data: {
         chatId,
         name: firstName,
+        telegramId: message.from?.username,
       },
     });
   }
