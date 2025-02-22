@@ -1,5 +1,5 @@
 export const config = {
-  welcomeImageLink: 'https://ibb.co/jvNtkn9k',
+  welcomeImageLink: 'https://ibb.co/nMJRb3bd',
   welcomeMessage: `**Hey, I’m Chip Sterling, the Agent Agent!  **
 
 I manage thousands of creators and help brands craft the perfect campaigns.  
