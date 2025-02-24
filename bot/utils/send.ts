@@ -27,11 +27,10 @@ export const sendProfile = async ({
   note,
 }: ISendProfile) => {
   const user = await prisma.user?.findUnique({ where: { chatId } });
-
   if (specificField && typeof (user as any)[specificField] !== 'undefined') {
     const message = `Your ${camelToNormalCase(specificField)} is ${
       (user as any)[specificField]
-    }.`;
+    }${specificField === 'negotationField' ? '%' : ''}.`;
     bot.sendMessage(chatId, message);
     return;
   }

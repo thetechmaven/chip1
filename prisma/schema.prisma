@@ -51,6 +51,7 @@ model User {
   isAdmin             Boolean   @default(false)
   isStaff             Boolean   @default(false)
   tags                String[]
+  negotationLimit     Float?
 
   groups              Group[]
   packages            Package[]

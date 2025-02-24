@@ -722,6 +722,16 @@ export const handleProfileCommand = async ({
       ],
       [
         {
+          text: 'Packages',
+          callback_data: 'VIEW_MY_PACKAGES',
+        },
+        {
+          text: 'Negotation',
+          callback_data: `${EDIT_PROFILE_FIELD}:negotationLimit`,
+        },
+      ],
+      [
+        {
           text: 'Complete Setup ✅',
           callback_data: 'COMPLETE_SETUP',
         },
@@ -740,6 +750,16 @@ export const handleEditProfileField = async ({
     const chatId = message.chat.id;
     const user = await prisma.user.findUnique({ where: { chatId } });
     if (!user) {
+      return;
+    }
+    if (commandData === 'negotationLimit') {
+      await prisma.user.update({
+        where: { chatId },
+        data: {
+          negotationLimit: parseFloat(message.text as string),
+        },
+      });
+      await sendProfile({ bot, chatId, specificField: commandData });
       return;
     }
     await prisma.user.update({

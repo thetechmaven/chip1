@@ -341,6 +341,9 @@ const handleEditProfileField = async (
       case 'schedule':
         message = 'Please send your schedule';
         break;
+      case 'negotationLimit':
+        message = 'Please send your negotation limit';
+        break;
       default:
         message = 'Please send your name';
     }
