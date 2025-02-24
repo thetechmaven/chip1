@@ -76,6 +76,11 @@ export const getKnowledgeBase = async (chatId: number) => {
       `${Object.keys(creator)
         .map((key: any) => `${key}: ${(creator as any)[key]}`)
         .join('\n')}\n` +
+      `${
+        creator.negotation
+          ? `Content Creator negotation limit: ${creator.negotation}`
+          : ``
+      }` +
       `Content creator packages: \n` +
       `${packages
         .map(
