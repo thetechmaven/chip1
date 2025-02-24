@@ -517,21 +517,21 @@ export const handleFindCreators = async ({
         tags: true,
       },
     });
-    console.log('Creators', creators);
-    const searchResultString = await sendRequestToGPT4(
-      `Here is the list of creators:
+    const query = `Here is the list of creators:
       ${creators
         .map((creator) => {
           return `${creator.id}: ${creator.tags.join(', ')}`;
         })
         .join('\n')}
       
-      Find the top 5 creators which match the user requirements. Requirements are:
+      Find the top 5 creators which match the user requirements. In case user have not specified any requirement, find the top 5 creators randomly. Requirements are:
       ${JSON.stringify(message.text)}
 
       Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
       ["id1", "id2", ...]
-      `,
+      `;
+    const searchResultString = await sendRequestToGPT4(
+      query,
       true,
       messageHistory.getRecentConversations(chatId),
       {
