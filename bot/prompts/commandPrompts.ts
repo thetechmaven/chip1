@@ -37,7 +37,7 @@ export const sellerCommands = {
   },
   OTHER: {
     condition:
-      'Choose this command if you want to do something else or the user has asked a suggestion or a question. Also choose other if user is asking what data in their profile or packages is missing. Choose other if user is asking how can they improve their packages',
+      'Select this command if the user is asking for a suggestion, or has a question. Also, choose this option if the user is inquiring about missing data in their profile or packages. Additionally, select this option if the user is asking how they can improve their bio or packages.',
   },
 };
 

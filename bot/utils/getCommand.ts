@@ -47,7 +47,7 @@ export const getCommandAndData = async (
 
         Output as json in the following format:
         {
-            command: The choosen command, null if no command matches the result. Take help from the context if required
+            command: The best choosen command, null if no command matches the result. Take help from the context and previous messages.
         }
     `;
   const responseText = await sendRequestToGPT4(
