@@ -7,12 +7,12 @@ import {
   USER_TYPE_CREATOR,
 } from '../contants';
 import { sendProfile } from '../utils/send';
-import bot from '..';
 import { config } from '../config';
 import {
   COMMAND_HANDLE_EDIT_PROFILE_FIELD,
   EDIT_PROFILE_FIELD,
 } from '../../constants';
+import bot from '..';
 const TelegramBot = require('node-telegram-bot-api');
 
 export async function sendLoadingMessage(
