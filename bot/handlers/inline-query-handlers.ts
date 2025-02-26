@@ -7,7 +7,7 @@ import {
   USER_TYPE_CREATOR,
 } from '../contants';
 import { sendProfile } from '../utils/send';
-import bot from '..';
+import bot from '../bot';
 import { config } from '../config';
 import {
   COMMAND_HANDLE_EDIT_PROFILE_FIELD,
