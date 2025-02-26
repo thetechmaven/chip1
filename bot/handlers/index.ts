@@ -64,15 +64,38 @@ const handlers = (bot: typeof TelegramBot) => {
     .then(() => console.log('Bot commands set successfully'))
     .catch((err: any) => console.error('Error setting bot commands:', err));
 
+  bot.on('my_chat_member', (msg: any) => {
+    const newStatus = msg.new_chat_member.status;
+    if (newStatus === 'left') {
+      return;
+    }
+    try {
+      if (newStatus === 'member' || newStatus === 'administrator') {
+        bot.sendMessage(msg.chat.id, 'Thanks for adding me to the group!');
+        groupHandler(bot, msg);
+      }
+    } catch (err) {
+      console.error('Error adding bot to group:', err);
+    }
+  });
+
   bot.on('message', async (msg: TelegramBotTypes.Message) => {
     if (msg.text?.indexOf('/') === 0) {
       return;
     }
     if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-      console.log(
-        `Message from [${msg.chat.title}]: ${JSON.stringify(msg.text, null, 2)}`
-      );
-      groupHandler(bot, msg);
+      try {
+        console.log(
+          `Message from [${msg.chat.title}]: ${JSON.stringify(
+            msg.text,
+            null,
+            2
+          )}`
+        );
+        groupHandler(bot, msg);
+      } catch (err) {
+        console.error('Error handling group message:', err);
+      }
     }
     const user = await prisma.user.findUnique({
       where: { chatId: msg.chat.id },
