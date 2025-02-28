@@ -120,5 +120,6 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
         inline_keyboard: inline_keyboard || [],
       },
     });
+    console.log('Done');
   }
 };

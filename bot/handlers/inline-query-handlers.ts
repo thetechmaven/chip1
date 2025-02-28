@@ -424,7 +424,7 @@ const inlineQueryHandlers = (
   const [command, data] = query.data?.split(':') || [];
   console.log('COMMAND>>', command, data);
   if (command && command in register) {
-    register[command](bot, [command, data], query);
+    return register[command](bot, [command, data], query);
   }
 };
 

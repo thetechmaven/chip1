@@ -21,7 +21,6 @@ import {
   viewMyPackages,
 } from './commandHandlers';
 import { ILastMessage } from '../models/ChatMessageHistory';
-import { deleteLastMessage } from '../utils/message';
 import { getCommandAndData } from '../utils/getCommand';
 import { USER_TYPE_BRAND, USER_TYPE_CREATOR } from '../contants';
 import { groupHandler } from './groupHandlers';

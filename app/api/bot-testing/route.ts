@@ -32,7 +32,7 @@ const bot = (responses: string[]) => {
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type');
-  const chatId = searchParams.get('chatId');
+  const chatId = parseInt(searchParams.get('chatId') as string);
   const first_name = searchParams.get('first_name');
   const last_name = searchParams.get('last_name');
   const message = searchParams.get('message');
@@ -53,12 +53,12 @@ export const GET = async (req: NextRequest) => {
 
   if (type === 'QUERY') {
     const botMessage: any = {
+      data: command,
       message: {
         id: chatId + '-' + Date.now(),
         chat: {
           id: chatId,
         },
-        data: message,
         from: {
           id: chatId,
           first_name,
