@@ -370,9 +370,6 @@ export const handleReceiveUpdateProfile = async ({
       );
     }
   }
-  messageHistory.setLastMessage(chatId, {
-    command: 'COMMAND_RECEIVE_UPDATE_PROFILE',
-  });
   messageHistory.deleteLoadingMessages(chatId, bot);
 };
 
