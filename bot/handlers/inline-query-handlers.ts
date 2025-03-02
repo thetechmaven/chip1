@@ -19,6 +19,9 @@ export async function sendLoadingMessage(
   chatId: number,
   showProcessMessage = '📝 Typing...'
 ) {
+  if (process.env.ENV === 'test') {
+    return;
+  }
   const message = await bot.sendMessage(chatId, '🤔 Thinking...');
   messageHistory.addLoadingMessage(chatId, message.message_id);
 
