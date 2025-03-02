@@ -4,14 +4,38 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse, NextRequest } from 'next/server';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
 
+const markupToString = (option: any) => {
+  const reply_markup = option?.reply_markup;
+  const inlineKeyboard = reply_markup?.inline_keyboard;
+  let keyboard = ':::KEYBOARD:::';
+  if (inlineKeyboard) {
+    keyboard += inlineKeyboard
+      .flat()
+      .map((row: any) => {
+        return `${row.text}\n${row.callback_data}\n`;
+      })
+      .join('\n\n');
+    return keyboard;
+  } else {
+    return '';
+  }
+};
+
 const bot = (responses: string[]) => {
   return {
     sendMessage: (chatId: string, message: string, options: any) => {
-      responses.push(message);
+      responses.push(message + markupToString(options));
       return {};
     },
     sendPhoto: (chatId: string, photo: string, options: any) => {
-      responses.push('Photo sent');
+      responses.push(
+        'Photo sent\n' +
+          photo +
+          '\n\n' +
+          options.caption +
+          '\n' +
+          markupToString(options)
+      );
       return {};
     },
     deleteMessage: (chatId: string, messageId: string) => {
