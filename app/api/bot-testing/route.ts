@@ -1,4 +1,10 @@
-import { handleStartCommand } from '@/bot/handlers/commandHandlers';
+import handlers from '@/bot/handlers';
+import {
+  handleBadgeCommand,
+  handlePackageCommand,
+  handleProfileCommand,
+  handleStartCommand,
+} from '@/bot/handlers/commandHandlers';
 import inlineQueryHandlers from '@/bot/handlers/inline-query-handlers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse, NextRequest } from 'next/server';
@@ -27,6 +33,15 @@ const bot = (responses: string[]) => {
       responses.push(message + markupToString(options));
       return {};
     },
+    setMyCommands: (_: any) => {
+      return new Promise(
+        (resolve: (value: any) => void, reject: (reason?: any) => void) => {
+          resolve({});
+        }
+      );
+    },
+    on: (_: any, __: any) => {},
+    onText: (_: any, __: any) => {},
     sendPhoto: (chatId: string, photo: string, options: any) => {
       responses.push(
         'Photo sent\n' +
@@ -122,8 +137,35 @@ export const GET = async (req: NextRequest) => {
         });
         break;
       }
+      case '/profile': {
+        handleProfileCommand({
+          bot: bot(responses),
+          message: botMessage,
+          command: '',
+        });
+        break;
+      }
+      case '/badge': {
+        handleBadgeCommand({
+          bot: bot(responses),
+          message: botMessage,
+          command: '',
+        });
+        break;
+      }
+      case '/package': {
+        handlePackageCommand({
+          bot: bot(responses),
+          message: botMessage,
+          command: '',
+        });
+        break;
+      }
       default: {
-        bot(responses).sendMessage(chatId.toString(), botMessage, {});
+        console.log('Responses 0', responses);
+        const handle: any = await handlers(bot(responses));
+        console.log('respinses', responses);
+        await handle(botMessage);
       }
     }
     return NextResponse.json({
