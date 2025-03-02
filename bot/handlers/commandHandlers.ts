@@ -31,6 +31,27 @@ interface ICommandHandlerArgs {
   commandData?: string;
 }
 
+export const handleStartCommand = async ({
+  bot,
+  message,
+}: ICommandHandlerArgs) => {
+  const chatId = message.chat.id;
+
+  let user = await prisma.user.findUnique({ where: { chatId } });
+  if (user && user.userType) {
+    let message = '';
+    if (user.userType === 'BRAND') {
+      message = 'Hey there, brand owner! Let me know what do you need';
+    } else {
+      message =
+        'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
+    }
+    bot.sendMessage(chatId, message, {});
+  } else {
+    return handleNewUser({ bot, message, command: '' });
+  }
+};
+
 export const handleNewUser = async ({ bot, message }: ICommandHandlerArgs) => {
   const chatId = message.chat.id;
   const firstName = message.from?.first_name;

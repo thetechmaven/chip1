@@ -9,12 +9,12 @@ import {
   handleCommandUpdatePackage,
   handleEditProfileField,
   handleFindCreators,
-  handleNewUser,
   handleOther,
   handlePackageCommand,
   handleProfileCommand,
   handleReceiveUpdateProfile,
   handleSendProfile,
+  handleStartCommand,
   handleUpdateName,
   handleUpdatePicture,
   handleXLink,
@@ -131,22 +131,7 @@ const handlers = (bot: typeof TelegramBot) => {
   });
 
   bot.onText(/\/start/, async (msg: TelegramBotTypes.Message) => {
-    const chatId = msg.chat.id;
-
-    let user = await prisma.user.findUnique({ where: { chatId } });
-    console.log(user?.userType);
-    if (user && user.userType) {
-      let message = '';
-      if (user.userType === 'BRAND') {
-        message = 'Hey there, brand owner! Let me know what do you need';
-      } else {
-        message =
-          'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
-      }
-      bot.sendMessage(chatId, message, {});
-    } else {
-      handleNewUser({ bot, message: msg, command: '' });
-    }
+    handleStartCommand({ bot, message: msg, command: '' });
   });
 
   bot.on('callback_query', (query: TelegramBotTypes.CallbackQuery) => {

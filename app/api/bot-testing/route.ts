@@ -1,3 +1,4 @@
+import { handleStartCommand } from '@/bot/handlers/commandHandlers';
 import inlineQueryHandlers from '@/bot/handlers/inline-query-handlers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse, NextRequest } from 'next/server';
@@ -36,6 +37,7 @@ export const GET = async (req: NextRequest) => {
   const first_name = searchParams.get('first_name');
   const last_name = searchParams.get('last_name');
   const message = searchParams.get('message');
+  const username = searchParams.get('username');
   const command = searchParams.get('command');
 
   const responses: string[] = [];
@@ -74,6 +76,35 @@ export const GET = async (req: NextRequest) => {
       responses,
     });
   } else {
+    const botMessage: any = {
+      text: message,
+      chat: {
+        id: chatId,
+      },
+      from: {
+        id: chatId,
+        first_name,
+        last_name,
+        username,
+      },
+    };
+    console.log('Message', message);
+    switch (message) {
+      case '/start': {
+        await handleStartCommand({
+          bot: bot(responses),
+          message: botMessage,
+          command: '',
+        });
+        break;
+      }
+      default: {
+        bot(responses).sendMessage(chatId.toString(), botMessage, {});
+      }
+    }
+    return NextResponse.json({
+      responses,
+    });
   }
 
   return NextResponse.json({
