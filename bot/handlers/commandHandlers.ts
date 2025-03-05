@@ -256,15 +256,7 @@ export const handleReceiveUpdateProfile = async ({
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
     const profileData = await sendRequestToGPT4(
-      `
-      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
-      {
-        "brandName": "name/brandName in this text",
-        "brandLocation": "location of brand",
-        "brandIndustry": "industry of brand"
-      }  
-      NB: If something is missing. set it null.
-      Text: "${message.text}"
+      `${prompts.getBrandProfileData} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -296,25 +288,7 @@ export const handleReceiveUpdateProfile = async ({
   } else if (user?.userType === USER_TYPE_CREATOR) {
     const profileData = await sendRequestToGPT4(
       `
-      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
-      {
-        "phone": "Phone number of the creator. E.g. +1 234 567 8901",
-        "name": "name/brandName in this text",
-        "bio": "bio of creator",
-        "telegramId": "telegram account of creator",
-        "twitterId": "x/twitter handle, x.com or twitter.com link",
-        "discordId": "discord id of the creator",
-        "facebookId": "facebook id of the creator",
-        "youtubeId": "youtube profile of the creator",
-        "evmWallet": "EVM Wallet Address of the creator",
-        "solWallet": "Solana wallet address of the creator",
-        "niche": "niche/field/industry of creator",
-        "schedule": "Working schedule of the creator",
-        "location": "Location of the creator",
-        "contentStyle": "Content style of the creator",
-      }  
-      NB: If something is missing. set it null.
-      Text: "${message.text}"
+      ${prompts.getCreatorProfileData} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -504,19 +478,16 @@ export const handleFindCreators = async ({
         tags: true,
       },
     });
-    const query = `Here is the list of creators:
-      ${creators
-        .map((creator) => {
-          return `${creator.id}: ${creator.tags.join(', ')}`;
-        })
-        .join('\n')}
-      
-      Find the top 5 creators which match the user requirements. In case user have not specified any requirement, find the top 5 creators randomly. Requirements are:
-      ${JSON.stringify(message.text)}
-
-      Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
-      ["id1", "id2", ...]
-      `;
+    const creatorsList = creators
+      .map((creator) => {
+        return `${creator.id}: ${creator.tags.join(', ')}`;
+      })
+      .join('\n');
+    const messageText = JSON.stringify(message.text);
+    const query = getText(prompts.findCreators, {
+      messageText,
+      creatorsList,
+    });
     const searchResultString = await sendRequestToGPT4(
       query,
       true,
