@@ -76,7 +76,7 @@ function Users() {
 
   const [{ fetching: deletingUser }, deleteUser] = useMutation(gql`
     mutation DeleteUser($userId: String!) {
-      deleteUser(userId: $userId) {
+      deleteUser(id: $userId) {
         id
       }
     }
