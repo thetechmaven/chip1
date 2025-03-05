@@ -19,6 +19,7 @@ import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
 import { EDIT_PROFILE_FIELD } from '../../constants';
 import { generateImage } from '../utils/imageGeneration';
+import prompts from '../../prompts.json';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -81,18 +82,7 @@ export const handleCommandAddPackage = async ({
       location: user.brandLocation || 'MISSING',
       industry: user.brandIndustry || 'MISSING',
     };
-    const prompt = `${commandData.commandPrompt}\n If required fields, use fefault values.
-    
-    OUTPUT AS JSON IN THIS Format: 
-    
-    {
-      "name": "Name of the package, empty string if missing",
-      "description": "Description of the package, nicely formatted. Empty string if missing, empty string is missing",
-      "price": "Price of the package. It should be a float number. 0 if missing",
-      "negotitationLimit": "Negotiation limit. 0 if missing. negotitation Limit or max discount is also this same field. Some number with percentage can be a negotitation limit too. There can be typos too."
-    }
-    
-    \n Text: ${message.text}`;
+    const prompt = `${commandData.commandPrompt}\n ${prompts.addPackage} ${message.text}`;
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
