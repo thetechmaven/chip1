@@ -13,7 +13,7 @@ export const sendPackage = async (
     where: { id: packageId },
   });
   if (_package) {
-    const message = `Package Name: ${_package.name}\nDescription: ${_package.description}\nPrice: ${_package.price} $\nNegotiation Limit: ${_package.negotitationLimit}`;
+    const message = `Package Name: ${_package.name}\nDescription: ${_package.description}\nPrice: ${_package.price} $\nNegotiation Limit: ${_package.negotiation}`;
     const updatedMessage = await sendRequestToGPT4(`
             Update this message. Add emojis also. Im something is missing motivate user to add it. Format is markdown and highlight important things. Avoid adding a lot of extra text. Name should be on top. Make it friendly and natural.
             Text: ${message}

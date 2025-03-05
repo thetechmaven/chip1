@@ -51,7 +51,7 @@ model User {
   isAdmin             Boolean   @default(false)
   isStaff             Boolean   @default(false)
   tags                String[]
-  negotationLimit     Float?
+  negotiationLimit    Float?
 
   groups              Group[]
   packages            Package[]
@@ -67,7 +67,7 @@ model Package {
   tags                String[]
   status              String
   createdAt           DateTime  @default(now())
-  negotitationLimit   Int?
+  negotiation         Int?
 }
 
 model Group {

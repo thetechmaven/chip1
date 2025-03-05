@@ -105,8 +105,8 @@ export const handleCommandAddPackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotitationLimit: response.negotitationLimit
-            ? parseFloat(response.negotitationLimit)
+          negotiation: response.negotiation
+            ? parseFloat(response.negotiation)
             : null,
           creator: {
             connect: {
@@ -184,7 +184,7 @@ export const handleCommandUpdatePackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotitationLimit: response.negotitationLimit || null,
+          negotiation: response.negotiation || null,
           creator: {
             connect: {
               chatId,
@@ -386,7 +386,7 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
           chatId,
           `*${pack.name}*\n${pack.description || ''}\nPrice: ${
             pack.price
-          } \nNegotiation Limit: ${pack.negotitationLimit || 'Not set'}`,
+          } \nNegotiation Limit: ${pack.negotiation || 'Not set'}`,
           {
             parse_mode: 'Markdown',
             reply_markup: {
@@ -713,8 +713,8 @@ export const handleProfileCommand = async ({
           callback_data: 'VIEW_MY_PACKAGES',
         },
         {
-          text: 'Negotation',
-          callback_data: `${EDIT_PROFILE_FIELD}:negotationLimit`,
+          text: 'Negotiation',
+          callback_data: `${EDIT_PROFILE_FIELD}:negotiationLimit`,
         },
       ],
       [
@@ -739,11 +739,11 @@ export const handleEditProfileField = async ({
     if (!user) {
       return;
     }
-    if (commandData === 'negotationLimit') {
+    if (commandData === 'negotiationLimit') {
       await prisma.user.update({
         where: { chatId },
         data: {
-          negotationLimit: parseFloat(message.text as string),
+          negotiationLimit: parseFloat(message.text as string),
         },
       });
       await sendProfile({ bot, chatId, specificField: commandData });

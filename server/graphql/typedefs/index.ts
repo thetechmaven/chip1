@@ -14,7 +14,7 @@ const typeDefs = gql`
     tags: [String!]
     status: String
     createdAt: Date
-    negotiationLimit: Int
+    negotiation: Int
   }
 
   type User {
@@ -87,7 +87,7 @@ const typeDefs = gql`
       name: String
       description: String
       price: Float
-      negotiationLimit: Int
+      negotiation: Int
     ): Package
     deletePackage(id: String!): Package
   }

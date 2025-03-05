@@ -21,7 +21,7 @@ export const sellerCommands = {
           'Price of the package. It should be a float number. 0 if missing',
         required: true,
       },
-      negotitationLimit: {
+      negotiation: {
         details:
           'Negotiation limit. 0 if missing. negotitation Limit or max discount is also this same field. Some number with percentage can be a negotitation limit too. There can be typos too.',
         required: false,
