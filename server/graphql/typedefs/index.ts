@@ -42,6 +42,7 @@ const typeDefs = gql`
     dob: Date
     country: String
     userType: String
+    contentStyle: String
 
     isStaff: Boolean
     isAdmin: Boolean
@@ -90,6 +91,7 @@ const typeDefs = gql`
       negotiation: Int
     ): Package
     deletePackage(id: String!): Package
+    deleteUser(id: String!): User
   }
 
   ${projectTypedefs}

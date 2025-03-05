@@ -67,6 +67,17 @@ export const updateStaffStatus = adminOnly(
   }
 );
 
+export const deleteUser = adminOnly(
+  async (_: unknown, { id }: { id: string }) => {
+    await prisma.package.deleteMany({
+      where: { creatorId: id },
+    });
+    return prisma.user.delete({
+      where: { id },
+    });
+  }
+);
+
 export const updatePackage = async (
   _: unknown,
   { id, ...data }: Prisma.Package
