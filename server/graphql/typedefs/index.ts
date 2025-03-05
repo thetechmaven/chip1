@@ -4,6 +4,19 @@ import projectTypedefs from './project';
 const typeDefs = gql`
   scalar Date
 
+  type Package {
+    id: String!
+    name: String
+    description: String
+    price: Float
+    creatorId: String
+    creator: User
+    tags: [String!]
+    status: String
+    createdAt: Date
+    negotiationLimit: Int
+  }
+
   type User {
     id: String!
     name: String
@@ -51,6 +64,7 @@ const typeDefs = gql`
   type Query {
     user: User
     users: [User]
+    packages: [Package]
   }
   type Mutation {
     registerUser(
