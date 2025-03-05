@@ -97,12 +97,14 @@ export const deletePackage = async (_: unknown, { id }: { id: string }) => {
 };
 
 export const editPrompt = adminOnly(async (_: unknown, { key, value }: any) => {
-  const promptsFilePath = path.join(__dirname, '../../../../prompts.json');
+  console.log('Editing');
+  const promptsFilePath = path.join(process.cwd(), 'prompts.json');
 
   const prompts = JSON.parse(fs.readFileSync(promptsFilePath, 'utf-8'));
+  console.log('prompts', prompts);
   prompts[key] = value;
 
   fs.writeFileSync(promptsFilePath, JSON.stringify(prompts, null, 2));
-
+  console.log(prompts[key]);
   return prompts;
 });

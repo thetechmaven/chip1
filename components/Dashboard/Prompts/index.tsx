@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Layout from '../Layout';
-import { gql } from 'urql';
+import { gql, useMutation } from 'urql';
 
 export const UPDATE_PROMPT = gql`
   mutation EditPrompt($key: String!, $value: String!) {
@@ -13,10 +13,20 @@ export const UPDATE_PROMPT = gql`
 function Prompts({ prompts }: any) {
   const [open, setOpen] = useState('');
   const [data, setData] = useState<any>();
+  const [{ fetching: updating, error }, updatePrompt] =
+    useMutation(UPDATE_PROMPT);
 
   useEffect(() => {
     setData(undefined);
   }, [open]);
+
+  const handleSave = async () => {
+    if (data) {
+      await updatePrompt(data);
+      alert('Done!');
+      window.location.reload();
+    }
+  };
 
   return (
     <Layout heading="Prompts">
@@ -49,10 +59,7 @@ function Prompts({ prompts }: any) {
                       className="bg-blue-500 text-white p-2 rounded-md"
                       onClick={() => {
                         if (data) {
-                          const newPrompts = { ...prompts };
-                          //newPrompts[data.key] = data.value;
-                          //localStorage.setItem("prompts", JSON.stringify(newPrompts));
-                          window.location.reload();
+                          handleSave();
                         }
                       }}
                     >
