@@ -42,6 +42,7 @@ export default function ViewPackage() {
     useMutation(DELETE_PACKAGE);
 
   const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this package?')) return;
     const result = await deletePackage({ deletePackageId: id });
     if (result.error) {
       console.error('Error deleting package:', result.error);

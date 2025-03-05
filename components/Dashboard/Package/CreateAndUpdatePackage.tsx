@@ -53,6 +53,8 @@ export default function CreateAndUpdatePackage({
   const [{ fetching: fetchingUpdate }, updatePackage] =
     useMutation(UPDATE_PACKAGE);
 
+  const fetching = fetchingCreate || fetchingUpdate;
+
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -168,7 +170,7 @@ export default function CreateAndUpdatePackage({
           type="submit"
           className="bg-black px-2 py-1 text-white rounded-lg w-max"
         >
-          {formData.id ? 'Update Package' : 'Create Package'}
+          {fetching ? '...' : formData.id ? 'Update Package' : 'Create Package'}
         </button>
       </form>
     </div>
