@@ -3,6 +3,8 @@ import type * as Prisma from '@prisma/client';
 import { isNameValid, isPasswordValid } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
 import { adminOnly } from '../../wrappers';
+import fs from 'fs';
+import path from 'path';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -93,3 +95,14 @@ export const deletePackage = async (_: unknown, { id }: { id: string }) => {
     where: { id },
   });
 };
+
+export const editPrompt = adminOnly(async (_: unknown, { key, value }: any) => {
+  const promptsFilePath = path.join(__dirname, '../../../../prompts.json');
+
+  const prompts = JSON.parse(fs.readFileSync(promptsFilePath, 'utf-8'));
+  prompts[key] = value;
+
+  fs.writeFileSync(promptsFilePath, JSON.stringify(prompts, null, 2));
+
+  return prompts;
+});

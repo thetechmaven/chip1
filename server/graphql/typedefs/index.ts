@@ -92,6 +92,7 @@ const typeDefs = gql`
     ): Package
     deletePackage(id: String!): Package
     deleteUser(id: String!): User
+    editPrompt(key: String!, value: String!): String
   }
 
   ${projectTypedefs}

@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react';
-import prompts from '../../../prompts.json';
-import Layout from '../Layout';
+'use client';
 
-function Prompts() {
+import { useEffect, useState } from 'react';
+import Layout from '../Layout';
+import { gql } from 'urql';
+
+export const UPDATE_PROMPT = gql`
+  mutation EditPrompt($key: String!, $value: String!) {
+    editPrompt(key: $key, value: $value)
+  }
+`;
+
+function Prompts({ prompts }: any) {
   const [open, setOpen] = useState('');
   const [data, setData] = useState<any>();
 
