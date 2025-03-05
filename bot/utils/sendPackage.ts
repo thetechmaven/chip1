@@ -3,6 +3,7 @@ import prisma from '../../prisma/prisma';
 import { sendRequestToGPT4 } from './openai';
 import { messageHistory } from '../handlers';
 const TelegramBot = require('node-telegram-bot-api');
+import prompts from '../../prompts.json';
 
 export const sendPackage = async (
   bot: typeof TelegramBot,
@@ -14,10 +15,11 @@ export const sendPackage = async (
   });
   if (_package) {
     const message = `Package Name: ${_package.name}\nDescription: ${_package.description}\nPrice: ${_package.price} $\nNegotiation Limit: ${_package.negotiation}`;
-    const updatedMessage = await sendRequestToGPT4(`
-            Update this message. Add emojis also. Im something is missing motivate user to add it. Format is markdown and highlight important things. Avoid adding a lot of extra text. Name should be on top. Make it friendly and natural.
-            Text: ${message}
-        `);
+    const updatedMessage = await sendRequestToGPT4(
+      getText(prompts.sendPackage, {
+        message,
+      })
+    );
     await bot.sendMessage(chatId, updatedMessage, {
       parse_mode: 'Markdown',
       reply_markup: {
