@@ -82,6 +82,14 @@ const typeDefs = gql`
     verifyEmail(token: String!): StatusResponse!
     updateAdminStatus(userId: String!, status: Boolean): User
     updateStaffStatus(userId: String!, status: Boolean): User
+    updatePackage(
+      id: String!
+      name: String
+      description: String
+      price: Float
+      negotiationLimit: Int
+    ): Package
+    deletePackage(id: String!): Package
   }
 
   ${projectTypedefs}

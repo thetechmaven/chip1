@@ -66,3 +66,19 @@ export const updateStaffStatus = adminOnly(
     return updatedUser;
   }
 );
+
+export const updatePackage = async (
+  _: unknown,
+  { id, ...data }: Prisma.Package
+) => {
+  return prisma.package.update({
+    where: { id },
+    data,
+  });
+};
+
+export const deletePackage = async (_: unknown, { id }: { id: string }) => {
+  return prisma.package.delete({
+    where: { id },
+  });
+};
