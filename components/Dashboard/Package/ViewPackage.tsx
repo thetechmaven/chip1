@@ -21,6 +21,7 @@ export const VIEW_PACKAGE = gql`
       negotiation
       creator {
         id
+        name
       }
     }
   }
@@ -70,7 +71,7 @@ export default function ViewPackage() {
                 <Th>Name</Th>
                 <Th>Description</Th>
                 <Th>Price</Th>
-                <Th>Status</Th>
+                <Th>Creator</Th>
                 <Th>Negotiation Limit</Th>
                 <Th>Actions</Th>
               </Tr>
@@ -80,7 +81,7 @@ export default function ViewPackage() {
                     <Td>{item.name}</Td>
                     <Td>{item.description}</Td>
                     <Td>{item.price}</Td>
-                    <Td>{item.status}</Td>
+                    <Td>{item.creator?.name}</Td>
                     <Td>{item.negotiation}</Td>
                     <Td>
                       <div className="flex items-center gap-2">
