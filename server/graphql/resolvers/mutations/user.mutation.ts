@@ -100,12 +100,15 @@ export const deletePackage = async (_: unknown, { id }: { id: string }) => {
 };
 
 export const editPrompt = adminOnly(async (_: unknown, { key, value }: any) => {
-  const promptsFilePath = path.join(process.cwd(), 'prompts.json');
-
-  const prompts = JSON.parse(fs.readFileSync(promptsFilePath, 'utf-8'));
-  prompts[key] = value;
-
-  fs.writeFileSync(promptsFilePath, JSON.stringify(prompts, null, 2));
-  console.log(prompts[key]);
-  return prompts;
+  const existingPrompt = await prisma.prompt.findUnique({ where: { key } });
+  if (existingPrompt) {
+    return prisma.prompt.update({
+      where: { key },
+      data: { value },
+    });
+  } else {
+    return prisma.prompt.create({
+      data: { key, value },
+    });
+  }
 });

@@ -79,3 +79,10 @@ model Group {
   chat                Json?
   createdAt           DateTime  @default(now())
 }
+
+model Prompt {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  key                 String    @unique
+  value               String
+  createdAt           DateTime  @default(now())
+}
