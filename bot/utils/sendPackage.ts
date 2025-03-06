@@ -2,8 +2,8 @@ import { parse } from 'path';
 import prisma from '../../prisma/prisma';
 import { sendRequestToGPT4 } from './openai';
 import { messageHistory } from '../handlers';
+import getPrompt from './getPrompts';
 const TelegramBot = require('node-telegram-bot-api');
-import prompts from '../../prompts.json';
 
 export const sendPackage = async (
   bot: typeof TelegramBot,
@@ -15,8 +15,9 @@ export const sendPackage = async (
   });
   if (_package) {
     const message = `Package Name: ${_package.name}\nDescription: ${_package.description}\nPrice: ${_package.price} $\nNegotiation Limit: ${_package.negotiation}`;
+    const p = await getPrompt('sendPackage');
     const updatedMessage = await sendRequestToGPT4(
-      getText(prompts.sendPackage, {
+      getText(p?.value as string, {
         message,
       })
     );

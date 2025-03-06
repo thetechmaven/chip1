@@ -1,6 +1,6 @@
 import { messageHistory } from '../handlers';
+import getPrompt from './getPrompts';
 import { sendRequestToGPT4 } from './openai';
-import prompts from '../../prompts.json';
 
 interface ICommandData {
   [key: string]: {
@@ -41,7 +41,8 @@ export const getCommandAndData = async (
   chatId: number
 ) => {
   const commandText = getCommandsAsText(commandsList);
-  const prompt = getText(prompts.getCommandAndData, {
+  const p = await getPrompt('getCommandAndData');
+  const prompt = getText(p?.value as string, {
     commandText,
     message,
   });
