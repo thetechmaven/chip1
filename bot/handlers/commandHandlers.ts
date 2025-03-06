@@ -19,7 +19,7 @@ import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
 import { EDIT_PROFILE_FIELD } from '../../constants';
 import { generateImage } from '../utils/imageGeneration';
-import prompts from '../../prompts.json';
+import getPrompt from '../utils/getPrompts';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -82,7 +82,8 @@ export const handleCommandAddPackage = async ({
       location: user.brandLocation || 'MISSING',
       industry: user.brandIndustry || 'MISSING',
     };
-    const prompt = `${commandData.commandPrompt}\n ${prompts.addPackage} ${message.text}`;
+    const p = await getPrompt('addPackage');
+    const prompt = `${commandData.commandPrompt}\n ${p?.value} ${message.text}`;
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
@@ -255,8 +256,9 @@ export const handleReceiveUpdateProfile = async ({
   await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
+    const p = await getPrompt('getBrandProfileData');
     const profileData = await sendRequestToGPT4(
-      `${prompts.getBrandProfileData} "${message.text}"
+      `${p?.value} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -286,9 +288,10 @@ export const handleReceiveUpdateProfile = async ({
       'Your profile has been updated! Use /profile to view or edit your profile.'
     );
   } else if (user?.userType === USER_TYPE_CREATOR) {
+    const p = await getPrompt('getCreatorProfileData');
     const profileData = await sendRequestToGPT4(
       `
-      ${prompts.getCreatorProfileData} "${message.text}"
+      ${p?.value} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -484,7 +487,8 @@ export const handleFindCreators = async ({
       })
       .join('\n');
     const messageText = JSON.stringify(message.text);
-    const query = getText(prompts.findCreators, {
+    const p = await getPrompt('findCreators');
+    const query = getText(p?.value as string, {
       messageText,
       creatorsList,
     });
