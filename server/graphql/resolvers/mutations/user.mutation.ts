@@ -74,6 +74,9 @@ export const deleteUser = adminOnly(
     await prisma.package.deleteMany({
       where: { creatorId: id },
     });
+    await prisma.group.deleteMany({
+      where: { creatorId: id },
+    });
     return prisma.user.delete({
       where: { id },
     });
