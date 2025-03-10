@@ -3,6 +3,8 @@ import prisma from '@/prisma/prisma';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+
 async function getPrompts() {
   const prompts = await prisma.prompt.findMany();
   const data: { [key: string]: string } = {};
