@@ -14,7 +14,7 @@ const typeDefs = gql`
     tags: [String!]
     status: String
     createdAt: Date
-    negotiationLimit: Int
+    negotiation: Int
   }
 
   type User {
@@ -42,6 +42,7 @@ const typeDefs = gql`
     dob: Date
     country: String
     userType: String
+    contentStyle: String
 
     isStaff: Boolean
     isAdmin: Boolean
@@ -87,9 +88,11 @@ const typeDefs = gql`
       name: String
       description: String
       price: Float
-      negotiationLimit: Int
+      negotiation: Int
     ): Package
     deletePackage(id: String!): Package
+    deleteUser(id: String!): User
+    editPrompt(key: String!, value: String!): String
   }
 
   ${projectTypedefs}

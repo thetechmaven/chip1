@@ -198,7 +198,7 @@ const handleViewPackages = async (
           chatId,
           `*${pack.name}*\n${pack.description || ''}\nPrice: ${
             pack.price
-          } \nNegotiation Limit: ${pack.negotitationLimit || 'Not set'}`,
+          } \nNegotiation Limit: ${pack.negotiation || 'Not set'}`,
           {
             parse_mode: 'Markdown',
             reply_markup: {
@@ -341,8 +341,8 @@ const handleEditProfileField = async (
       case 'schedule':
         message = 'Please send your schedule';
         break;
-      case 'negotationLimit':
-        message = 'Please send your negotation limit';
+      case 'negotiationLimit':
+        message = 'Please send your negotiation limit';
         break;
       default:
         message = 'Please send your name';

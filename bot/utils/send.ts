@@ -30,7 +30,7 @@ export const sendProfile = async ({
   if (specificField && typeof (user as any)[specificField] !== 'undefined') {
     const message = `Your ${camelToNormalCase(specificField)} is ${
       (user as any)[specificField]
-    }${specificField === 'negotationField' ? '%' : ''}.`;
+    }${specificField === 'negotiationField' ? '%' : ''}.`;
     bot.sendMessage(chatId, message);
     return;
   }

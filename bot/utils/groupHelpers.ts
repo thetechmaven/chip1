@@ -77,8 +77,8 @@ export const getKnowledgeBase = async (chatId: number) => {
         .map((key: any) => `${key}: ${(creator as any)[key]}`)
         .join('\n')}\n` +
       `${
-        creator.negotation
-          ? `Content Creator negotation limit: ${creator.negotation}`
+        creator.negotiation
+          ? `Content Creator negotiation limit: ${creator.negotiation}`
           : ``
       }` +
       `Content creator packages: \n` +
@@ -86,7 +86,7 @@ export const getKnowledgeBase = async (chatId: number) => {
         .map(
           (p: any) =>
             `${p.name}(Price: ${p.price} USD${
-              p.negotitationLimit ? ` with a ± ${p.negotitationLimit}%` : ``
+              p.negotiation ? ` with a ± ${p.negotiation}%` : ``
             }): ${p.description || 'No Description'}`
         )
         .join('\n')}\n`;
@@ -114,7 +114,7 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
         .map(
           (p: any) =>
             `${p.name}(Price: ${p.price} USD${
-              p.negotitationLimit ? ` with a ± ${p.negotitationLimit}%` : ``
+              p.negotiation ? ` with a ± ${p.negotiation}%` : ``
             }): ${p.description || 'No Description'}`
         )
         .join('\n')}\n` +
@@ -162,7 +162,7 @@ export const initGroupv1 = async (message: TelegramBotTypes.Message) => {
         .map(
           (p: any) =>
             `${p.name}(Price: ${p.price} USD${
-              p.negotitationLimit ? ` with a ± ${p.negotitationLimit}%` : ``
+              p.negotiation ? ` with a ± ${p.negotiation}%` : ``
             }): ${p.description || 'No Description'}`
         )
         .join('\n')}\n` +

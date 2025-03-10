@@ -19,7 +19,7 @@ import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
 import { EDIT_PROFILE_FIELD } from '../../constants';
 import { generateImage } from '../utils/imageGeneration';
-import prompts from '../../prompts.json';
+import getPrompt from '../utils/getPrompts';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');
@@ -82,7 +82,8 @@ export const handleCommandAddPackage = async ({
       location: user.brandLocation || 'MISSING',
       industry: user.brandIndustry || 'MISSING',
     };
-    const prompt = `${commandData.commandPrompt}\n ${prompts.addPackage} ${message.text}`;
+    const p = await getPrompt('addPackage');
+    const prompt = `${commandData.commandPrompt}\n ${p?.value} ${message.text}`;
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
@@ -105,8 +106,8 @@ export const handleCommandAddPackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotitationLimit: response.negotitationLimit
-            ? parseFloat(response.negotitationLimit)
+          negotiation: response.negotiation
+            ? parseFloat(response.negotiation)
             : null,
           creator: {
             connect: {
@@ -184,7 +185,7 @@ export const handleCommandUpdatePackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotitationLimit: response.negotitationLimit || null,
+          negotiation: response.negotiation || null,
           creator: {
             connect: {
               chatId,
@@ -255,16 +256,9 @@ export const handleReceiveUpdateProfile = async ({
   await sendLoadingMessage(chatId);
   const user = await prisma.user.findUnique({ where: { chatId } });
   if (user?.userType === USER_TYPE_BRAND) {
+    const p = await getPrompt('getBrandProfileData');
     const profileData = await sendRequestToGPT4(
-      `
-      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
-      {
-        "brandName": "name/brandName in this text",
-        "brandLocation": "location of brand",
-        "brandIndustry": "industry of brand"
-      }  
-      NB: If something is missing. set it null.
-      Text: "${message.text}"
+      `${p?.value} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -294,27 +288,10 @@ export const handleReceiveUpdateProfile = async ({
       'Your profile has been updated! Use /profile to view or edit your profile.'
     );
   } else if (user?.userType === USER_TYPE_CREATOR) {
+    const p = await getPrompt('getCreatorProfileData');
     const profileData = await sendRequestToGPT4(
       `
-      Extract the data from the provided text and output it as a JSON object in the following format without any additional text:  
-      {
-        "phone": "Phone number of the creator. E.g. +1 234 567 8901",
-        "name": "name/brandName in this text",
-        "bio": "bio of creator",
-        "telegramId": "telegram account of creator",
-        "twitterId": "x/twitter handle, x.com or twitter.com link",
-        "discordId": "discord id of the creator",
-        "facebookId": "facebook id of the creator",
-        "youtubeId": "youtube profile of the creator",
-        "evmWallet": "EVM Wallet Address of the creator",
-        "solWallet": "Solana wallet address of the creator",
-        "niche": "niche/field/industry of creator",
-        "schedule": "Working schedule of the creator",
-        "location": "Location of the creator",
-        "contentStyle": "Content style of the creator",
-      }  
-      NB: If something is missing. set it null.
-      Text: "${message.text}"
+      ${p?.value} "${message.text}"
     `,
       true,
       messageHistory.getRecentConversations(chatId),
@@ -386,7 +363,7 @@ export const viewMyPackages = async ({ bot, message }: ICommandHandlerArgs) => {
           chatId,
           `*${pack.name}*\n${pack.description || ''}\nPrice: ${
             pack.price
-          } \nNegotiation Limit: ${pack.negotitationLimit || 'Not set'}`,
+          } \nNegotiation Limit: ${pack.negotiation || 'Not set'}`,
           {
             parse_mode: 'Markdown',
             reply_markup: {
@@ -504,19 +481,17 @@ export const handleFindCreators = async ({
         tags: true,
       },
     });
-    const query = `Here is the list of creators:
-      ${creators
-        .map((creator) => {
-          return `${creator.id}: ${creator.tags.join(', ')}`;
-        })
-        .join('\n')}
-      
-      Find the top 5 creators which match the user requirements. In case user have not specified any requirement, find the top 5 creators randomly. Requirements are:
-      ${JSON.stringify(message.text)}
-
-      Output as array of creator ids and ensure the output is valid JSON and contains no additional text.
-      ["id1", "id2", ...]
-      `;
+    const creatorsList = creators
+      .map((creator) => {
+        return `${creator.id}: ${creator.tags.join(', ')}`;
+      })
+      .join('\n');
+    const messageText = JSON.stringify(message.text);
+    const p = await getPrompt('findCreators');
+    const query = getText(p?.value as string, {
+      messageText,
+      creatorsList,
+    });
     const searchResultString = await sendRequestToGPT4(
       query,
       true,
@@ -713,8 +688,8 @@ export const handleProfileCommand = async ({
           callback_data: 'VIEW_MY_PACKAGES',
         },
         {
-          text: 'Negotation',
-          callback_data: `${EDIT_PROFILE_FIELD}:negotationLimit`,
+          text: 'Negotiation',
+          callback_data: `${EDIT_PROFILE_FIELD}:negotiationLimit`,
         },
       ],
       [
@@ -739,11 +714,11 @@ export const handleEditProfileField = async ({
     if (!user) {
       return;
     }
-    if (commandData === 'negotationLimit') {
+    if (commandData === 'negotiationLimit') {
       await prisma.user.update({
         where: { chatId },
         data: {
-          negotationLimit: parseFloat(message.text as string),
+          negotiationLimit: parseFloat(message.text as string),
         },
       });
       await sendProfile({ bot, chatId, specificField: commandData });

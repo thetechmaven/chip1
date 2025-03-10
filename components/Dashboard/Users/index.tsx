@@ -36,6 +36,7 @@ const GET_USERS = gql`
       userType
       username
       youtubeId
+      contentStyle
     }
   }
 `;
@@ -62,38 +63,24 @@ const UPDATE_STAFF_STATUS = gql`
   }
 `;
 
-function TuitorBadge() {
-  return (
-    <span className="mx-0.5 bg-gray-600 text-white p-1 px-2 text-xs font-medium rounded-lg cursor-default">
-      T
-    </span>
-  );
-}
-
-function AdminBadge() {
-  return (
-    <span className="mx-0.5 bg-zinc-600 text-white p-1 px-2 text-xs font-medium rounded-lg cursor-default">
-      A
-    </span>
-  );
-}
-
-function StaffBadge() {
-  return (
-    <span className="mx-0.5 bg-blue-600 text-white p-1 px-2 text-xs font-medium rounded-lg cursor-default">
-      S
-    </span>
-  );
-}
-
 function Users() {
-  const [{ fetching, data }] = useQuery({ query: GET_USERS });
+  const [{ fetching, data }, reexecuteQuery] = useQuery({ query: GET_USERS });
   const [{ fetching: updatingAdminStatus }, updateAdminStatus] =
     useMutation(UPDATE_ADMIN_STATUS);
   const [{ fetching: updatingStaffStatus }, updateStaffStatus] =
     useMutation(UPDATE_STAFF_STATUS);
 
   const [userDetailsId, setUserDetailsId] = useState('');
+  const [deleteUserId, setDeleteUserId] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const [{ fetching: deletingUser }, deleteUser] = useMutation(gql`
+    mutation DeleteUser($userId: String!) {
+      deleteUser(id: $userId) {
+        id
+      }
+    }
+  `);
 
   const userDetails = useMemo(() => {
     return data?.users?.find((u: IUser) => u.id === userDetailsId);
@@ -120,12 +107,23 @@ function Users() {
                     <Td>{user.name}</Td>
                     <Td>{user.userType}</Td>
                     <Td>
-                      <button
-                        className="bg-blue-600 p-1 px-2 text-white border-0 font-medium rounded-md"
-                        onClick={() => setUserDetailsId(user.id)}
-                      >
-                        View
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          className="bg-blue-600 p-1 px-2 text-white border-0 font-medium rounded-md"
+                          onClick={() => setUserDetailsId(user.id)}
+                        >
+                          View
+                        </button>
+                        <button
+                          className="bg-red-600 p-1 px-2 text-white border-0 font-medium rounded-md"
+                          onClick={() => {
+                            setDeleteUserId(user.id);
+                            setShowDeleteConfirm(true);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </Td>
                   </Tr>
                 );
@@ -219,6 +217,64 @@ function Users() {
           <div className="mt-2 pb-2 border-b">
             <p className="text-sm font-medium text-gray-600">Schedule</p>
             <p className="">{userDetails?.schedule}</p>
+          </div>
+          <div className="mt-2 pb-2 border-b">
+            <p className="text-sm font-medium text-gray-600">Content Style</p>
+            <p className="">
+              {userDetails?.contentStyle ?? (
+                <span className="text-red-600 text-sm">
+                  Content style information unavailable
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      </ModalComponent>
+
+      <ModalComponent
+        isOpen={showDeleteConfirm}
+        title="Confirm Delete"
+        header={<p className="font-medium text-red-600">Delete User</p>}
+        onClose={() => {
+          setDeleteUserId('');
+          setShowDeleteConfirm(false);
+        }}
+      >
+        <div className="p-4">
+          <p>
+            Are you sure you want to delete this user? This action cannot be
+            undone.
+          </p>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              className="bg-gray-500 p-2 px-4 text-white rounded-md"
+              onClick={() => {
+                setDeleteUserId('');
+                setShowDeleteConfirm(false);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-red-600 p-2 px-4 text-white rounded-md"
+              onClick={async () => {
+                try {
+                  const result = await deleteUser({ userId: deleteUserId });
+                  if (result.error) {
+                    console.error('Error deleting user:', result.error);
+                    return;
+                  }
+                  await reexecuteQuery({ requestPolicy: 'network-only' });
+                  setDeleteUserId('');
+                  setShowDeleteConfirm(false);
+                } catch (error) {
+                  console.error('Error deleting user:', error);
+                }
+              }}
+              disabled={deletingUser}
+            >
+              {deletingUser ? 'Deleting...' : 'Delete'}
+            </button>
           </div>
         </div>
       </ModalComponent>

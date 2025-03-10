@@ -51,7 +51,7 @@ model User {
   isAdmin             Boolean   @default(false)
   isStaff             Boolean   @default(false)
   tags                String[]
-  negotationLimit     Float?
+  negotiationLimit    Float?
 
   groups              Group[]
   packages            Package[]
@@ -67,7 +67,7 @@ model Package {
   tags                String[]
   status              String
   createdAt           DateTime  @default(now())
-  negotitationLimit   Int?
+  negotiation         Int?
 }
 
 model Group {
@@ -77,5 +77,12 @@ model Group {
   groupChatId         Int       @unique
   creator             User      @relation(fields: [creatorId], references: [id])
   chat                Json?
+  createdAt           DateTime  @default(now())
+}
+
+model Prompt {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  key                 String    @unique
+  value               String
   createdAt           DateTime  @default(now())
 }

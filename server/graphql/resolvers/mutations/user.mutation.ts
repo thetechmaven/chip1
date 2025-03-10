@@ -3,6 +3,8 @@ import type * as Prisma from '@prisma/client';
 import { isNameValid, isPasswordValid } from '../../../utils/validation';
 import jwt from 'jsonwebtoken';
 import { adminOnly } from '../../wrappers';
+import fs from 'fs';
+import path from 'path';
 
 type RegisterUserInput = Prisma.User & { password: string };
 export const registerUser = async (_: unknown, args: RegisterUserInput) => {
@@ -67,6 +69,20 @@ export const updateStaffStatus = adminOnly(
   }
 );
 
+export const deleteUser = adminOnly(
+  async (_: unknown, { id }: { id: string }) => {
+    await prisma.package.deleteMany({
+      where: { creatorId: id },
+    });
+    await prisma.group.deleteMany({
+      where: { creatorId: id },
+    });
+    return prisma.user.delete({
+      where: { id },
+    });
+  }
+);
+
 export const updatePackage = async (
   _: unknown,
   { id, ...data }: Prisma.Package
@@ -82,3 +98,17 @@ export const deletePackage = async (_: unknown, { id }: { id: string }) => {
     where: { id },
   });
 };
+
+export const editPrompt = adminOnly(async (_: unknown, { key, value }: any) => {
+  const existingPrompt = await prisma.prompt.findUnique({ where: { key } });
+  if (existingPrompt) {
+    return prisma.prompt.update({
+      where: { key },
+      data: { value },
+    });
+  } else {
+    return prisma.prompt.create({
+      data: { key, value },
+    });
+  }
+});

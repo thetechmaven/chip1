@@ -1,4 +1,5 @@
 import { messageHistory } from '../handlers';
+import getPrompt from './getPrompts';
 import { sendRequestToGPT4 } from './openai';
 
 interface ICommandData {
@@ -39,17 +40,12 @@ export const getCommandAndData = async (
   commandsList: ICommandList,
   chatId: number
 ) => {
-  const prompt = `
-        From this following text, choose one of the following commands:
-        ${getCommandsAsText(commandsList)}
-
-        Text: ${message}
-
-        Output as json in the following format:
-        {
-            command: The best choosen command, null if no command matches the result. Take help from the context and previous messages.
-        }
-    `;
+  const commandText = getCommandsAsText(commandsList);
+  const p = await getPrompt('getCommandAndData');
+  const prompt = getText(p?.value as string, {
+    commandText,
+    message,
+  });
   const responseText = await sendRequestToGPT4(
     prompt,
     true,
