@@ -1,3 +1,4 @@
+import getText from '../../utils/getText';
 import { messageHistory } from '../handlers';
 import getPrompt from './getPrompts';
 import { sendRequestToGPT4 } from './openai';

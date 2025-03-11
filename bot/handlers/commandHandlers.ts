@@ -20,6 +20,7 @@ import { config } from '../config';
 import { EDIT_PROFILE_FIELD } from '../../constants';
 import { generateImage } from '../utils/imageGeneration';
 import getPrompt from '../utils/getPrompts';
+import getText from '../../utils/getText';
 
 const TelegramBot = require('node-telegram-bot-api');
 const fs = require('fs');

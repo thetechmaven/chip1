@@ -4,3 +4,5 @@ function getText(template: string, variables: any) {
     (_, key) => variables[key] || `{${key}}`
   );
 }
+
+export default getText;

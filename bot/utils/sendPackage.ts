@@ -4,6 +4,7 @@ import { sendRequestToGPT4 } from './openai';
 import { messageHistory } from '../handlers';
 import getPrompt from './getPrompts';
 const TelegramBot = require('node-telegram-bot-api');
+import getText from '../../utils/getText';
 
 export const sendPackage = async (
   bot: typeof TelegramBot,
