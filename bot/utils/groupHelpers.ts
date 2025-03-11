@@ -104,22 +104,26 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
   if (document) {
     const systemPrompt = await getSystemPrompt();
     const { packages, ...user } = document;
-    const prompt =
-      `Hello Chip!` +
-      `Below are the details of creator. You are manager of the creator: \n` +
-      `${Object.keys(user)
-        .map((key: any) => `${key}: ${(user as any)[key]}`)
-        .join('\n')}\n` +
-      `Creators packages are: \n` +
-      `${packages
-        .map(
-          (p: any) =>
-            `${p.name}(Price: ${p.price} USD${
-              p.negotiation ? ` with a ± ${p.negotiation}%` : ``
-            }): ${p.description || 'No Description'}`
-        )
-        .join('\n')}\n` +
-      `Now, your role will be inform my clients about the creators packages and negotiate with them. Dont tell them negotiation limit but try to make a good deal. Dont let the client go!`;
+    const creatorDetails = Object.keys(user)
+      .map((key: any) => `${key}: ${(user as any)[key]}`)
+      .join('\n');
+    const packagesDetails = packages
+      .map(
+        (p: any) =>
+          `${p.name}(Price: ${p.price} USD${
+            p.negotiation ? ` with a ± ${p.negotiation}%` : ``
+          }): ${p.description || 'No Description'}`
+      )
+      .join('\n');
+    const userPrompt = await prisma.prompt.findFirst({
+      where: {
+        key: 'group_userPrompt',
+      },
+    });
+    const prompt = getText(userPrompt?.value as string, {
+      creatorDetails,
+      packagesDetails,
+    });
     return dealOpenaiWrapper(getChatId(message), [
       {
         role: 'system',
