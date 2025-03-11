@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Layout from '../Layout';
 import { gql, useMutation } from 'urql';
+import promptDetails from './promptDetails';
 
 export const UPDATE_PROMPT = gql`
   mutation EditPrompt($key: String!, $value: String!) {
@@ -67,7 +68,9 @@ function Prompts({ prompts }: any) {
                     </button>
                   </div>
                 </p>
-                <div className="border-t text-gray-400 p-2">Hello World</div>
+                <div className="border-t text-gray-400 p-2">
+                  {(promptDetails as any)[key] || '-'}
+                </div>
               </div>
             </div>
           );
