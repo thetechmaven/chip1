@@ -23,11 +23,11 @@ export const CREATE_PACKAGE = gql`
 
 export const UPDATE_PACKAGE = gql`
   mutation UpdatePackage(
-    $updatePackageId: String!
-    $name: String!
-    $description: String!
-    $price: Float!
-    $negotiation: Int!
+    $updatePackageId: String
+    $name: String
+    $description: String
+    $price: Float
+    $negotiation: Int
   ) {
     updatePackage(
       id: $updatePackageId
