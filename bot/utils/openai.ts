@@ -1,4 +1,4 @@
-import prisma from '@/prisma/prisma';
+import prisma from '../../prisma/prisma';
 import { IRecentConversation } from '../models/ChatMessageHistory';
 
 const axios = require('axios');

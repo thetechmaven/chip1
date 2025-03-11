@@ -1,4 +1,4 @@
-import prisma from '@/prisma/prisma';
+import prisma from '../../prisma/prisma';
 
 export const getSystemPrompt = async () => {
   const p = await prisma.prompt.findFirst({

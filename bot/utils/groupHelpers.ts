@@ -2,6 +2,7 @@ import prisma from '../../prisma/prisma';
 import type * as TelegramBotTypes from 'node-telegram-bot-api';
 import { dealUsingOpenAi } from './openai';
 import { getSystemPrompt } from './getSystemPrompt';
+import getText from '../../utils/getText';
 
 export const dealOpenaiWrapper = async (chatId: number, newMessage: any[]) => {
   const group = await prisma.group.findUnique({
