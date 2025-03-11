@@ -1,3 +1,4 @@
+import prisma from '@/prisma/prisma';
 import { IRecentConversation } from '../models/ChatMessageHistory';
 
 const axios = require('axios');
@@ -49,7 +50,11 @@ export async function sendRequestToGPT4(
     'Content-Type': 'application/json',
     Authorization: `Bearer ${apiKey}`,
   };
-
+  const systemPrompt = await prisma.prompt.findFirst({
+    where: {
+      key: 'systemPrompt',
+    },
+  });
   const data = {
     model: options?.jsonResponse ? 'gpt-3.5-turbo-0125' : 'gpt-4',
     messages: [
@@ -62,7 +67,7 @@ export async function sendRequestToGPT4(
         : [
             {
               role: 'system',
-              content: ``,
+              content: systemPrompt?.value || '',
             },
           ]),
     ],
