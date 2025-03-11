@@ -21,7 +21,7 @@ async function getPrompts() {
 
   defaultPrompts.forEach((prompt: { key: string; value: string }) => {
     if (!data[prompt.key]) {
-      data[prompt.key] = '';
+      data[prompt.key] = prompt.value;
     }
   });
 

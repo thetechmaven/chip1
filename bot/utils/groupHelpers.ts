@@ -102,6 +102,7 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
     },
   });
   if (document) {
+    const systemPrompt = await getSystemPrompt();
     const { packages, ...user } = document;
     const prompt =
       `Hello Chip!` +
@@ -134,7 +135,7 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
         content: [
           {
             type: 'text',
-            text: getSystemPrompt(),
+            text: systemPrompt,
           },
         ],
       },

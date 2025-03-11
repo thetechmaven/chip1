@@ -147,21 +147,23 @@ export const handleCommandUpdatePackage = async ({
   const user = await prisma.user.findUnique({ where: { chatId } });
   const commandData = sellerCommands['ADD_PACKAGE'];
   if (user?.userType === USER_TYPE_CREATOR) {
-    const prompt = `${
-      commandData.commandPrompt
-    }\n Content creator wants to update his/her package. 
-    
-    Current Package: ${JSON.stringify(packageData)}
-    
-    Only return the fields which are present in text and skip the fields which are not there. List of fields:${JSON.stringify(
-      commandData.data
-    )}  \nOUTPUT AS JSON IN THIS Format: ${getResponseFormat({
+    const currentPackage = JSON.stringify(packageData);
+    const commandFields = JSON.stringify(commandData.data);
+    const responseFormat = getResponseFormat({
       ...commandData.data,
       message: {
         details:
           'Let user know that the package has been updated successfully. If any field is missing, ask user to send the message again with the missing field',
       },
-    })}\n Text: ${message.text}`;
+    });
+    const messageText = message.text;
+    const p = await getPrompt('updatePackage');
+    const prompt = getText(p?.value as string, {
+      currentPackage,
+      commandFields,
+      responseFormat,
+      messageText,
+    });
     const responseText = await sendRequestToGPT4(
       prompt,
       true,
@@ -756,7 +758,7 @@ export const handlePackageCommand = async ({
       message.chat.id,
       `Time to get you paid! 
 
-Your content packages are what I will use to consider you for hire, and to share with your clients.   For your first package, please provide the required fields: title, price. You can also include description and negotiation limit for a more detailed package!`
+Your content packages are what I will use to consider you for hire, and to share with your clients. For your first package, please provide the required fields: title, price. You can also include description and negotiation limit for a more detailed package!`
     );
     messageHistory.setSuperCommand(message.chat.id, 'COMMAND_ADD_PACKAGE');
     return;
