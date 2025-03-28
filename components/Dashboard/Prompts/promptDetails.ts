@@ -27,10 +27,9 @@ contentStyle
   getCommandAndData: `{commandText} {message}. The output should be object with command field`,
   sendPackage: `{message}: used to send package to user. **Might be replaced soon**`,
   updatePackage: `{currentPackage}, {responseFormat}, {messageText}.  It should return one or more of these fields: name, description, price, negotiationLimit`,
+  systemPrompt:`This is system prompt for direct Bot communications.`,
   group_userPrompt: `{creatorDetails}, {packagesDetails}. Used as user prompt when  a query is received from a brand in a group`,
-  group_systemPrompt: `
-    This is system prompt for group communication. 
-  `,
+  group_systemPrompt: `This is system prompt for group communication.`,
 };
 
 export default promptDetails;
