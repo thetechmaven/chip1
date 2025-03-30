@@ -4,25 +4,87 @@ import { dealUsingOpenAi } from './openai';
 import { getSystemPrompt } from './getSystemPrompt';
 import getText from '../../utils/getText';
 
-export const dealOpenaiWrapper = async (chatId: number, newMessage: any[]) => {
-  const group = await prisma.group.findUnique({
-    where: { groupChatId: chatId },
-  });
-  if (!group) {
-    return 'Group not found';
+const getGroupMessages = async (groupId: number) => {
+  try {
+    const group = await prisma.group.findUnique({
+      where: { groupChatId: groupId },
+      select: { chat: true }
+    });
+    return Array.isArray(group?.chat) ? group.chat : [];
+  } catch (error) {
+    console.error('Error getting group messages:', error);
+    return [];
   }
-  if (!group.chat) {
-    group.chat = [newMessage].flat();
-  } else {
-    group.chat = [...(group.chat as any), ...newMessage].flat();
+};
+
+const callOpenAI = async (messages: any[]) => {
+  try {
+    return await dealUsingOpenAi(messages);
+  } catch (error) {
+    console.error('Error calling OpenAI:', error);
+    throw error;
   }
-  const updatedGroup = await prisma.group.update({
-    where: { groupChatId: chatId },
-    data: {
-      chat: group.chat,
-    },
-  });
-  return dealUsingOpenAi(updatedGroup.chat);
+};
+
+const saveMessageToGroup = async (groupId: number, messages: any[], response: string) => {
+  try {
+    const group = await prisma.group.findUnique({
+      where: { groupChatId: groupId }
+    });
+    
+    if (group) {
+      // Get existing chat or initialize empty array
+      const existingChat = Array.isArray(group.chat) ? group.chat : [];
+      
+      // Add new messages and response
+      const updatedChat = [
+        ...existingChat,
+        ...messages,
+        { role: 'assistant', content: [{ type: 'text', text: response }] }
+      ];
+      
+      // Trim chat history if it gets too long (keep last 20 messages)
+      const trimmedChat = updatedChat.slice(-20);
+      
+      // Update database
+      await prisma.group.update({
+        where: { groupChatId: groupId },
+        data: { chat: trimmedChat }
+      });
+    }
+  } catch (error) {
+    console.error('Error saving message to group:', error);
+  }
+};
+
+export const dealOpenaiWrapper = async (
+  groupId: number, 
+  messages: any[], 
+  clearHistory = false
+) => {
+  try {
+    // If clearHistory is true, don't fetch previous messages
+    const previousMessages = clearHistory ? [] : await getGroupMessages(groupId);
+    
+    // Ensure previousMessages is an array
+    const prevMsgs = Array.isArray(previousMessages) ? previousMessages : [];
+    
+    // Combine previous messages with new ones
+    const allMessages = [...prevMsgs, ...messages];
+    
+    // Call OpenAI
+    const response = await callOpenAI(allMessages);
+    
+    // Save response unless we're in clearHistory mode
+    if (!clearHistory) {
+      await saveMessageToGroup(groupId, messages, response);
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('Error communicating with OpenAI:', error);
+    throw error;
+  }
 };
 
 const groupCreatorMap: {
@@ -116,15 +178,25 @@ export const initGroup = async (message: TelegramBotTypes.Message) => {
           }): ${p.description || 'No Description'}`
       )
       .join('\n');
-    const userPrompt = await prisma.prompt.findFirst({
-      where: {
-        key: 'group_userPrompt',
-      },
-    });
-    const prompt = getText(userPrompt?.value as string, {
+    
+    // Use raw query or alternative approach since 'prompt' isn't in PrismaClient
+    // Option 1: Define a default prompt if table doesn't exist
+    const defaultPrompt = "I'm a content creator assistant. My details: {{creatorDetails}}. My packages: {{packagesDetails}}";
+    let promptValue = defaultPrompt;
+    
+    try {
+      // Option 2: Try to use Prisma's $queryRaw if you need to access the prompt table
+      // const promptRecord = await prisma.$queryRaw`SELECT value FROM "Prompt" WHERE key = 'group_userPrompt' LIMIT 1`;
+      // promptValue = promptRecord?.[0]?.value || defaultPrompt;
+    } catch (err) {
+      console.warn('Could not fetch prompt from database, using default');
+    }
+    
+    const prompt = getText(promptValue, {
       creatorDetails,
       packagesDetails,
     });
+    
     return dealOpenaiWrapper(getChatId(message), [
       {
         role: 'system',
