@@ -27,16 +27,16 @@ export const groupHandler = async (
         bot.sendMessage(
           getChatId(message), 
           'Group initialized\n\nPlease make me an admin of this group to ensure I can function properly.',
-          message.chat.username ? {
+          {
             reply_markup: {
               inline_keyboard: [[
                 {
-                  text: '📝 Make Bot Admin',
-                  url: `https://t.me/${message.chat.username}/administrators`
+                  text: '⚙️ Group Settings',
+                  url: `tg://settings/group`
                 }
               ]]
             }
-          } : undefined
+          }
         );
       } else {
         bot.sendMessage(
