@@ -24,7 +24,20 @@ export const groupHandler = async (
     if (isNewGroup) {
       if (isCreator) {
         await initGroup(message);
-        bot.sendMessage(getChatId(message), 'Group initialized');
+        bot.sendMessage(
+          getChatId(message), 
+          'Group initialized\n\nPlease make me an admin of this group to ensure I can function properly.',
+          message.chat.username ? {
+            reply_markup: {
+              inline_keyboard: [[
+                {
+                  text: '📝 Make Bot Admin',
+                  url: `https://t.me/${message.chat.username}/administrators`
+                }
+              ]]
+            }
+          } : undefined
+        );
       } else {
         bot.sendMessage(
           getChatId(message),
