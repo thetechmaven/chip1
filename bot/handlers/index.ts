@@ -164,7 +164,8 @@ const handlers = (bot: typeof TelegramBot) => {
       if (user.userType === 'BRAND') {
         message = 'Hey there, brand owner! Let me know what do you need';
       } else {
-        message = 'Hey there, creative genius! 🚀 Let\'s make magic happen! Send me what you want to do 🌟';
+        message =
+          'Hey there, creative genius! 🚀 Let’s make magic happen! Send me what you want to do🌟';
       }
       bot.sendMessage(chatId, message, {});
     } else {
