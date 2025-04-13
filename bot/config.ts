@@ -22,7 +22,8 @@ First, let’s get you set up! Once your profile is ready, I’ll send you your 
 
 Please provide:  
 - **Name**  
-- **All Social Links**  
+- **Bio**  
+- **All Social Links (X, Youtube, Tiktok, Discord, etc.)**  
 - **SOL Wallet**  
 - **EVM Wallet**  
 - **Niche**  

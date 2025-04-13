@@ -94,7 +94,8 @@ export const handleCommandAddPackage = async ({
       }
     );
     const response = JSON.parse(responseText);
-    console.log(response);
+    console.log('RESPONSE>>', response);
+    console.log('PROMPT>>', prompt);
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
       query: message.text || '',
@@ -107,8 +108,8 @@ export const handleCommandAddPackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotiation: response.negotiation
-            ? parseFloat(response.negotiation)
+          negotiation: response.negotiationLimit
+            ? parseFloat(response.negotiationLimit)
             : null,
           creator: {
             connect: {
@@ -117,10 +118,6 @@ export const handleCommandAddPackage = async ({
           },
         },
       });
-      bot.sendMessage(
-        chatId,
-        `Nice! You officially have your first package. I’d suggest adding a couple more with varying prices/services so your clients can have OPTIONS! Drop more info to add another!`
-      );
       sendPackage(bot, chatId, newPackge.id);
       updateTags(user.id);
     } else {
@@ -188,7 +185,7 @@ export const handleCommandUpdatePackage = async ({
           name: response.name,
           description: response.description || null,
           price: response.price,
-          negotiation: response.negotiation || null,
+          negotiation: response.negotiationLimit || null,
           creator: {
             connect: {
               chatId,
@@ -308,6 +305,9 @@ export const handleReceiveUpdateProfile = async ({
       answer: profileData,
     });
     const data = JSON.parse(profileData);
+
+    console.log('PROFILE DATA>>', data);
+
     for (let key in data) {
       if (data[key] === null) {
         delete data[key];

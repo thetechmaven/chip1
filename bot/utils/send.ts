@@ -85,17 +85,17 @@ If "brandName" is missing, emphasize its importance in a polite and funny way. I
     }
 
     let message = '*👨‍🎨 Your Creator Profile*\n';
-    message += `\n🎯 Bio: ${user.bio || 'Not Set'}`;
-    message += `\n🐦 X Account: ${user.twitterId || 'Not Set'}`;
-    message += `\n📺 Youtube: ${user.youtubeId || 'Not Set'}`;
-    message += `\n📱 Tiktok: ${user.tiktokId || 'Not Set'}`;
-    message += `\n🎮 Twitch: ${user.twitchId || 'Not Set'}`;
-    message += `\n💰 EVM Wallet: ${user.evmWallet || 'Not Set'}`;
-    message += `\n💎 Sol Wallet: ${user.solWallet || 'Not Set'}`;
-    message += `\n📍 Location: ${user.location || 'Not Set'}`;
-    message += `\n🎨 Content Style: ${user.contentStyle || 'Not Set'}`;
-    message += `\n🎯 Niche: ${user.niche || 'Not Set'}`;
-    message += `\n⏰ Hours: ${user.schedule || 'Not Set'}`;
+    message += `\n🎯 *Bio*: ${user.bio || 'Not Set'}`;
+    message += `\n🎯 *Niche*: ${user.niche || 'Not Set'}`;
+    message += `\n🎨 *Content Style*: ${user.contentStyle || 'Not Set'}`;
+    message += `\n💰 *EVM Wallet*: ${user.evmWallet || 'Not Set'}`;
+    message += `\n💎 *Sol Wallet*: ${user.solWallet || 'Not Set'}`;
+    message += `\n🐦 *X Account*: ${user.twitterId || 'Not Set'}`;
+    message += `\n📺 *Youtube*: ${user.youtubeId || 'Not Set'}`;
+    message += `\n📱 *Tiktok*: ${user.tiktokId || 'Not Set'}`;
+    message += `\n🎮 *Discord*: ${user.discordId || 'Not Set'}`;
+    message += `\n📍 *Location*: ${user.location || 'Not Set'}`;
+    message += `\n⏰ *Hours*: ${user.schedule || 'Not Set'}`;
 
     const missingFields = getMissingFields(user);
     if (missingFields.length > 0) {
