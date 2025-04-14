@@ -324,7 +324,7 @@ export const handleReceiveUpdateProfile = async ({
       },
     });
 
-    if (updatedUser.packages.length === 0) {
+    if (updatedUser.packages.length === 0 && !user.congratsMessageSent) {
       generateImage(bot, message);
       await bot.sendMessage(
         chatId,
@@ -332,6 +332,12 @@ export const handleReceiveUpdateProfile = async ({
       );
       messageHistory.setLastMessage(chatId, {
         command: 'COMMAND_RECEIVE_X_LINK',
+      });
+      await prisma.user.update({
+        where: { chatId },
+        data: {
+          congratsMessageSent: true,
+        },
       });
     } else {
       bot.sendMessage(

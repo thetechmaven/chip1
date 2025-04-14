@@ -158,7 +158,6 @@ const handlers = (bot: typeof TelegramBot) => {
     const chatId = msg.chat.id;
 
     let user = await prisma.user.findUnique({ where: { chatId } });
-    console.log(user?.userType);
     if (user && user.userType) {
       let message = '';
       if (user.userType === 'BRAND') {
