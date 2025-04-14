@@ -324,7 +324,7 @@ export const handleReceiveUpdateProfile = async ({
       },
     });
 
-    if (updatedUser.packages.length === 0) {
+    if (updatedUser.packages.length === 0 && !user.congratsMessageSent) {
       generateImage(bot, message);
       await bot.sendMessage(
         chatId,
@@ -332,6 +332,12 @@ export const handleReceiveUpdateProfile = async ({
       );
       messageHistory.setLastMessage(chatId, {
         command: 'COMMAND_RECEIVE_X_LINK',
+      });
+      await prisma.user.update({
+        where: { chatId },
+        data: {
+          congratsMessageSent: true,
+        },
       });
     } else {
       bot.sendMessage(
@@ -610,17 +616,33 @@ export const handleProfileCommand = async ({
   });
 
   if (user?.userType === USER_TYPE_BRAND) {
-    bot.sendMessage(
-      message.chat.id,
-      'Hey there, brand owner! Let us know your brand name, location, and industry',
-      {
-        parse_mode: 'Markdown',
-      }
-    );
-    messageHistory.setSuperCommand(
-      message.chat.id,
-      'COMMAND_RECEIVE_UPDATE_PROFILE'
-    );
+    if (user.brandName || user.brandIndustry || user.brandLocation) {
+      bot.sendMessage(
+        message.chat.id,
+        'Hey there, brand owner! here is your profile\n\n*Brand Name:* ' +
+          (user.brandName || '*Not provided*') +
+          '\n*Brand Industry:* ' +
+          (user.brandIndustry || '*Not provided*') +
+          '\n*Brand Location:* ' +
+          (user.brandLocation || '*Not provided*'),
+        {
+          parse_mode: 'Markdown',
+        }
+      );
+    } else {
+      bot.sendMessage(
+        message.chat.id,
+        'Hey there, brand owner! Let us know your brand name, location, and industry',
+        {
+          parse_mode: 'Markdown',
+        }
+      );
+      messageHistory.setSuperCommand(
+        message.chat.id,
+        'COMMAND_RECEIVE_UPDATE_PROFILE'
+      );
+      return;
+    }
     return;
   }
 

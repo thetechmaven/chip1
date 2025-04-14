@@ -53,6 +53,8 @@ model User {
   tags                String[]
   negotiationLimit    Float?
 
+  congratsMessageSent Boolean   @default(false)
+
   groups              Group[]
   packages            Package[]
 }
