@@ -66,7 +66,11 @@ const handlers = (bot: typeof TelegramBot) => {
 
   bot.on('my_chat_member', (msg: any) => {
     const newStatus = msg.new_chat_member.status;
-    if (newStatus === 'left') {
+    if (
+      newStatus === 'left' ||
+      newStatus === 'kicked' ||
+      parseInt(msg.chat.id) > 0
+    ) {
       return;
     }
     try {
