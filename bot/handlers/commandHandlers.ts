@@ -573,9 +573,10 @@ export const handleXLink = async ({ bot, message }: ICommandHandlerArgs) => {
   const user = await prisma.user.findUnique({
     where: { chatId: message.chat.id },
   });
-  const username = message.text?.split('/').filter(Boolean)[2];
+  const username = message.text?.split('/').filter(Boolean)[1];
+  const username2 = message.text?.split('/').filter(Boolean)[2];
   const twitterId = user?.twitterId?.replace('@', '');
-  if (username !== twitterId) {
+  if (username !== twitterId && username2 !== twitterId) {
     bot.sendMessage(
       message.chat.id,
       `Hey there, the tweet link you shared doesn't match the X account you provided. Please share the correct tweet link. Use /profile command to view your X username.`
