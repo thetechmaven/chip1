@@ -763,6 +763,20 @@ export const handleEditProfileField = async ({
       await sendProfile({ bot, chatId, specificField: commandData });
       return;
     }
+    if (
+      commandData === 'twitterId' ||
+      commandData === 'twitchId' ||
+      commandData === 'tiktokId'
+    ) {
+      const twitterId = message.text || '';
+      if (!twitterId.startsWith('@')) {
+        bot.sendMessage(
+          chatId,
+          'Please provide your account detail in the format: @username'
+        );
+        return;
+      }
+    }
     await prisma.user.update({
       where: { chatId },
       data: {
