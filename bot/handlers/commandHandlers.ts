@@ -483,7 +483,7 @@ export const handleFindCreators = async ({
   if (user?.userType === USER_TYPE_BRAND || true) {
     const creators = await prisma.user.findMany({
       where: {
-        //userType: USER_TYPE_CREATOR,
+        userType: USER_TYPE_CREATOR,
       },
       select: {
         id: true,
@@ -532,39 +532,50 @@ export const handleFindCreators = async ({
         packages: true,
       },
     });
-    relatedCreators.forEach((creator) => {
+
+    if (relatedCreators.filter((creator) => creator.packages.length > 0)) {
       bot.sendMessage(
         chatId,
-        `*${creator.name}\n*${
-          creator.bio ? `${creator.bio}\n` : ''
-        }*Packages*\n${creator.packages
-          .map((pack) => {
-            return `Name: ${pack.name}\nDescription: ${pack.description}\nPrice: ${pack.price}\n`;
-          })
-          .join('\n')}
-        `,
-        {
-          parse_mode: 'Markdown',
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: 'Contact',
-                  url: `t.me/${
-                    creator.telegramId?.startsWith('@')
-                      ? creator.telegramId.substring(
-                          1,
-                          creator.telegramId.length
-                        )
-                      : `${creator.telegramId}`
-                  }`,
-                },
-              ],
-            ],
-          },
-        }
+        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
       );
-    });
+      return;
+    }
+
+    relatedCreators
+      .filter((creator) => creator.packages.length > 0)
+      .forEach((creator) => {
+        bot.sendMessage(
+          chatId,
+          `*${creator.name}\n*${
+            creator.bio ? `${creator.bio}\n` : ''
+          }*Packages*\n${creator.packages
+            .map((pack) => {
+              return `Name: ${pack.name}\nDescription: ${pack.description}\nPrice: ${pack.price}\n`;
+            })
+            .join('\n')}
+        `,
+          {
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Contact',
+                    url: `t.me/${
+                      creator.telegramId?.startsWith('@')
+                        ? creator.telegramId.substring(
+                            1,
+                            creator.telegramId.length
+                          )
+                        : `${creator.telegramId}`
+                    }`,
+                  },
+                ],
+              ],
+            },
+          }
+        );
+      });
   }
   messageHistory.deleteLoadingMessages(chatId, bot);
 };
