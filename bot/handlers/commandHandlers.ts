@@ -17,7 +17,10 @@ import { buyerFaqs, sellerFaqs } from '../contants/faqs';
 import { updateTags } from '../utils/profile';
 import { sellerCommands } from '../prompts/commandPrompts';
 import { config } from '../config';
-import { EDIT_PROFILE_FIELD } from '../../constants';
+import {
+  COMMAND_HANDLE_EDIT_PROFILE_FIELD,
+  EDIT_PROFILE_FIELD,
+} from '../../constants';
 import { generateImage } from '../utils/imageGeneration';
 import getPrompt from '../utils/getPrompts';
 import getText from '../../utils/getText';
@@ -324,7 +327,16 @@ export const handleReceiveUpdateProfile = async ({
       },
     });
 
-    if (updatedUser.packages.length === 0 && !user.congratsMessageSent) {
+    if (
+      updatedUser.packages.length === 0 &&
+      !user.congratsMessageSent &&
+      user.bio &&
+      user.twitterId &&
+      user.solWallet &&
+      user.evmWallet &&
+      user.contentStyle &&
+      user.niche
+    ) {
       generateImage(bot, message);
       await bot.sendMessage(
         chatId,
@@ -773,6 +785,10 @@ export const handleEditProfileField = async ({
         bot.sendMessage(
           chatId,
           'Please provide your account detail in the format: @username'
+        );
+        messageHistory.setSuperCommand(
+          chatId,
+          `${COMMAND_HANDLE_EDIT_PROFILE_FIELD}:${commandData}`
         );
         return;
       }
