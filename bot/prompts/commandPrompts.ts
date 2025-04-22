@@ -39,6 +39,9 @@ export const sellerCommands = {
     condition:
       'Select this command if the user is asking for a suggestion, or has a question. Also, choose this option if the user is inquiring about missing data in their profile or packages. Additionally, select this option if the user is asking how they can improve their bio or packages.',
   },
+  FIND_CREATORS: {
+    condition: 'Choose this command if you want to find creators',
+  },
 };
 
 export const buyerCommands = {
