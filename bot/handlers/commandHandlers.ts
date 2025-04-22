@@ -309,8 +309,6 @@ export const handleReceiveUpdateProfile = async ({
     });
     const data = JSON.parse(profileData);
 
-    console.log('PROFILE DATA>>', data);
-
     for (let key in data) {
       if (data[key] === null) {
         delete data[key];
@@ -785,6 +783,19 @@ export const handleEditProfileField = async ({
         bot.sendMessage(
           chatId,
           'Please provide your account detail in the format: @username'
+        );
+        messageHistory.setSuperCommand(
+          chatId,
+          `${COMMAND_HANDLE_EDIT_PROFILE_FIELD}:${commandData}`
+        );
+        return;
+      }
+    } else if (commandData === 'solWallet' || commandData === 'evmWallet') {
+      const wallet = message.text || '';
+      if (!wallet.startsWith('0x')) {
+        bot.sendMessage(
+          chatId,
+          'Please provide your wallet address in the format: 0x...'
         );
         messageHistory.setSuperCommand(
           chatId,
