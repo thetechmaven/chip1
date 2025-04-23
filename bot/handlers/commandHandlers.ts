@@ -681,9 +681,24 @@ export const handleEditProfileField = async ({
         );
         return;
       }
-    } else if (commandData === 'solWallet' || commandData === 'evmWallet') {
+    } else if (commandData === 'evmWallet') {
       const wallet = message.text || '';
       if (!wallet.startsWith('0x')) {
+        bot.sendMessage(
+          chatId,
+          'Please provide your wallet address in the format: 0x...'
+        );
+        messageHistory.setSuperCommand(
+          chatId,
+          `${COMMAND_HANDLE_EDIT_PROFILE_FIELD}:${commandData}`
+        );
+        return;
+      }
+    } else if (commandData === 'solWallet') {
+      const wallet = message.text || '';
+      const solanaWalletRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+      if (!solanaWalletRegex.test(wallet)) {
         bot.sendMessage(
           chatId,
           'Please provide your wallet address in the format: 0x...'
