@@ -781,6 +781,9 @@ export const handleFindCreators = async ({
     const creators = await prisma.user.findMany({
       where: {
         userType: USER_TYPE_CREATOR,
+        packages: {
+          some: {},
+        },
       },
       select: {
         id: true,
@@ -798,14 +801,9 @@ export const handleFindCreators = async ({
       messageText,
       creatorsList,
     });
-    const searchResultString = await sendRequestToGPT4(
-      query,
-      true,
-      messageHistory.getRecentConversations(chatId),
-      {
-        jsonResponse: true,
-      }
-    );
+    const searchResultString = await sendRequestToGPT4(query, true, [], {
+      jsonResponse: true,
+    });
     messageHistory.addRecentConversation(chatId, {
       time: Date.now(),
       query: message.text || '',
@@ -820,7 +818,6 @@ export const handleFindCreators = async ({
       messageHistory.deleteLoadingMessages(chatId, bot);
       return;
     }
-    console.log('Search Result', searchResult.creators);
     const relatedCreators = await prisma.user.findMany({
       where: {
         id: {
@@ -838,7 +835,7 @@ export const handleFindCreators = async ({
     ) {
       bot.sendMessage(
         chatId,
-        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
+        "1Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
       );
       messageHistory.deleteLoadingMessages(chatId, bot);
       return;
