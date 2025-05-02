@@ -835,7 +835,7 @@ export const handleFindCreators = async ({
     ) {
       bot.sendMessage(
         chatId,
-        "1Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
+        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
       );
       messageHistory.deleteLoadingMessages(chatId, bot);
       return;
