@@ -701,7 +701,7 @@ export const handleEditProfileField = async ({
       if (!solanaWalletRegex.test(wallet)) {
         bot.sendMessage(
           chatId,
-          'Please provide your wallet address in the format: 0x...'
+          'Please provide your wallet address in SOL format'
         );
         messageHistory.setSuperCommand(
           chatId,
