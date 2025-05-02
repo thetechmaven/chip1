@@ -13,6 +13,7 @@ import {
   EDIT_PROFILE_FIELD,
 } from '../../constants';
 import bot from '..';
+import { generateImage } from '../utils/imageGeneration';
 const TelegramBot = require('node-telegram-bot-api');
 
 export async function sendLoadingMessage(
@@ -383,6 +384,17 @@ export const handleCompleteProfileSetup = async (
       chatId,
       'Congrats! You’re officially represented by CAAA - here’s your badge of approval. I’ve already got your first paid deal!! Over $100k in rewards up for grabs. Just need you to share this badge on X and tag ME @ChipTheAgent - then come back and share that tweet link here!'
     );
+    const msg = {
+      chat: {
+        id: chatId,
+      },
+      from: {
+        id: user.chatId,
+        first_name: user.name.split(' ')[0],
+        last_name: user.name.split(' ')[1] || '',
+      },
+    };
+    await generateImage(bot, msg);
     messageHistory.setLastMessage(chatId, {
       command: 'COMMAND_RECEIVE_X_LINK',
     });
