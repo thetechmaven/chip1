@@ -22,6 +22,12 @@ export const dealOpenaiWrapper = async (chatId: number, newMessage: any[]) => {
       chat: group.chat,
     },
   });
+  const messages = [];
+  //for (let i = 0; i < updatedGroup?.chat?.length || 0; i++) {
+  // const message = updatedGroup.chat[i];
+
+  //}
+
   return dealUsingOpenAi(updatedGroup.chat);
 };
 
