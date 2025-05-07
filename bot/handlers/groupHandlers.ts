@@ -19,12 +19,14 @@ export const groupHandler = async (
     if ((message as any).new_chat_member?.status === 'left') {
       return;
     }
-    sendLoadingMessage(getChatId(message));
     const { isCreator, isNewGroup } = await isCreatorGroup(message);
     if (isNewGroup) {
       if (isCreator) {
         await initGroup(message);
-        bot.sendMessage(getChatId(message), 'Group initialized');
+        const initializationMessage = await bot.sendMessage(
+          getChatId(message),
+          'Hi there! Chip here—ready to help with any questions you have.'
+        );
       } else {
         bot.sendMessage(
           getChatId(message),
@@ -49,12 +51,9 @@ export const groupHandler = async (
             ],
           },
         ]);
-        bot.sendMessage(
-          getChatId(message),
-          'Temp Message: will be removed because Chip dont reply to creators, only replies to buyers'
-        );
       } else {
         const knowledgebase = await getKnowledgeBase(getChatId(message));
+        sendLoadingMessage(getChatId(message));
         //const data = await sendRequestToEliza(
         //  getChatId(message),
         //  (message.text as string) +
@@ -79,10 +78,10 @@ export const groupHandler = async (
         bot.sendMessage(getChatId(message), text, {
           parse_mode: 'Markdown',
         });
+
+        messageHistory.deleteLoadingMessages(getChatId(message), bot);
       }
     }
-
-    messageHistory.deleteLoadingMessages(getChatId(message), bot);
   } catch (err) {
     console.error('Error handling group message:', err);
   }

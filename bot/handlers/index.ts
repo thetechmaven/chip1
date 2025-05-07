@@ -182,3 +182,10 @@ const handlers = (bot: typeof TelegramBot) => {
 };
 
 export default handlers;
+
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
