@@ -790,6 +790,14 @@ export const handleFindCreators = async ({
         tags: true,
       },
     });
+    if (creators.length === 0) {
+      bot.sendMessage(
+        chatId,
+        "Oops! No creators found. Maybe try tweaking your requirements a bit? Let's find that perfect match!"
+      );
+      messageHistory.deleteLoadingMessages(chatId, bot);
+      return;
+    }
     const creatorsList = creators
       .map((creator) => {
         return `${creator.id}: ${creator.tags.join(', ')}` || 'No tags';
@@ -818,6 +826,7 @@ export const handleFindCreators = async ({
       messageHistory.deleteLoadingMessages(chatId, bot);
       return;
     }
+    console.log('searchResult', searchResult);
     const relatedCreators = await prisma.user.findMany({
       where: {
         id: {
