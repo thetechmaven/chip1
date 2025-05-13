@@ -381,7 +381,24 @@ export const handleCompleteProfileSetup = async (
     user.niche
   ) {
     sendLoadingMessage(chatId, 'Generating ...');
-    await generateImage(bot, query.message);
+
+    const message = {
+      id: query.message?.message_id,
+      from: {
+        id: chatId,
+        first_name: query.message?.chat?.first_name || '',
+        last_name: query.message?.chat?.last_name || '',
+        username: query.message?.chat?.username || '',
+      },
+      chat: {
+        id: chatId,
+        first_name: query.message?.chat?.first_name || '',
+        last_name: query.message?.chat?.last_name || '',
+        username: query.message?.chat?.username || '',
+      },
+    };
+
+    await generateImage(bot, message);
     messageHistory.deleteLoadingMessages(chatId, bot);
 
     bot.sendMessage(
