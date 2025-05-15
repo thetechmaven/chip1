@@ -77,7 +77,8 @@ export const getKnowledgeBase = async (chatId: number) => {
     creators[chatId] = creator;
   }
   if (creator) {
-    const packages = creator.packages;
+    const packages = [...creator.packages];
+    delete creator.packages;
     const knowledgebase =
       `Content creator details: \n` +
       `${Object.keys(creator)
@@ -88,7 +89,7 @@ export const getKnowledgeBase = async (chatId: number) => {
           ? `Content Creator negotiation limit: ${creator.negotiation}`
           : ``
       }` +
-      `Content creator packages: \n` +
+      `List of Content creator's packages: \n` +
       `${packages
         .map(
           (p: any) =>
@@ -97,6 +98,7 @@ export const getKnowledgeBase = async (chatId: number) => {
             }): ${p.description || 'No Description'}`
         )
         .join('\n')}\n`;
+
     return knowledgebase;
   }
 };
