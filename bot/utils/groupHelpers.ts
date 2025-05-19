@@ -77,6 +77,7 @@ export const getKnowledgeBase = async (chatId: number) => {
     creators[chatId] = creator;
   }
   if (creator) {
+    creator = { ...creator };
     const packages = [...creator.packages];
     delete creator.packages;
     const knowledgebase =
@@ -98,7 +99,6 @@ export const getKnowledgeBase = async (chatId: number) => {
             }): ${p.description || 'No Description'}`
         )
         .join('\n')}\n`;
-
     return knowledgebase;
   }
 };
@@ -181,7 +181,6 @@ export const initGroupv1 = async (message: TelegramBotTypes.Message) => {
         )
         .join('\n')}\n` +
       `Now, your role will be inform my clients about my package and negotiate with them. Dont tell them negotiation limit but try to make a good deal. Dont let the client go!`;
-    console.log('Prompt: ', prompt);
     sendRequestToEliza(getChatId(message), prompt);
   }
 };
