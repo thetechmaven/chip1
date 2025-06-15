@@ -22,13 +22,15 @@ export const dealOpenaiWrapper = async (chatId: number, newMessage: any[]) => {
       chat: group.chat,
     },
   });
-  const messages = [];
-  //for (let i = 0; i < updatedGroup?.chat?.length || 0; i++) {
-  // const message = updatedGroup.chat[i];
-
-  //}
-
-  return dealUsingOpenAi(updatedGroup.chat);
+  const messages: any = [...(updatedGroup.chat as [])];
+  function getLength() {
+    const content = messages.map((m: any) => m?.content[0]?.text).join();
+    return content.length;
+  }
+  while (getLength() > 20e3) {
+    messages.shift();
+  }
+  return dealUsingOpenAi(messages);
 };
 
 const groupCreatorMap: {

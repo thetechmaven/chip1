@@ -36,7 +36,10 @@ export const groupHandler = async (
       }
     } else {
       if (isCreator) {
-        console.log('HERE 1');
+        bot.sendMessage(
+          getChatId(message),
+          'Only creators can inilialize the group. Join the bot as creator to initialize the group.'
+        );
         await dealOpenaiWrapper(getChatId(message), [
           {
             role: 'user',
