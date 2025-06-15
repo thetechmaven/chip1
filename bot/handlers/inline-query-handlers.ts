@@ -24,11 +24,13 @@ export async function sendLoadingMessage(
   messageHistory.addLoadingMessage(chatId, message.message_id);
 
   try {
-    setTimeout(() => {
-      bot.editMessageText(showProcessMessage, {
-        chat_id: chatId,
-        message_id: message.message_id,
-      });
+    setTimeout(async () => {
+      try {
+        bot.editMessageText(showProcessMessage, {
+          chat_id: chatId,
+          message_id: message.message_id,
+        });
+      } catch (err) {}
     }, 1000);
   } catch (err) {}
 

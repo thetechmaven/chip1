@@ -57,7 +57,6 @@ export const groupHandler = async (
           },
         ]);
       } else {
-        console.log('HERE 2');
         const knowledgebase = await getKnowledgeBase(getChatId(message));
         sendLoadingMessage(getChatId(message));
         //const data = await sendRequestToEliza(
